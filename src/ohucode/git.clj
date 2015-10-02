@@ -1,4 +1,4 @@
-(ns ohucode.repository
+(ns ohucode.git
   (:import (org.eclipse.jgit.lib Ref Repository FileMode)
            (org.eclipse.jgit.api Git)
            (org.eclipse.jgit.storage.file FileRepositoryBuilder)

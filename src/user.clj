@@ -1,6 +1,6 @@
 (ns user
   (:require [clojure.test :refer :all]
-            [ohucode.repository :as r]
+            [ohucode.git :as git]
             [clojure.repl :refer :all]
             [clojure.tools.namespace.repl :refer [refresh]]))
 
