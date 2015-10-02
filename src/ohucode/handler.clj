@@ -1,8 +1,8 @@
-(ns codohu.handler
+(ns ohucode.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [codohu.view :as view]))
+            [ohucode.view :as view]))
 
 (defroutes app-routes
   (GET "/" [] "Hello World")

@@ -1,4 +1,4 @@
-(ns codohu.repository
+(ns ohucode.repository
   (:import (org.eclipse.jgit.lib Ref Repository FileMode)
            (org.eclipse.jgit.api Git)
            (org.eclipse.jgit.storage.file FileRepositoryBuilder)
@@ -73,7 +73,7 @@
        :mode (str (.getFileMode walk 0))
        :stream (.openStream loader)})))
 
-;;(println  (blob (open ".git") "master" "src/codohu/repository.clj"))
+;;(println  (blob (open ".git") "master" "src/ohucode/repository.clj"))
 
 (defn- git-command [repo commandf]
   (with-open [git (Git. repo)]

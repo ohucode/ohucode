@@ -1,6 +1,6 @@
-(ns codohu.repository-test
+(ns ohucode.repository-test
   (:require [clojure.test :refer :all]
-            [codohu.repository :refer :all]))
+            [ohucode.repository :refer :all]))
 
 (use-fixtures :each
   (fn [f]
