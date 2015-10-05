@@ -6,11 +6,13 @@
                  [compojure "1.4.0"]
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
+                 [ring-logger-timbre "0.7.4"]
                  [aleph "0.4.0"]
                  [enlive "1.1.6"]
                  [org.eclipse.jgit/org.eclipse.jgit "4.1.0.201509280440-r"]]
   :plugins [[lein-ring "0.9.6"]]
-  :ring {:handler ohucode.handler/app}
+  :ring {:handler ohucode.handler/app-dev}
+  :main ohucode.handler/start
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]
