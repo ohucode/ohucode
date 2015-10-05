@@ -1,6 +1,6 @@
 (ns ohucode.git-http
   (:require [ohucode.git :as git])
-  (:import (java.io OutputStream ByteArrayOutputStream)
+  (:import (java.io InputStream OutputStream ByteArrayOutputStream)
            (org.eclipse.jgit.transport
             UserAgent PacketLineOut
             ReceivePack RefAdvertiser$PacketLineOutRefAdvertiser
@@ -18,6 +18,11 @@
       (.end plo)
       (.sendAdvertisedRefs up pck)
       (finally (.. up getRevWalk close)))))
+
+(defn upload-pack [repo ^InputStream in ^OutputStream out]
+  (let [up (doto (UploadPack. repo)
+             (.setBiDirectionalPipe false))]
+    (.upload up in out nil)))
 
 (UserAgent/set "OhuGit/0.0.1")
 

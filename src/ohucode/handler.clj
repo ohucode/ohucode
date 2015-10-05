@@ -38,7 +38,18 @@
         :body in}))))
 
 (defn upload-pack-handler [request]
-  )
+  (let [repo (git/open ".")
+        out (PipedOutputStream.)
+        in (PipedInputStream. out)]
+    (future (git-http/upload-pack repo (:body request) out) (.close out))
+    (no-cache
+     {:status 200
+      :headers {"Content-Type" "application/x-git-upload-pack-result"}
+      :body in})))
+
+(defn receive-pack-handler [request]
+  (prn (:body request))
+  "let's rock!")
 
 (defroutes app-routes
   (GET "/" [] index)
@@ -50,7 +61,8 @@
   (context "/:user/:project" [user project]
     (GET "/" [] (str user "/" "project"))
     (GET "/info/refs" [] info-refs-handler)
-    (POST "/git-upload-pack" [] upload-pack-handler))
+    (POST "/git-upload-pack" [] upload-pack-handler)
+    (POST "/git-receive-pack" [] receive-pack-handler))
   (route/resources "/")
   (route/not-found "Page not found"))
 
