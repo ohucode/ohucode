@@ -1,6 +1,6 @@
-(ns ohucode.repository-test
+(ns ohucode.git-test
   (:require [clojure.test :refer :all]
-            [ohucode.repository :refer :all]))
+            [ohucode.git :refer :all]))
 
 (use-fixtures :each
   (fn [f]
