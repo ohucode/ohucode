@@ -14,13 +14,14 @@
             [ohucode.git :as git]
             [ohucode.git-http :as git-http])
   (:import [java.util Locale]
-           [java.io PipedInputStream PipedOutputStream]))
+           [java.io PipedInputStream PipedOutputStream]
+           [java.util.zip GZIPInputStream GZIPOutputStream]))
 
 (defn index [req] "한글 인덱스 뷰! 별도 함수 리로드 확인. 이건 알레프도 되요.")
 
 (println "핸들러 로드")
 
-(def repo (git/open "p"))
+(def repo (git/open "fixture/git.git"))
 
 (defn no-cache [response]
   (-> response
@@ -39,14 +40,28 @@
         :headers {"Content-Type" (str "application/x-" svc "-advertisement")}
         :body in}))))
 
+(defn- input-stream [request]
+  (let [in (:body request)
+        gzip #{"gzip" "x-gzip"}
+        enc (get-in request [:headers "Content-Encoding"])]
+    (if (contains? gzip enc)
+      (GZIPInputStream. in)
+      in)))
+
 (defn upload-pack-handler [request]
-  (let [repo repo
-        out (PipedOutputStream.)
-        in (PipedInputStream. out)]
-    (future (git-http/upload-pack repo (:body request) out) (.close out))
+  (let [out (PipedOutputStream.)
+        in (PipedInputStream. out)
+        zout (GZIPOutputStream. out)]
+    (future
+      (try
+        (git-http/upload-pack repo (input-stream request) zout)
+        (println "업로드팩 끝")
+        (catch Exception e (prn e))
+        (finally (.close zout))))
     (no-cache
      {:status 200
-      :headers {"Content-Type" "application/x-git-upload-pack-result"}
+      :headers {"Content-Type" "application/x-git-upload-pack-result"
+                "Content-Encoding" "gzip"}
       :body in})))
 
 (defn receive-pack-handler [request]
@@ -59,12 +74,19 @@
       :headers {"Content-Type" "application/x-git-receive-pack-result"}
       :body in})))
 
+(defn stream-test [request]
+  (let [s (s/stream)]
+    {:body (let [sent (atom 0)]
+             (->> (s/periodically 100 #(str (swap! sent inc) "\n"))
+                  (s/transform (take 100))))}))
+
 (defroutes app-routes
   (GET "/" [] index)
   (GET "/chunked" []
     {:status 200
      :headers {"Content-Type" "text/plain"}
      :body (java.io.ByteArrayInputStream. (.getBytes "청크드 test"))})
+  (GET "/stream" [] stream-test)
   (POST "/" [] "post test")
   (context "/:user/:project" [user project]
     (GET "/" [] (str user "/" "project"))
@@ -81,7 +103,6 @@
   (-> app
       (wrap-reload)
       (wrap-stacktrace)
-      (wrap-lint)
       (wrap-with-logger)))
 
 ;; start-server로 시작한 내용은 리로드되지 않음. 왜?
