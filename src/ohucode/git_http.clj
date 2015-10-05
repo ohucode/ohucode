@@ -24,9 +24,9 @@
              (.setBiDirectionalPipe false))]
     (.upload up in out nil)))
 
-(UserAgent/set "OhuGit/0.0.1")
+(defn receive-pack [repo ^InputStream in ^OutputStream out]
+  (let [rp (doto (ReceivePack. repo)
+             (.setBiDirectionalPipe false))]
+    (.receive rp in out nil)))
 
-(with-open [repo (git/open ".")
-            out (ByteArrayOutputStream.)]
-  (advertise repo "git-upload-pack" out)
-  (print (.toString out)))
+(UserAgent/set "OhuGit/0.0.1")

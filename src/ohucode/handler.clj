@@ -20,6 +20,8 @@
 
 (println "핸들러 로드")
 
+(def repo (git/open "p"))
+
 (defn no-cache [response]
   (-> response
       (header "Cache-Control" "no-cache, max-age=0, must-revalidate")
@@ -31,14 +33,14 @@
     {:status 403 :body "not a valid service request"}
     (let [out (PipedOutputStream.)
           in (PipedInputStream. out)]
-      (future (git-http/advertise (git/open ".") svc out) (.close out))
+      (future (git-http/advertise repo svc out) (.close out))
       (no-cache
        {:status 200
         :headers {"Content-Type" (str "application/x-" svc "-advertisement")}
         :body in}))))
 
 (defn upload-pack-handler [request]
-  (let [repo (git/open ".")
+  (let [repo repo
         out (PipedOutputStream.)
         in (PipedInputStream. out)]
     (future (git-http/upload-pack repo (:body request) out) (.close out))
@@ -48,8 +50,14 @@
       :body in})))
 
 (defn receive-pack-handler [request]
-  (prn (:body request))
-  "let's rock!")
+  (let [repo repo
+        out (PipedOutputStream.)
+        in (PipedInputStream. out)]
+    (future (git-http/receive-pack repo (:body request) out) (.close out))
+    (no-cache
+     {:status 200
+      :headers {"Content-Type" "application/x-git-receive-pack-result"}
+      :body in})))
 
 (defroutes app-routes
   (GET "/" [] index)
@@ -80,5 +88,3 @@
 (defn start []
   (Locale/setDefault Locale/US)
   (http/start-server app-dev {:port 10000}))
-
-(println "handler")
