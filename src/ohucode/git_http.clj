@@ -6,11 +6,13 @@
             ReceivePack RefAdvertiser$PacketLineOutRefAdvertiser
             UploadPack)))
 
-(defn advertise [repo ^OutputStream out]
-  (let [svc "git-upload-pack"
-        plo (PacketLineOut. out)
+(defn advertise [repo svc ^OutputStream out]
+  (let [plo (PacketLineOut. out)
         pck (RefAdvertiser$PacketLineOutRefAdvertiser. plo)
-        up (UploadPack. repo)]
+        up (cond
+             (= svc "git-upload-pack") (UploadPack. repo)
+             (= svc "git-receive-pack") (ReceivePack. repo)
+             :else (throw (IllegalArgumentException.)))]
     (try
       (.writeString plo (str "# service=" svc "\n"))
       (.end plo)
@@ -21,5 +23,5 @@
 
 (with-open [repo (git/open ".")
             out (ByteArrayOutputStream.)]
-  (advertise repo out)
+  (advertise repo "git-upload-pack" out)
   (print (.toString out)))

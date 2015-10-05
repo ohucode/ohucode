@@ -31,10 +31,10 @@
     {:status 403 :body "not a valid service request"}
     (let [out (PipedOutputStream.)
           in (PipedInputStream. out)]
-      (future (git-http/advertise (git/open ".") out) (.close out))
+      (future (git-http/advertise (git/open ".") svc out) (.close out))
       (no-cache
        {:status 200
-        :headers {"Content-Type" "application/x-git-upload-pack-advertisement"}
+        :headers {"Content-Type" (str "application/x-" svc "-advertisement")}
         :body in}))))
 
 (defn upload-pack-handler [request]
@@ -46,12 +46,11 @@
     {:status 200
      :headers {"Content-Type" "text/plain"}
      :body (java.io.ByteArrayInputStream. (.getBytes "청크드 test"))})
-  (POST "/" []
-    )
+  (POST "/" [] "post test")
   (context "/:user/:project" [user project]
     (GET "/" [] (str user "/" "project"))
     (GET "/info/refs" [] info-refs-handler)
-    (POST "/git-upload-pack") upload-pack-handler)
+    (POST "/git-upload-pack" [] upload-pack-handler))
   (route/resources "/")
   (route/not-found "Page not found"))
 
