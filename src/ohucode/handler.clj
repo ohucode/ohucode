@@ -50,6 +50,11 @@
 (def ^:private no-cache-and-gzip-response
   (comp no-cache gzip-response-header))
 
+(defn wrap-no-cache-and-gzip [handler]
+  (fn [request]
+    (if-let [response (handler request)]
+      (no-cache-and-gzip-response response request))))
+
 (defn info-refs-handler [{{svc :service} :params :as request}]
   (if-not (contains? #{"git-receive-pack" "git-upload-pack"} svc)
     {:status 403 :body "not a valid service request"}
@@ -57,10 +62,8 @@
           in (PipedInputStream. out)
           out (gzip-output-stream request out)]
       (future (git-http/advertise repo svc out) (.close out))
-      (-> {:status 200
-           :headers {"Content-Type" (str "application/x-" svc "-advertisement")}
-           :body in}
-          (no-cache-and-gzip-response request)))))
+      (-> (response in)
+          (content-type (str "application/x-" svc "-advertisement"))))))
 
 (defn upload-pack-handler [request]
   (let [out (PipedOutputStream.)
@@ -71,10 +74,8 @@
         (git-http/upload-pack repo (gzip-input-stream request) out)
         (catch Exception e (prn e))
         (finally (.close out))))
-    (-> {:status 200
-         :headers {"Content-Type" "application/x-git-upload-pack-result"}
-         :body in}
-        (no-cache-and-gzip-response request))))
+    (-> (response in)
+        (content-type "application/x-git-upload-pack-result"))))
 
 (defn receive-pack-handler [request]
   (let [repo repo
@@ -86,17 +87,18 @@
         (git-http/receive-pack repo (gzip-input-stream request) out)
         (catch Exception e (prn e))
         (finally (.close out))))
-    (-> {:status 200
-         :headers {"Content-Type" "application/x-git-receive-pack-result"}
-         :body in}
-        (no-cache-and-gzip-response request))))
+    (-> (response in)
+        (content-type "application/x-git-receive-pack-result"))))
 
 (defn project-routes [user project]
   (routes
    (GET "/" [] (str user "/" project))
-   (GET "/info/refs" [] info-refs-handler)
-   (POST "/git-upload-pack" [] upload-pack-handler)
-   (POST "/git-receive-pack" [] receive-pack-handler)))
+   (GET "/info/refs" []
+     (wrap-no-cache-and-gzip info-refs-handler))
+   (POST "/git-upload-pack" []
+     (wrap-no-cache-and-gzip upload-pack-handler))
+   (POST "/git-receive-pack" []
+     (wrap-no-cache-and-gzip receive-pack-handler))))
 
 (defroutes app-routes
   (GET "/" [] index)

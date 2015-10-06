@@ -15,10 +15,11 @@
 
   (testing "/info/refs should response with a proper content-type"
     (let [response (app (mock/request :get "/u/p/info/refs?service=git-upload-pack"))]
-      (is (= ((:headers response) "Content-Type")
-             "application/x-git-upload-pack-advertisement")))
+      (is (= (get-in response [:headers "Content-Type"])
+             "application/x-git-upload-pack-advertisement"))
+      (is (= (:status response) 200)))
     (let [response (app (mock/request :get "/u/p/info/refs?service=git-receive-pack"))]
-      (is (= ((:headers response) "Content-Type")
+      (is (= (get-in response [:headers "Content-Type"])
              "application/x-git-receive-pack-advertisement"))))
 
   (testing "POST /git-upload-pack"
