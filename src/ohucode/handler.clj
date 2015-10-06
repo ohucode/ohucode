@@ -22,25 +22,20 @@
 (println "핸들러 로드")
 
 (def repo (git/open "fixture/git.git"))
+;(def repo (git/open "p"))
 
-(defn no-cache [response]
+(defn- no-cache [response]
   (-> response
       (header "Cache-Control" "no-cache, max-age=0, must-revalidate")
       (header "Expires" "Fri, 01 Jan 1980 00:00:00 GMT")
       (header "Pragma" "no-cache")))
 
-(defn info-refs-handler [{{svc :service} :params}]
-  (if-not (contains? #{"git-receive-pack" "git-upload-pack"} svc)
-    {:status 403 :body "not a valid service request"}
-    (let [out (PipedOutputStream.)
-          in (PipedInputStream. out)]
-      (future (git-http/advertise repo svc out) (.close out))
-      (no-cache
-       {:status 200
-        :headers {"Content-Type" (str "application/x-" svc "-advertisement")}
-        :body in}))))
+(defn- gzip-response-header [response request]
+  (if-not (= "gzip" (:headers "Accept-Encoding"))
+    response
+    (header response "ContentEncoding" "gzip")))
 
-(defn- input-stream [request]
+(defn- gzip-input-stream [request]
   (let [in (:body request)
         gzip #{"gzip" "x-gzip"}
         enc (get-in request [:headers "Content-Encoding"])]
@@ -48,31 +43,51 @@
       (GZIPInputStream. in)
       in)))
 
+(defn- gzip-output-stream [request out]
+  (if (= "gzip" (:headers "Accept-Encoding"))
+    (GZIPOutputStream. out)
+    out))
+
+(defn info-refs-handler [{{svc :service} :params :as request}]
+  (if-not (contains? #{"git-receive-pack" "git-upload-pack"} svc)
+    {:status 403 :body "not a valid service request"}
+    (let [out (PipedOutputStream.)
+          in (PipedInputStream. out)
+          out (gzip-output-stream request out)]
+      (future (git-http/advertise repo svc out) (.close out))
+      (-> {:status 200
+           :headers {"Content-Type" (str "application/x-" svc "-advertisement")}
+           :body in}
+          (no-cache)
+          (gzip-response-header request)))))
+
 (defn upload-pack-handler [request]
   (let [out (PipedOutputStream.)
         in (PipedInputStream. out)
-        zout (GZIPOutputStream. out)]
+        out (gzip-output-stream request out)]
     (future
       (try
-        (git-http/upload-pack repo (input-stream request) zout)
+        (git-http/upload-pack repo (gzip-input-stream request) out)
         (println "업로드팩 끝")
         (catch Exception e (prn e))
-        (finally (.close zout))))
-    (no-cache
-     {:status 200
-      :headers {"Content-Type" "application/x-git-upload-pack-result"
-                "Content-Encoding" "gzip"}
-      :body in})))
+        (finally (.close out))))
+    (-> {:status 200
+         :headers {"Content-Type" "application/x-git-upload-pack-result"}
+         :body in}
+        (no-cache)
+        (gzip-response-header request))))
 
 (defn receive-pack-handler [request]
   (let [repo repo
         out (PipedOutputStream.)
-        in (PipedInputStream. out)]
-    (future (git-http/receive-pack repo (:body request) out) (.close out))
-    (no-cache
-     {:status 200
-      :headers {"Content-Type" "application/x-git-receive-pack-result"}
-      :body in})))
+        in (PipedInputStream. out)
+        out (gzip-output-stream request out)]
+    (future (git-http/receive-pack repo (gzip-input-stream request) out) (.close out))
+    (-> {:status 200
+         :headers {"Content-Type" "application/x-git-receive-pack-result"}
+         :body in}
+        no-cache
+        (gzip-response-header request))))
 
 (defn stream-test [request]
   (let [s (s/stream)]
@@ -82,10 +97,6 @@
 
 (defroutes app-routes
   (GET "/" [] index)
-  (GET "/chunked" []
-    {:status 200
-     :headers {"Content-Type" "text/plain"}
-     :body (java.io.ByteArrayInputStream. (.getBytes "청크드 test"))})
   (GET "/stream" [] stream-test)
   (POST "/" [] "post test")
   (context "/:user/:project" [user project]

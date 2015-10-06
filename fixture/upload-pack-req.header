@@ -1,0 +1,8 @@
+POST /u/git33/git-upload-pack HTTP/1.1
+Host: 0.0.0.0:10000
+User-Agent: git/2.5.3
+Accept-Encoding: gzip
+Content-Type: application/x-git-upload-pack-request
+Accept: application/x-git-upload-pack-result
+Content-Encoding: gzip
+Content-Length: 14762
