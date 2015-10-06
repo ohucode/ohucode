@@ -98,15 +98,19 @@
              (->> (s/periodically 100 #(str (swap! sent inc) "\n"))
                   (s/transform (take 100))))}))
 
+(defn project-routes [user project]
+  (routes
+   (GET "/" [] (str user "/" project))
+   (GET "/info/refs" [] info-refs-handler)
+   (POST "/git-upload-pack" [] upload-pack-handler)
+   (POST "/git-receive-pack" [] receive-pack-handler)))
+
 (defroutes app-routes
   (GET "/" [] index)
   (GET "/stream" [] stream-test)
   (POST "/" [] "post test")
   (context "/:user/:project" [user project]
-    (GET "/" [] (str user "/" "project"))
-    (GET "/info/refs" [] info-refs-handler)
-    (POST "/git-upload-pack" [] upload-pack-handler)
-    (POST "/git-receive-pack" [] receive-pack-handler))
+    (project-routes user project))
   (route/resources "/")
   (route/not-found "Page not found"))
 
