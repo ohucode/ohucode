@@ -31,9 +31,9 @@
       (header "Pragma" "no-cache")))
 
 (defn- gzip-response-header [response request]
-  (if-not (= "gzip" (:headers "Accept-Encoding"))
-    response
-    (header response "ContentEncoding" "gzip")))
+  (if (= "gzip" ((:headers request) "Accept-Encoding"))
+    (header response "Content-Encoding" "gzip")
+    response))
 
 (defn- gzip-input-stream [request]
   (let [in (:body request)
@@ -68,7 +68,6 @@
     (future
       (try
         (git-http/upload-pack repo (gzip-input-stream request) out)
-        (println "업로드팩 끝")
         (catch Exception e (prn e))
         (finally (.close out))))
     (-> {:status 200
@@ -82,7 +81,11 @@
         out (PipedOutputStream.)
         in (PipedInputStream. out)
         out (gzip-output-stream request out)]
-    (future (git-http/receive-pack repo (gzip-input-stream request) out) (.close out))
+    (future
+      (try
+        (git-http/receive-pack repo (gzip-input-stream request) out)
+        (catch Exception e (prn e))
+        (finally (.close out))))
     (-> {:status 200
          :headers {"Content-Type" "application/x-git-receive-pack-result"}
          :body in}
