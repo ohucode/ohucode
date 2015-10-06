@@ -9,7 +9,6 @@
             [ring.middleware.lint :refer [wrap-lint]]
             [ring.logger.timbre :refer [wrap-with-logger]]
             [aleph.http :as http]
-            [manifold.stream :as s]
             [ohucode.view :as view]
             [ohucode.git :as git]
             [ohucode.git-http :as git-http])
@@ -25,10 +24,10 @@
 ;(def repo (git/open "p"))
 
 (defn- no-cache [response]
-  (-> response
-      (header "Cache-Control" "no-cache, max-age=0, must-revalidate")
-      (header "Expires" "Fri, 01 Jan 1980 00:00:00 GMT")
-      (header "Pragma" "no-cache")))
+  (update response :headers merge
+          {"Cache-Control" "no-cache, max-age=0, must-revalidate"
+           "Expires" "Fri, 01 Jan 1980 00:00:00 GMT"
+           "Pragma" "no-cache"}))
 
 (defn- gzip-input-stream [request]
   (let [in (:body request)
@@ -39,14 +38,17 @@
       in)))
 
 (defn- gzip-output-stream [request out]
-  (if (= "gzip" ((:headers request) "Accept-Encoding"))
+  (if (= "gzip" (get-in request [:headers "Accept-Encoding"]))
     (GZIPOutputStream. out)
     out))
 
 (defn- gzip-response-header [response request]
-  (if (= "gzip" ((:headers request) "Accept-Encoding"))
+  (if (= "gzip" (get-in request [:headers "Accept-Encoding"]))
     (header response "Content-Encoding" "gzip")
     response))
+
+(def ^:private no-cache-and-gzip-response
+  (comp no-cache gzip-response-header))
 
 (defn info-refs-handler [{{svc :service} :params :as request}]
   (if-not (contains? #{"git-receive-pack" "git-upload-pack"} svc)
@@ -58,8 +60,7 @@
       (-> {:status 200
            :headers {"Content-Type" (str "application/x-" svc "-advertisement")}
            :body in}
-          (no-cache)
-          (gzip-response-header request)))))
+          (no-cache-and-gzip-response request)))))
 
 (defn upload-pack-handler [request]
   (let [out (PipedOutputStream.)
@@ -73,8 +74,7 @@
     (-> {:status 200
          :headers {"Content-Type" "application/x-git-upload-pack-result"}
          :body in}
-        (no-cache)
-        (gzip-response-header request))))
+        (no-cache-and-gzip-response request))))
 
 (defn receive-pack-handler [request]
   (let [repo repo
@@ -89,14 +89,7 @@
     (-> {:status 200
          :headers {"Content-Type" "application/x-git-receive-pack-result"}
          :body in}
-        (no-cache)
-        (gzip-response-header request))))
-
-(defn stream-test [request]
-  (let [s (s/stream)]
-    {:body (let [sent (atom 0)]
-             (->> (s/periodically 100 #(str (swap! sent inc) "\n"))
-                  (s/transform (take 100))))}))
+        (no-cache-and-gzip-response request))))
 
 (defn project-routes [user project]
   (routes
@@ -107,7 +100,6 @@
 
 (defroutes app-routes
   (GET "/" [] index)
-  (GET "/stream" [] stream-test)
   (POST "/" [] "post test")
   (context "/:user/:project" [user project]
     (project-routes user project))
