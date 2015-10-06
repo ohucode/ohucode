@@ -40,27 +40,21 @@
         "Cache-Control" "no-cache, max-age=0, must-revalidate")))
 
   (testing "POST /git-receive-pack"
-    (let [create-branch {:file "fixture/receive-pack-create-branch.body"
-                         :size 189}
-          delete-branch {:file "fixture/receive-pack-delete-branch.body"
-                         :size 157}
-          fixtures [create-branch delete-branch]
-          testf (fn [fixture]
-                  (let [request
-                        (merge
-                         (mock/request :post "/u/p/git-receive-pack")
-                         {:headers {"Content-Length" (:size fixture)
-                                    "Content-Type" "application/x-git-receive-pack-request"
-                                    "Accept" "application/x-git-receive-pack-result"
-                                    "Content-Encoding" "gzip"
-                                    "Accept-Encoding" "gzip"}
-                          :body (io/input-stream (:file fixture))})
-                        response (app request)
-                        res-headers (:headers response)]
-                    (is (= (:status response) 200))
-                    (are [header-key value] (= (res-headers header-key) value)
-                      "Content-Type" "application/x-git-receive-pack-result"
-                      "Content-Encoding" "gzip"
-                      "Cache-Control" "no-cache, max-age=0, must-revalidate")))]
-      (map testf fixtures)))
+    (let [create-branch (io/as-file "fixture/receive-pack-create-branch.body")
+          delete-branch (io/as-file "fixture/receive-pack-delete-branch.body")]
+      (doseq [fixture-file [create-branch delete-branch]]
+        (let [request (merge
+                       (mock/request :post "/u/p/git-receive-pack")
+                       {:headers {"Content-Length" (.length fixture-file)
+                                  "Content-Type" "application/x-git-receive-pack-request"
+                                  "Accept" "application/x-git-receive-pack-result"
+                                  "Accept-Encoding" "gzip"}
+                        :body (io/input-stream fixture-file)})
+              response (app request)]
+          (is (= (:status response) 200))
+          (are [key value] (= ((:headers response) key) value)
+            "Content-Type" "application/x-git-receive-pack-result"
+            "Content-Encoding" "gzip"
+            "Cache-Control" "no-cache, max-age=0, must-revalidate")))))
   )
+

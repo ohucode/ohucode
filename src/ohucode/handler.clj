@@ -30,11 +30,6 @@
       (header "Expires" "Fri, 01 Jan 1980 00:00:00 GMT")
       (header "Pragma" "no-cache")))
 
-(defn- gzip-response-header [response request]
-  (if (= "gzip" ((:headers request) "Accept-Encoding"))
-    (header response "Content-Encoding" "gzip")
-    response))
-
 (defn- gzip-input-stream [request]
   (let [in (:body request)
         gzip #{"gzip" "x-gzip"}
@@ -44,9 +39,14 @@
       in)))
 
 (defn- gzip-output-stream [request out]
-  (if (= "gzip" (:headers "Accept-Encoding"))
+  (if (= "gzip" ((:headers request) "Accept-Encoding"))
     (GZIPOutputStream. out)
     out))
+
+(defn- gzip-response-header [response request]
+  (if (= "gzip" ((:headers request) "Accept-Encoding"))
+    (header response "Content-Encoding" "gzip")
+    response))
 
 (defn info-refs-handler [{{svc :service} :params :as request}]
   (if-not (contains? #{"git-receive-pack" "git-upload-pack"} svc)
@@ -89,7 +89,7 @@
     (-> {:status 200
          :headers {"Content-Type" "application/x-git-receive-pack-result"}
          :body in}
-        no-cache
+        (no-cache)
         (gzip-response-header request))))
 
 (defn stream-test [request]
