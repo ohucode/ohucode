@@ -11,7 +11,7 @@
             [aleph.http :as http]
             [ohucode.view :as view]
             [ohucode.git :as git]
-            [ohucode.git-http :as git-http])
+            [ohucode.git-http :refer [smart-http-routes]])
   (:import [java.util Locale]))
 
 (defn index [req] "한글 인덱스 뷰! 별도 함수 리로드 확인. 이건 알레프도 되요.")
@@ -19,14 +19,14 @@
 (println "핸들러 로드")
 
 (def project-routes
-  (routes
-   git-http/smart-http-routes
-   (GET "/:user/:project" [user project] (str user "/" project))))
+  (context "/:user/:project" [user project]
+    (GET "/" [] (str user "/" project))))
 
 (def app-routes
   (routes
    (GET "/" [] index)
    (POST "/" [] "post test")
+   smart-http-routes
    project-routes
    (route/resources "/")
    (route/not-found "Page not found")))
