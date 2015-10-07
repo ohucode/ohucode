@@ -3,8 +3,9 @@
   (:import (java.io InputStream OutputStream ByteArrayOutputStream)
            (org.eclipse.jgit.transport
             UserAgent PacketLineOut
-            ReceivePack RefAdvertiser$PacketLineOutRefAdvertiser
-            UploadPack)))
+            RefAdvertiser$PacketLineOutRefAdvertiser
+            ReceivePack PreReceiveHook PostReceiveHook
+            UploadPack RefFilter PreUploadHook PostUploadHook)))
 
 (defn advertise [repo svc ^OutputStream out]
   (let [plo (PacketLineOut. out)
@@ -20,8 +21,20 @@
       (finally (.. up getRevWalk close)))))
 
 (defn upload-pack [repo ^InputStream in ^OutputStream out]
-  (let [up (doto (UploadPack. repo)
-             (.setBiDirectionalPipe false))]
+  (let [ref-filter (reify RefFilter
+                     (filter [this refs]
+                       (prn (str "filtering for" refs))
+                       refs))
+        pre-hook (reify PreUploadHook
+                   (onBeginNegotiateRound [this up wants cnt-offered] nil)
+                   (onEndNegotiateRound [this up wants cnt-common cnt-not-found ready?] nil)
+                   (onSendPack [this up wants haves]
+                     (prn "pre-hook")
+                     (prn up)))
+        up (doto (UploadPack. repo)
+             (.setBiDirectionalPipe false)
+             (.setRefFilter ref-filter)
+             (.setPreUploadHook pre-hook))]
     (.upload up in out nil)))
 
 (defn receive-pack [repo ^InputStream in ^OutputStream out]
