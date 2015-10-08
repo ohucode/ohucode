@@ -6,6 +6,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.lint :refer [wrap-lint]]
+            [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.logger.timbre :refer [wrap-with-logger]]
             [aleph.http :as http]
             [ohucode.view :as view]
@@ -30,17 +31,22 @@
     (GET "/tags" [] not-implemented-yet)
     (GET "/issues" [] not-implemented-yet)))
 
-(def app-routes
+(def web-routes
   (routes
    (GET "/" [] index)
    (POST "/" [] "post test")
-   smart-http-routes
-   project-routes
+   project-routes))
+
+(def app-routes
+  (routes
+   (wrap-defaults web-routes
+                  (update site-defaults :session
+                          merge {:store (cookie-store)}))
+   (wrap-defaults smart-http-routes api-defaults)
    (route/resources "/")
    (route/not-found "Page not found")))
 
-(def app
-  (wrap-defaults app-routes api-defaults))
+(def app app-routes)
 
 (def app-dev
   (-> app
