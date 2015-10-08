@@ -11,7 +11,8 @@
             [aleph.http :as http]
             [ohucode.view :as view]
             [ohucode.git :as git]
-            [ohucode.git-http :refer [smart-http-routes]])
+            [ohucode.git-http :refer [smart-http-routes]]
+            [ohucode.db :as db])
   (:import [java.util Locale]))
 
 (defn- not-implemented [req]

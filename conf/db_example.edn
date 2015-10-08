@@ -1,0 +1,3 @@
+(postgres {:db "ohucode_dev"
+           :user "ohucode"  
+           :password "thepassword"})
