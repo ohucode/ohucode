@@ -5,7 +5,6 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [ring.middleware.lint :refer [wrap-lint]]
             [ring.logger.timbre :refer [wrap-with-logger]]
             [aleph.http :as http]
@@ -18,9 +17,18 @@
 
 (println "핸들러 로드")
 
+(defn- not-implemented-yet [req]
+  (throw (UnsupportedOperationException.)))
+
 (def project-routes
   (context "/:user/:project" [user project]
-    (GET "/" [] (str user "/" project))))
+    (GET "/" [] (str user "/" project))
+    (GET "/commits" [] not-implemented-yet)
+    (GET "/settings" [] not-implemented-yet)
+    (GET "/tree/:ref/:path" [path] not-implemented-yet)
+    (GET "/blob/:ref/:path" [path] not-implemented-yet)
+    (GET "/tags" [] not-implemented-yet)
+    (GET "/issues" [] not-implemented-yet)))
 
 (def app-routes
   (routes
@@ -37,7 +45,6 @@
 (def app-dev
   (-> app
       (wrap-reload)
-      (wrap-stacktrace)
       (wrap-with-logger)))
 
 ;; start-server로 시작한 내용은 리로드되지 않음. 왜?
