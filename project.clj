@@ -9,6 +9,8 @@
                  [ring-logger-timbre "0.7.4"]
                  [aleph "0.4.0"]
                  [enlive "1.1.6"]
+                 [korma "0.4.2"]
+                 [org.postgresql/postgresql "9.4-1203-jdbc42"]
                  [org.eclipse.jgit/org.eclipse.jgit "4.1.0.201509280440-r"]
                  [com.amazonaws/aws-java-sdk-s3 "1.10.23"]
                  [com.amazonaws/aws-java-sdk-ses "1.10.23"]
