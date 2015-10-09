@@ -12,4 +12,5 @@
 (defentity users
   (has-many emails {:fk :user_id}))
 
-(prn (select users (with emails)))
+(defn select-users []
+  (select users))

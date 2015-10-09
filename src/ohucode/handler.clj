@@ -12,11 +12,17 @@
             [ohucode.view :as view]
             [ohucode.git :as git]
             [ohucode.git-http :refer [smart-http-routes]]
-            [ohucode.db :as db])
+            [ohucode.db :as db]
+            [ohucode.admin-handler :as admin])
   (:import [java.util Locale]))
 
 (defn- not-implemented [req]
   (throw (UnsupportedOperationException.)))
+
+(def restricted-username
+  ["admin" "js" "css" "fonts" "sign-up" "login" "logout" "fonts"
+   "settings" "help" "support" "notifications" "notification"
+   "status" "components" "news" "account" "templates"])
 
 (def user-routes
   (context "/:user" [user]
@@ -41,21 +47,24 @@
   (routes
    (GET "/" [] "리로드?")
    (POST "/" [] "post test")
+   admin/admin-routes
    user-routes
    project-routes))
 
 (def app
   (routes
+   (route/resources "/")
    (wrap-defaults web-routes
                   (update site-defaults
                           :session merge
                           {:store (cookie-store "ohucode passkey")}))
    (wrap-defaults smart-http-routes api-defaults)
-   (route/resources "/")
    (route/not-found "Page not found")))
 
 (def app-dev
-  (-> app
+  (-> (routes
+       (route/resources "/templates" {:root "/templates"})
+       app)
       (wrap-reload)
       (wrap-lint)
       (wrap-with-logger)))
