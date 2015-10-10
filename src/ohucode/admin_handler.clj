@@ -16,12 +16,14 @@
                [:.location] (h/content (:location u))
                [:.date]     (h/content (str (:created_at u)))))
 
+;; TODO: make reloading affect only in dev mode
 (reload/auto-reload *ns*)
 
 (defn users [req]
   "welcome to user list")
 
 (def admin-routes
+  ;; TODO: wrap a handler that authorizes the req is from an admin
   (context "/admin" [admin]
     (GET "/" [] (let [u (db/select-users)]
                   (prn u)

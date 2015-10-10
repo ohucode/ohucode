@@ -18,7 +18,7 @@
                  [com.amazonaws/aws-java-sdk-route53 "1.10.23"]]
   :plugins [[lein-ring "0.9.6"]]
   :ring {:handler ohucode.handler/app-dev}
-  :main ohucode.handler/start
+  :main ohucode.server/start
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]
