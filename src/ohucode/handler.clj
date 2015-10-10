@@ -48,6 +48,8 @@
      (if (a/auth? req)
        (v/intro-guest) (v/intro-guest)))
    (POST "/" [] "post test")
+   (POST "/sign-up" [] "가입화면")
+   (GET "/logout" [] "로그아웃처리")
    admin/admin-routes
    user-routes
    project-routes))
@@ -64,6 +66,4 @@
        (route/resources "/templates" {:root "/templates"})
        app)
       (wrap-reload)
-      (wrap-lint)
-      (wrap-with-logger)))
-
+      (wrap-lint)))

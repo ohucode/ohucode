@@ -24,7 +24,8 @@
   )
 
 (defn anti-forgery-field []
-  (h/html [:input {:type "hidden" :value *anti-forgery-token*}]))
+  (h/html [:input {:type "hidden" :name "__anti-forgery-token"
+                   :value *anti-forgery-token*}]))
 
 (defn intro-guest []
   (layout
