@@ -10,6 +10,7 @@
                  [aleph "0.4.0"]
                  [enlive "1.1.6"]
                  [korma "0.4.2"]
+                 [prone "0.8.2"]
                  [crypto-password "0.1.3"]
                  [org.postgresql/postgresql "9.4-1203-jdbc42"]
                  [org.eclipse.jgit/org.eclipse.jgit "4.1.0.201509280440-r"]

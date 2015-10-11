@@ -7,6 +7,7 @@
             [ring.middleware.lint :refer [wrap-lint]]
             [ring.middleware.anti-forgery :as af]
             [ring.logger.timbre :refer [wrap-with-logger]]
+            [prone.middleware :refer [wrap-exceptions]]
             [taoensso.timbre :as timbre]
             [ohucode.auth :as a]
             [ohucode.view :as v]
@@ -50,6 +51,7 @@
    (POST "/" [] "post test")
    (POST "/sign-up" [] "가입화면")
    (GET "/logout" [] "로그아웃처리")
+   (GET "/throw" [] (throw (RuntimeException. "스택트레이스 실험")))
    admin/admin-routes
    user-routes
    project-routes))
@@ -65,5 +67,6 @@
   (-> (routes
        (route/resources "/templates" {:root "/templates"})
        app)
+      (wrap-exceptions)
       (wrap-reload)
       (wrap-lint)))
