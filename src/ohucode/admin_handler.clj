@@ -30,5 +30,3 @@
                   (v/layout {:title "오후코드 관리자"
                              :main (dashboard u)})))
     (GET "/users" [] users)))
-
-

@@ -19,7 +19,7 @@
 (defn- not-implemented [req]
   (throw (UnsupportedOperationException.)))
 
-(def restricted-username
+(def restricted-usernames
   ["admin" "js" "css" "fonts" "sign-up" "login" "logout" "fonts"
    "settings" "help" "support" "notifications" "notification"
    "status" "components" "news" "account" "templates"])
