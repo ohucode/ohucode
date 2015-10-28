@@ -17,21 +17,11 @@
                  [org.eclipse.jgit/org.eclipse.jgit "4.1.0.201509280440-r"]
                  [com.amazonaws/aws-java-sdk-s3 "1.10.23"]
                  [com.amazonaws/aws-java-sdk-ses "1.10.23"]
-                 [com.amazonaws/aws-java-sdk-route53 "1.10.23"]
-
-                 [cljsjs/bootstrap "3.3.5-0"]
-                 [cljsjs/highlight "8.4-0"]
-                 [cljsjs/marked "0.3.5-0"]
-                 [cljsjs/google-analytics "2015.04.13-0"]
-                 [cljsjs/d3 "3.5.5-3"]]
-  :plugins [[lein-ring "0.9.6"]
-            [lein-cljsbuild "1.1.0"]]
+                 [com.amazonaws/aws-java-sdk-route53 "1.10.23"]]
+  :plugins [[lein-ring "0.9.6"]]
   :ring {:handler ohucode.handler/app-dev}
   :main ohucode.server/start
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]
-                        [org.clojure/tools.namespace "0.2.11"]]}}
-  :cljsbuild {:builds [{:source-paths ["src-cljs"]
-                        :compiler {:output-to "resources/public/js/ohucode.js"
-                                   :optimizations :advanced}}]})
+                        [org.clojure/tools.namespace "0.2.11"]]}})
