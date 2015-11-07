@@ -63,10 +63,11 @@
    (wrap-defaults smart-http-routes api-defaults)
    (route/not-found "Page not found")))
 
+
 (def app-dev
-  (-> (routes
-       (route/resources "/templates" {:root "/templates"})
-       app)
+  (-> app
       (wrap-exceptions)
       (wrap-reload)
       (wrap-lint)))
+
+(println (str *ns* " reloaded"))

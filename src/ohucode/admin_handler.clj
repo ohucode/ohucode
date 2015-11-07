@@ -2,22 +2,27 @@
   (:require [compojure.core :refer :all]
             [ring.util.response :refer :all]
             [ohucode.db :as db]
-            [net.cgrand.enlive-html :as h]
-            [net.cgrand.reload :as reload]
+            [hiccup.core :refer :all]
             [ohucode.view :as v]))
 
-(h/defsnippet dashboard "templates/admin/dashboard.html"
-  [:main]  
-  [users]
-  [:#user-list :.user-entry]
-  (h/clone-for [u users]
-               [:.id]       (h/content (:id u))
-               [:.name]     (h/content (:name u))
-               [:.location] (h/content (:location u))
-               [:.date]     (h/content (str (:created_at u)))))
+(defn dashboard [users]
+  [:main
+   [:h2 "사용자 리스트"]
+   [:div.container
+    [:div.row
+     [:table#user-list.table
+      [:tbody
+       [:tr
+        [:th "아이디"]
+        [:th "이름"]
+        [:th "지역"]
+        [:th "가입일"]]
+       (for [u users] [:tr.user-entry
+                       [:td.id (:id u)]
+                       [:td.name (:name u)]
+                       [:td.location (:location u)]
+                       [:td.date (str (:created_at u))]])]]]]])
 
-;; TODO: make reloading affect only in dev mode
-(reload/auto-reload *ns*)
 
 (defn users [req]
   "welcome to user list")
@@ -27,6 +32,8 @@
   (context "/admin" [admin]
     (GET "/" [] (let [u (db/select-users)]
                   (prn u)
-                  (v/layout {:title "오후코드 관리자"
-                             :main (dashboard u)})))
+                  (v/layout {:title "오후코드 관리자"}
+                            (dashboard u))))
     (GET "/users" [] users)))
+
+(println (str *ns* " reloaded"))
