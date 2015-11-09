@@ -1,9 +1,9 @@
 var App = Vue.extend();
 
 var router = new VueRouter({history: true});
-// var validator = window['vue-validator'];
+var validator = window['vue-validator'];
 
-// Vue.use(validator);
+Vue.use(validator);
 
 var Root = Vue.extend({
     template: "루트 본문"    

@@ -12,7 +12,7 @@
       [:span.icon-bar]
       [:span.icon-bar]
       [:span.icon-bar]]
-     [:a.navbar-brand {:href "#"} "오후코드"]]
+     [:a.navbar-brand {:href "/"} "오후코드"]]
     [:div#navbar.collapse.navbar-collapse
      [:ul.nav.navbar-nav
       [:li {:class "active"}
@@ -20,10 +20,16 @@
       [:li
        "<a v-link=\"{ path: '/about' }\">소개</a>"]
       [:li
-       "<a v-link=\"{ path: '/help' }\">도움말</a>"]]]]])
+       "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
+     [:ul.nav.navbar-nav.navbar-right
+      [:li
+       [:a.btn.btn-default {:href "/"} "로그인"]]]]]])
 
 (defn footer []
-  [:footer "Copyright 2015 오후코드"])
+  [:footer [:ul.list-inline
+            [:li "Copyright 2015 오후코드"]
+            [:li "개인정보보호정책"]
+            [:li "이용약관"]]])
 
 (defn layout [opts & body]
   (html5
@@ -38,7 +44,7 @@
     [:body#app
      (navigation)
      [:div {:class "container main-wrap"}
-      [:router-view body]
+      [:main body]
       (footer)]
      (include-js "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")
      (include-js "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
@@ -58,7 +64,7 @@
     [:div.row
      [:div.col-md-8
       [:h1 "오후코드"]
-      [:p "즐겁고 효율적인 프로그래밍의 동반자, 오후코드에 오신 것을 환영합니다.\n"
+      [:p "즐겁고 효율적인 프로그래밍의 동반자, 오후코드에 오신 것을 환영합니다."
        "오후코드는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git) 저장소를 편리하게 제공합니다."]]
      [:div.col-md-4
       [:form#sign-up-form {:method "POST", :action "/sign-up"}
