@@ -1,0 +1,25 @@
+{
+  "name": "ohucode",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ohucode/ohucode",
+  "authors": [
+    "김대현 <dhk@ohucode.com>"
+  ],
+  "description": "오후코드 연습사이트",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vue": "~0.12.16",
+    "bootstrap": "~3.3.5",
+    "octicons": "~3.1.0",
+    "materialize": "~0.97.2",
+    "vue-router": "~0.7.5",
+    "vue-validator": "~1.4.4"
+  }
+}
