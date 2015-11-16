@@ -4,8 +4,8 @@
         [hiccup.page]))
 
 (defn navigation []
-  [:nav {:class "navbar navbar-inverse navbar-fixed-top"}
-   [:div.container
+  [:nav.navbar.navbar-inverse.navbar-fixed-top
+   [:div.container-fluid
     [:div.navbar-header
      [:button {:type "button" :class "navbar-toggle collapsed" :data-toggle "collapse" :data-target "#navbar" :aria-expanded "false" :aria-controls "navbar"}
       [:span.sr-only "Toggle navigation"]
@@ -23,7 +23,7 @@
        "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
      [:ul.nav.navbar-nav.navbar-right
       [:li
-       [:a.btn.btn-default {:href "/"} "로그인"]]]]]])
+       [:a {:href "/"} "로그인"]]]]]])
 
 (defn footer []
   [:footer [:ul.list-inline
@@ -43,7 +43,7 @@
      (include-css "/css/ohucode.css")]
     [:body#app
      (navigation)
-     [:div {:class "container main-wrap"}
+     [:div.container-fluid.main-wrap
       [:main body]
       (footer)]
      (include-js "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")
@@ -62,11 +62,11 @@
    {:title "오후코드 첫화면"}
    [:div.jumbotron
     [:div.row
-     [:div.col-md-8
+     [:div.col-sm-8.col-xs-12
       [:h1 "오후코드"]
       [:p "즐겁고 효율적인 프로그래밍의 동반자, 오후코드에 오신 것을 환영합니다."
        "오후코드는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git) 저장소를 편리하게 제공합니다."]]
-     [:div.col-md-4
+     [:div.col-sm-4.col-xs-6
       [:form#sign-up-form {:method "POST", :action "/sign-up"}
        [:div.form-group
         [:label {:for "sign-up-email"} "이메일"]
@@ -74,7 +74,7 @@
        [:div.form-group
         [:label {:for "sign-up-password"} "패스워드"]
         [:input#sign-up-password.form-control {:name "password" :type "password" :placeholder "영문숫자혼합패스워드" :required true }]]
-       [:button.btn.btn-default.btn-primary {:type "submit"} "가입하기"]
+       [:button.btn.btn-lg.btn-primary {:type "submit"} "가입하기"]
        (anti-forgery-field)]]]]))
 
 (println (str *ns* " reloaded"))
