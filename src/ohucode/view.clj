@@ -28,8 +28,10 @@
 (defn footer []
   [:footer [:ul.list-inline
             [:li "Copyright 2015 오후코드"]
-            [:li "개인정보보호정책"]
-            [:li "이용약관"]]])
+            [:li
+             [:a {:href "/privacy-policy"} "개인정보보호정책"]]
+            [:li
+             [:a {:href "/terms-of-service"} "이용약관"]]]])
 
 (defn layout [opts & body]
   (html5
@@ -74,7 +76,35 @@
        [:div.form-group
         [:label {:for "sign-up-password"} "패스워드"]
         [:input#sign-up-password.form-control {:name "password" :type "password" :placeholder "영문숫자혼합패스워드" :required true }]]
+       (anti-forgery-field)
        [:button.btn.btn-lg.btn-primary {:type "submit"} "가입하기"]
-       (anti-forgery-field)]]]]))
+       ]]]]))
+
+(defn sign-up-wait-confirm []
+  (layout {:title "오후코드 가입 > 2단계"}
+          [:div.row
+           [:div.col-sm-3
+            [:ul.list-group
+             [:li.list-group-item "1. 가입"]
+             [:li.list-group-item "2. 이메일 주소 확인"]]]
+           [:div.col-sm-9
+            [:ol.breadcrumb
+             [:li "가입"]
+             [:li "이메일 입력"]
+             [:li "이메일 확인"]]]]))
+
+(defn terms-of-service [_]
+  (layout {:title "오후코드 > 서비스 이용약관"}
+          [:div.container
+           [:div.row
+            [:h1 "서비스 이용약관"]
+            [:p "오후코드 서비스를 이용하면..."]]]))
+
+(defn privacy-policy [_]
+  (layout {:title "오후코드 > 개인정보 보호정책"}
+          [:div.container
+           [:div.row
+            [:h1 "개인정보 보호정책"]
+            [:p "오후코드 서비스를 이용하면..."]]]))
 
 (println (str *ns* " reloaded"))

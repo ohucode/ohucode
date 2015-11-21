@@ -22,7 +22,8 @@
 (def restricted-usernames
   ["admin" "js" "css" "fonts" "sign-up" "login" "logout" "fonts"
    "settings" "help" "support" "notifications" "notification"
-   "status" "components" "news" "account" "templates"])
+   "status" "components" "news" "account" "templates"
+   "terms-of-service" "privacy-policy"])
 
 (def user-routes
   (context "/:user" [user]
@@ -49,9 +50,13 @@
      (if (a/auth? req)
        (v/intro-guest) (v/intro-guest)))
    (POST "/" [] "post test")
-   (POST "/sign-up" [] "가입화면")
+   (POST "/sign-up" [email password]
+     (println (str email ", " password))
+     (v/sign-up-wait-confirm))
    (GET "/logout" [] "로그아웃처리")
    (GET "/throw" [] (throw (RuntimeException. "스택트레이스 실험")))
+   (GET "/terms-of-service" [] v/terms-of-service)
+   (GET "/privacy-policy" [] v/privacy-policy)
    admin/admin-routes
    user-routes
    project-routes))
@@ -63,11 +68,21 @@
    (wrap-defaults smart-http-routes api-defaults)
    (route/not-found "Page not found")))
 
+(def templates
+  (routes
+   (GET "/templates" []
+     (v/layout {:title "템플릿 확인"}
+               [:div.container
+                [:div.row
+                 [:ul.list-group
+                  [:li.list-group-item
+                   [:a {:href "/templates/sign-up-2"} "가입2단계"]]]]]))
+   (GET "/templates/sign-up-2" [] (v/sign-up-wait-confirm))))
 
 (def app-dev
-  (-> app
+  (-> (routes templates app)
       (wrap-exceptions)
       (wrap-reload)
-      (wrap-lint)))
+      ))
 
 (println (str *ns* " reloaded"))
