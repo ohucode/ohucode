@@ -15,10 +15,10 @@
     "tests"
   ],
   "dependencies": {
-    "vue": "~0.12.16",
-    "bootstrap": "~3.3.5",
-    "octicons": "~3.1.0",
-    "vue-router": "~0.7.5",
+    "vue": "~1.0.10",
+    "bootstrap": "~3.3.6",
+    "octicons": "~3.3.0",
+    "vue-router": "~0.7.7",
     "vue-validator": "~1.4.4"
   }
 }
