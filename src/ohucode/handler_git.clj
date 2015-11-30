@@ -1,4 +1,4 @@
-(ns ohucode.git-http
+(ns ohucode.handler-git
   (:require [ohucode.git :as git]
             [compojure.core :refer :all]
             [ring.util.response :refer :all]
@@ -49,7 +49,7 @@
 
 (UserAgent/set "OhuGit/0.0.1")
 
-(def repo (git/open "fixture/git.git"))
+(def repo (git/open "fixture/fixture-repo/.git"))
 ;;(def repo (git/open "p"))
 
 (defn- no-cache [response]

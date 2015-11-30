@@ -4,7 +4,7 @@
 
 (use-fixtures :each
   (fn [f]
-    (def repo (open "fixture/git.git"))
+    (def repo (open "fixture/fixture-repo/.git"))
     (try
       (f)
       (finally (.close repo) (ns-unmap *ns* 'repo)))))

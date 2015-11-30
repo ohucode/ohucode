@@ -1,0 +1,6 @@
+[submodule "fixture/git"]
+	path = fixture/git
+	url = https://github.com/git/git.git
+[submodule "fixture/fixture-repo"]
+	path = fixture/fixture-repo
+	url = https://github.com/ohucode/fixture-repo.git

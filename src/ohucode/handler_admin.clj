@@ -1,4 +1,4 @@
-(ns ohucode.admin-handler
+(ns ohucode.handler-admin
   (:require [compojure.core :refer :all]
             [ring.util.response :refer :all]
             [ohucode.db :as db]

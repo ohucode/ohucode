@@ -23,6 +23,54 @@ router.map({
 });
 
 $(function() {
-    //    router.start(App, "#app");
+    router.start(App, "#app");
 });
 
+
+//new Vue({el: "#app"});
+
+var ValidationRegex = {
+    email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    nickname: /\w{4,16}/
+};
+
+var VR = ValidationRegex;
+
+var validation_class = function(value, valid) {
+    var empty = value == "";
+    return {
+        'has-error': !empty && !valid,
+        'has-success': !empty && valid
+    };
+};
+
+
+Vue.filter('validate_class', function (value, valid) {
+    console.log([value, valid]);
+    return 'has-error';
+});
+
+new Vue({
+    el: "#sign-up-form",
+    data: {
+        email: "",
+        nickname: ""
+    },
+    computed: {
+        email_class: function() {
+            return validation_class(this.email, this.valid_email());
+        },
+        nickname_class: function() {
+            return validation_class(this.nickname, this.valid_nickname());
+        },
+        valid_email: function() {
+            return VR.email.test(this.email);
+        },
+        valid_nickname: function() {
+            return VR.nickname.test(this.nickname);
+        },
+        valid_form: function() {
+            return this.valid_email && this.valid_nickname;
+        }
+    }
+});

@@ -15,6 +15,6 @@
       (is (.contains (:body response) "u/p"))))
   
   (testing "not-found route"
-    (let [response (app (mock/request :get "/invalid"))]
+    (let [response (app (mock/request :get "/invalid/not/found"))]
       (is (= (:status response) 404)))))
 
