@@ -6,4 +6,9 @@
             [clojure.repl :refer :all]
             [clojure.tools.namespace.repl :refer [refresh]]))
 
-(def T run-tests)
+(defn T []
+  (run-tests 'ohucode.handler-test 'ohucode.handler-git-test))
+
+(defn RT []
+  (refresh)
+  (T))
