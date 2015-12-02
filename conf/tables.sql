@@ -1,9 +1,23 @@
-DROP TABLE audits, emails, users;
+CREATE DATABASE ohucode_dev OWNER ohucode_web ENCODING 'UTF8';
+
+DROP TABLE signup_requests, audits, emails, users;
+
+CREATE TABLE signup_requests (
+  id SERIAL PRIMARY KEY,
+  user_id VARCHAR(16) NOT NULL UNIQUE,
+  email VARCHAR(256) NOT NULL UNIQUE,
+  verifying_code VARCHAR(6),
+  verifying_digest VARCHAR(40),
+  requested_at TIMESTAMP,
+  sent_at TIMESTAMP,
+  expires_at TIMESTAMP
+);
 
 CREATE TABLE users (
   seq SERIAL,
   id VARCHAR(16) PRIMARY KEY,
   name VARCHAR(32),
+  primary_email VARCHAR(256) NOT NULL UNIQUE,
   password VARCHAR(64),
   company VARCHAR(256),
   url VARCHAR(256),
