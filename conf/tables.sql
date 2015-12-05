@@ -1,15 +1,17 @@
+-- 데이터베이스 생성
+
 CREATE DATABASE ohucode_dev OWNER ohucode_web ENCODING 'UTF8';
+CREATE DATABASE ohucode_test OWNER ohucode_web ENCODING 'UTF8';
 
-DROP TABLE signup_requests, audits, emails, users;
+-- 테이블 생성
 
-CREATE TABLE signup_requests (
+CREATE TABLE signups (
   id SERIAL PRIMARY KEY,
   user_id VARCHAR(16) NOT NULL UNIQUE,
   email VARCHAR(256) NOT NULL UNIQUE,
   verifying_code VARCHAR(6),
   verifying_digest VARCHAR(40),
-  requested_at TIMESTAMP,
-  sent_at TIMESTAMP,
+  created_at TIMESTAMP,
   expires_at TIMESTAMP
 );
 
@@ -18,10 +20,10 @@ CREATE TABLE users (
   id VARCHAR(16) PRIMARY KEY,
   name VARCHAR(32),
   primary_email VARCHAR(256) NOT NULL UNIQUE,
-  password VARCHAR(64),
+  password VARCHAR(32),
   company VARCHAR(256),
-  url VARCHAR(256),
   location VARCHAR(256),
+  url VARCHAR(256),
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 );
@@ -47,7 +49,9 @@ INSERT INTO emails (user_id, email) VALUES
 CREATE TABLE audits (
   id SERIAL PRIMARY KEY,
   user_id VARCHAR(32) REFERENCES users(id) ON DELETE CASCADE,
-  action VARCHAR(8),
+  ip inet4,
+  type VARCHAR(16),
+  action VARCHAR(16),
   description TEXT,
   created_at TIMESTAMP
 );

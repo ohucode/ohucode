@@ -21,7 +21,7 @@
 
 (defn T []
   (run-tests 'ohucode.handler-test 'ohucode.handler-git-test
-             'ohucode.password-test))
+             'ohucode.password-test 'ohucode.db-test))
 
 (defn RT []
   (refresh)

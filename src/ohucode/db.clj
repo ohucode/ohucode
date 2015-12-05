@@ -2,11 +2,29 @@
   (:refer-clojure :exclude [update])
   (:require [taoensso.timbre :as timbre]
             [korma.db :refer :all]
-            [korma.core :refer :all]))
+            [korma.core :refer :all]
+            [ohucode.password :as password]))
 
-(defdb dev
-  ((comp eval read-string slurp) "conf/db_dev.edn"))
+(def ^:private read-edn
+  (comp eval read-string slurp))
 
+(defdb dev-db
+  (read-edn "conf/db_dev.edn"))
+
+(comment defdb test-db
+  (read-edn "conf/db_test.edn"))
+
+(defn sql-now []
+  (java.sql.Timestamp. (.getTime  (java.util.Date.))))
+
+(defentity signups)
+
+(defn insert-signup [userid email]
+  (insert signups (values {:user_id userid :email email
+                           :verifying_code (password/random-6-digits)
+                           :verifying_digest (password/random-digest)
+                           :created_at (sql-now)
+                           })))
 (defentity emails)
 
 (defentity users
