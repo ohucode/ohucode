@@ -13,6 +13,6 @@
                [:ul.list-group
                 [:li.list-group-item
                  [:a {:href "/templates/sign-up-2"} "가입2단계"]]]]]))
-   (GET "/templates/sign-up-2" [] (signup/sign-up-wait-confirm))))
+   (GET "/templates/sign-up-2" [_] signup/sign-up-wait-confirm)))
 
 (println (str *ns* " reloaded"))

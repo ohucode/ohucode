@@ -34,34 +34,44 @@ var ValidationRegex = {
     nickname: /\w{4,16}/
 };
 
-var VR = ValidationRegex;
+var VR = window.VR = ValidationRegex;
 
-var validation_class = function(value, valid) {
+var validation_class = function(value, regex) {
+    console.log([value, regex]);
     var empty = value == "";
+    var valid = regex.test(value);
     return {
         'has-error': !empty && !valid,
         'has-success': !empty && valid
     };
 };
 
-
-Vue.filter('validate_class', function (value, valid) {
-    console.log([value, valid]);
-    return 'has-error';
+Vue.filter('feedback_class', function(value) {
+    console.log(value);
+    return {
+        'has-success': 'glyphicon-ok',
+        'has-error': 'glyphicon-remove'
+    }[value];
 });
 
 new Vue({
     el: "#sign-up-form",
     data: {
-        email: "",
-        nickname: ""
+        email: {
+            value: "",
+            pattern: VR.email
+        },
+        nickname: {
+            value: "",
+            pattern: VR.nickname
+        }
     },
     computed: {
-        email_class: function() {
-            return validation_class(this.email, this.valid_email());
+        class_email: function() {
+            return validation_class(this.email, VR.email);
         },
-        nickname_class: function() {
-            return validation_class(this.nickname, this.valid_nickname());
+        class_nickname: function() {
+            return validation_class(this.nickname, VR.nickname);
         },
         valid_email: function() {
             return VR.email.test(this.email);

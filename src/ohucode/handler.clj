@@ -70,5 +70,3 @@
   (-> (routes template-routes app)
       (wrap-exceptions)
       (wrap-reload)))
-
-(println (str *ns* " reloaded"))

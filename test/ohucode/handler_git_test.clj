@@ -14,7 +14,8 @@
     (let [res (app (mock/request :get "/u/p/info/refs?service=git-receive-pack"))]
       (is (= (get-in res [:headers "Content-Type"])
              "application/x-git-receive-pack-advertisement"))))
-  
+
+  ;; 요청 파일 업데이트 필요함
   (comment testing "POST /git-upload-pack"
     (let [file (io/as-file "fixture/upload-pack-req.body")
           req (merge
@@ -31,7 +32,8 @@
         "Content-Type" "application/x-git-upload-pack-result"
         "Content-Encoding" "gzip"
         "Cache-Control" "no-cache, max-age=0, must-revalidate")))
-  
+
+  ;; 요청 파일 업데이트 필요함
   (comment testing "POST /git-receive-pack"
     (let [create-branch (io/as-file "fixture/receive-pack-create-branch.body")
           delete-branch (io/as-file "fixture/receive-pack-delete-branch.body")]

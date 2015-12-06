@@ -58,5 +58,3 @@
 (defn anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"
            :value *anti-forgery-token*}])
-
-(println (str *ns* " reloaded"))

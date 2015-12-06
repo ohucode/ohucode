@@ -14,17 +14,15 @@
 (comment defdb test-db
   (read-edn "conf/db_test.edn"))
 
-(defn sql-now []
-  (java.sql.Timestamp. (.getTime  (java.util.Date.))))
+(defn now []
+  (java.sql.Timestamp. (.getTime (java.util.Date.))))
 
 (defentity signups)
 
 (defn insert-signup [userid email]
   (insert signups (values {:user_id userid :email email
-                           :verifying_code (password/random-6-digits)
-                           :verifying_digest (password/random-digest)
-                           :created_at (sql-now)
-                           })))
+                           :created_at (now)})))
+
 (defentity emails)
 
 (defentity users
