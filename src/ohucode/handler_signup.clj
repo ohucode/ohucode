@@ -8,16 +8,16 @@
             [ohucode.password :as password])
   (:use [ohucode.view-signup]))
 
-(defn request-confirm-mail [nickname email]
-  (let [code (password/random-6-digits)
-        digest (password/random-digest)]
-    (println code digest))
-  )
+(defn request-confirm-mail [userid email]
+  (comment let [code (password/generate-passcode)]
+    (future
+      (mail/send-signup-confirm userid email passcode))
+    (db/insert-signup userid email passcode)))
 
 (def signup-routes
   (context "/signup" []
-    (POST "/" [email password]
-        (println (str email ", " password))
-        (sign-up-wait-confirm nil))))
+    (POST "/" [userid email]
+      (request-confirm-mail userid email)
+      (sign-up-wait-confirm nil))))
 
 (println (str *ns* " reloaded"))

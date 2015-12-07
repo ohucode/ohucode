@@ -18,7 +18,7 @@
         (is (valid-password-digest? raw password salt)))))
 
   (testing "random-6-digits should have no duplicates in a limited condition"
-    (let [xs (repeatedly 100 random-6-digits)]
+    (let [xs (repeatedly 100 generate-passcode)]
       (is (= (count xs) (count (set xs))))))
 
   (testing "random-digest should have no duplicates in a limited condition"

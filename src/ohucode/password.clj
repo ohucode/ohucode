@@ -31,7 +31,7 @@
   (format (str "%0" len "d")
           (random-digits len)))
 
-(def random-6-digits (partial random-digits-str 6))
+(def generate-passcode (partial random-digits-str 6))
 
 (defn random-digest []
   "32바이트 길이의 임의 urlsafe-base64 문자열 생성."

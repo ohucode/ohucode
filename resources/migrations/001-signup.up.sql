@@ -1,10 +1,8 @@
 -- 가입 신청 정보
 CREATE TABLE signups (
   id SERIAL PRIMARY KEY,
-  user_id VARCHAR(16) NOT NULL UNIQUE,
+  userid VARCHAR(32) NOT NULL UNIQUE,
   email VARCHAR(256) NOT NULL UNIQUE,
-  verifying_code VARCHAR(6),
-  verifying_digest VARCHAR(40) NOT NULL UNIQUE,
-  created_at TIMESTAMP,
-  expires_at TIMESTAMP
+  passcode VARCHAR(8) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
