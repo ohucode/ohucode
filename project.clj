@@ -3,7 +3,7 @@
   :url "https://github.com/ohucode/ohucode"
   :min-lein-version "2.1.2"
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/tools.nrepl "0.2.11"]
+                 [org.clojure/tools.nrepl "0.2.12"]
                  [compojure "1.4.0"]
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
