@@ -18,6 +18,6 @@
   (context "/signup" []
     (POST "/" [userid email]
       (request-confirm-mail userid email)
-      (sign-up-wait-confirm nil))))
+      (signup-step2 nil))))
 
 (println (str *ns* " reloaded"))

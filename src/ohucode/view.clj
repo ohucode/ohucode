@@ -3,6 +3,11 @@
   (:use [hiccup.core]
         [hiccup.page]))
 
+(def brand-name "오후코드")
+
+(defn brand-name+ [& strs]
+  (apply str (concat brand-name " " strs)))
+
 (defn navigation []
   [:nav.navbar.navbar-inverse.navbar-fixed-top
    [:div.container-fluid
@@ -12,7 +17,7 @@
       [:span.icon-bar]
       [:span.icon-bar]
       [:span.icon-bar]]
-     [:a.navbar-brand {:href "/"} "오후코드"]]
+     [:a.navbar-brand {:href "/"} brand-name]]
     [:div#navbar.collapse.navbar-collapse
      [:ul.nav.navbar-nav
       [:li {:class "active"}
@@ -27,7 +32,7 @@
 
 (defn footer []
   [:footer [:ul.list-inline
-            [:li "Copyright 2015 오후코드"]
+            [:li "Copyright 2015 " brand-name]
             [:li
              [:a {:href "/privacy-policy"} "개인정보보호정책"]]
             [:li
@@ -40,7 +45,7 @@
      [:meta {:charset "utf-8"}]
      [:meta {:http-equiv "X-UA-Compatible", :content "IE=edge"}]
      [:meta {:name "viewport", :content "width=device-width, initial-scale=1"}]
-     [:title (get opts :title "오후코드 템플릿")]
+     [:title (get opts :title (brand-name+ " 템플릿"))]
      (include-css "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
      (include-css "/css/ohucode.css")]
     [:body#app
