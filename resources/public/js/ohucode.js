@@ -27,28 +27,25 @@
 
     var ValidationRegex = {
         email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        nickname: /\w{4,16}/
+        userid: /\w{4,16}/
     };
 
     var VR = window. VR = ValidationRegex;
 
-    var validation_class = function(value, regex) {
-        console.log([value, regex]);
-        var empty = value == "";
-        var valid = regex.test(value);
+    var is_valid_model = function(model) {
+        return model.pattern.test(model.value);
+    };
+    
+    var validation_class = function(model) {
+        var empty = model.value == "";
+        var valid = is_valid_model(model);
         return {
             'has-error': !empty && !valid,
             'has-success': !empty && valid
         };
     };
 
-    Vue.filter('feedback_class', function(value) {
-        console.log(value);
-        return {
-            'has-success': 'glyphicon-ok',
-            'has-error': 'glyphicon-remove'
-        }[value];
-    });
+    Vue.filter('validation_class', validation_class);
 
     new Vue({
         el: "#signup-form",
@@ -57,26 +54,16 @@
                 value: "",
                 pattern: VR.email
             },
-            nickname: {
+            userid: {
                 value: "",
-                pattern: VR.nickname
+                pattern: VR.userid
             }
         },
         computed: {
-            class_email: function() {
-                return validation_class(this.email, VR.email);
-            },
-            class_nickname: function() {
-                return validation_class(this.nickname, VR.nickname);
-            },
-            valid_email: function() {
-                return VR.email.test(this.email);
-            },
-            valid_nickname: function() {
-                return VR.nickname.test(this.nickname);
-            },
+            valid_email: function() { return is_valid_model(this.email); },
+            valid_userid: function() { return is_valid_model(this.userid); },
             valid_form: function() {
-                return this.valid_email && this.valid_nickname;
+                return this.valid_email && this.valid_userid;
             }
         }
     });
