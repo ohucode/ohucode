@@ -33,7 +33,7 @@
 
 (defn- signup-layout [active-step _ & body]
   (let [title (brand-name+ "가입 > " active-step "단계")]
-    (layout {:title title}
+    (layout {:title title :js ["/js/signup.js"]}
             [:div.container
              [:div.row
               [:div.page-header [:h1 title]]]
@@ -64,7 +64,8 @@
                      [:label.control-label.col-xs-3.col-sm-2 {:for "confirm-code"} "확인코드"]
                      [:div.col-xs-6.col-sm-3
                       [:div.input-group
-                       [:input#confirm-code.form-control {:v-model "code" :type "text" :placeholder "######" :autofocus true}]
+                       [:input#confirm-code.form-control {:v-model "code" :type "text"
+                                                          :placeholder "######" :autofocus true}]
                        [:span.input-group-btn [:button.btn.btn-primary "확인"]]]]]]]]
                  [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내드린 메일에 적혀있는 6자리 "
                   [:strong "확인코드"]
@@ -75,5 +76,12 @@
                     ]]]
                  [:p.text-right "다른 이메일 주소로 가입하시겠어요? > "
                   [:a {:href "#"} "1단계에서 다시 시작"]]))
+
+(defn signup-step3 [_]
+  "기본 프로필 입력"
+  (signup-layout 3 _
+                 [:div.row
+                  [:div.col-sm-7
+                   (signup-form _)]]))
 
 (println (str *ns* " reloaded"))

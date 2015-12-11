@@ -10,12 +10,16 @@
      (layout {:title "템플릿 확인"}
              [:div.container
               [:div.row
-               [:ul.list-group
-                [:li.list-group-item
-                 [:a {:href "/templates/signup-1"} "가입1단계: 이메일 입력"]]
-                [:li.list-group-item
-                 [:a {:href "/templates/signup-2"} "가입2단계"]]]]]))
+               [:div.col-sm-12
+                [:div.page-header [:h2 "템플릿"]]
+                [:ul.list-group
+                 (for [[path text] [["/templates/signup-1" "가입1단계: 이메일 입력"]
+                                    ["/templates/signup-2" "가입2단계"]
+                                    ["/templates/signup-3" "가입3단계"]]]
+                   [:li.list-group-item
+                    [:a {:href path} text]])]]]]))
    (GET "/templates/signup-1" [] signup/signup-step1)
-   (GET "/templates/signup-2" [] signup/signup-step2)))
+   (GET "/templates/signup-2" [] signup/signup-step2)
+   (GET "/templates/signup-3" [] signup/signup-step3)))
 
 (println (str *ns* " reloaded"))
