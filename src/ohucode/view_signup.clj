@@ -5,19 +5,23 @@
 
 ;; HTML5 validation과 vuejs와 bootstrap의 form validation css를 어떻게 잘 조립할지 고민중
 (defn signup-form [_]
-  [:form#signup-form {:method "POST" :action "/signup" :novalidate true}
-   [:div.form-group {:v-bind:class "email | validation_class"}
-    [:label.control-label {:for "signup-email"} "이메일"]
-    [:input#signup-email.form-control
-     {:type "email" :v-model "email.value" :name "email"
-      :placeholder "username@yourmail.net" :autofocus true}]]
-   [:div.form-group {:v-bind:class "userid | validation_class"}
-    [:label.control-label {:for "signup-userid"} "사용할 아이디"]
-    [:input#signup-userid.form-control
-     {:type "text" :placeholder "userid" :name "userid" :v-model "userid.value"}]]
-   (anti-forgery-field)
-   [:div.form-group.pull-right
-    [:button.btn.btn-primary {:type "submit" :disabled "{{!valid_form}}"} "다음 >"]]])
+  (letfn [(fg [attrs label-text & input-section]
+            [:div.form-group attrs
+             [:label.control-label.col-sm-3 label-text]
+             [:div.col-sm-9 input-section]])]
+    [:form#signup-form.form-horizontal {:method "POST" :action "/signup" :novalidate true}
+     (fg {:v-bind:class "email | validation_class"}
+         "이메일"
+         [:input#signup-email.form-control
+          {:type "email" :v-model "email.value" :name "email"
+           :placeholder "username@yourmail.net" :autofocus true}])
+     (fg {:v-bind:class "userid | validation_class"}
+         "아이디"
+         [:input#signup-userid.form-control
+          {:type "text" :placeholder "userid" :name "userid" :v-model "userid.value"}])
+     (anti-forgery-field)
+     (fg {} ""
+         [:button.btn.btn-primary {:type "submit" :disabled "{{!valid_form}}"} "다음 > "])]))
 
 (def ^:private signup-step-texts
   ["아이디/이메일 입력"
@@ -45,31 +49,31 @@
 (defn signup-step1 [_]
   "가입 1단계: 아이디와 이메일 접수"
   (signup-layout 1 _
-                 [:div.row [:div.col-sm-7 (signup-form _)]]))
+                 (signup-form _)))
 
 (defn signup-step2 [req]
   "가입 2단계: 메일 확인코드 입력"
-  (signup-layout 2 req
-                 [:div.panel.panel-default
-                  [:div.panel-body
-                   [:form#confirm-form.form-horizontal
-                    [:div.form-group
-                     [:label.control-label.col-xs-3.col-sm-2 "이메일"]
-                     [:div.form-control-static.col-xs-6.col-sm-10 "hatemogi@gmail.com"]]
-                    [:div.form-group
-                     [:label.control-label.col-xs-3.col-sm-2 {:for "confirm-code"} "확인코드"]
-                     [:div.col-xs-6.col-sm-3
-                      [:div.input-group
-                       [:input#confirm-code.form-control {:v-model "code" :type "text"
-                                                          :placeholder "######" :autofocus true}]
-                       [:span.input-group-btn [:button.btn.btn-primary "확인"]]]]]
-                    (anti-forgery-field)]]]
-                 [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내 드린 메일에 적혀있는 6자리 "
-                  [:strong "확인코드"]
-                  "를 입력해주세요."]
-                 [:p req]
-                 [:p.text-right "다른 이메일 주소로 가입하시겠어요? > "
-                  [:a {:href "#"} "1단계에서 다시 시작"]]))
+  (letfn [(fg [label-text & input-section]
+            [:div.form-group
+             [:label.control-label.col-xs-3.col-sm-2 label-text]
+             [:div.col-xs-9.col-sm-10 input-section]])]
+    (signup-layout 2 req
+                   [:div.panel.panel-default
+                    [:div.panel-body
+                     [:form#confirm-form.form-horizontal
+                      (fg "이메일"
+                          [:div.pull-right [:button.btn.btn-info "메일 재발송"]]
+                          [:div.form-control-static "hatemogi@gmail.com"])
+                      (fg "확인코드" [:input#confirm-code.form-control
+                                      {:v-model "code" :type "text" :placeholder "######" :autofocus true}])
+                      (fg "" [:button.btn.btn-primary "다음 > "])
+                      (anti-forgery-field)]]]
+                   [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내 드린 메일에 적혀있는 6자리 "
+                    [:strong "확인코드"]
+                    "를 입력해주세요."]
+                   [:p req]
+                   [:p.text-right "다른 이메일 주소로 가입하시겠어요? > "
+                    [:a {:href "#"} "1단계에서 다시 시작"]])))
 
 (defn signup-step3 [req]
   "기본 프로필 입력"
@@ -83,5 +87,5 @@
                     (fg "이름" [:input.form-control {:type "text" :placeholder "홍길동" :autofocus true}])
                     (fg "비밀번호" [:input.form-control {:type "password" :placeholder "********"}])
                     (fg "비번확인" [:input.form-control {:type "password" :placeholder "********"}])
-                    (fg "" [:button.btn.btn-primary "가입"])
+                    (fg "" [:button.btn.btn-primary "다음 >"])
                     ])))

@@ -30,10 +30,11 @@
       [:li [:a {:href "/"} "로그인"]]]]]])
 
 (defn footer []
-  [:footer [:ul.list-inline
-            [:li "Copyright 2015 " brand-name]
-            [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
-            [:li [:a {:href "/terms-of-service"} "이용약관"]]]])
+  [:footer
+   [:div.container [:div.row [:ul.list-inline
+                              [:li "Copyright 2015 " brand-name]
+                              [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
+                              [:li [:a {:href "/terms-of-service"} "이용약관"]]]]]])
 
 (defn layout [opts & body]
   "opts {:title "" :css [] :js []}"
@@ -52,8 +53,8 @@
          [:body#app
           (navigation)
           [:div.container-fluid.main-wrap
-           [:main body]
-           (footer)]
+           [:main body]]
+          (footer)
           (map include-js
                (list* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
                       "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
