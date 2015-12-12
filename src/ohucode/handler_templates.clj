@@ -21,5 +21,3 @@
    (GET "/templates/signup-1" [] signup/signup-step1)
    (GET "/templates/signup-2" [] signup/signup-step2)
    (GET "/templates/signup-3" [] signup/signup-step3)))
-
-(println (str *ns* " reloaded"))

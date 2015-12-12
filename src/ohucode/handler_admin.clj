@@ -35,5 +35,3 @@
                   (v/layout {:title "오후코드 관리자"}
                             (dashboard u))))
     (GET "/users" [] users)))
-
-(println (str *ns* " reloaded"))

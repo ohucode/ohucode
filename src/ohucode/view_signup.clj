@@ -80,5 +80,3 @@
                  [:div.row
                   [:div.col-sm-7
                    (signup-form _)]]))
-
-(println (str *ns* " reloaded"))

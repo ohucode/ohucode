@@ -32,9 +32,7 @@
     [:div.row
      [:div.col-sm-8.col-xs-12
       [:h1 brand-name]
-      [:p "즐겁고 효율적인 프로그래밍의 동반자, " brand-name "에 오신 것을 환영합니다."
+      [:p "즐겁고 효율적인 프로그래밍의 동반자, " brand-name "에 오신 것을 환영합니다. "
        brand-name "는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git 리모트 리포지토리)를 편리하게 제공합니다."]]
      [:div.col-sm-4.col-xs-6
       (signup-form _)]]]))
-
-(println (str *ns* " reloaded"))

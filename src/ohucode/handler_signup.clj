@@ -17,8 +17,5 @@
 (def signup-routes
   (context "/signup" []
     (POST "/" [userid email :as req]
-      (println userid email req)
       (request-confirm-mail userid email)
       (signup-step2 req))))
-
-(println (str *ns* " reloaded"))

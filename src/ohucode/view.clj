@@ -38,29 +38,28 @@
 (defn layout [opts & body]
   "opts {:title "" :css [] :js []}"
   {:pre (seq? (:js opts))}
-  (html5
-   [:html {:lang "ko"}
-    [:head
-     [:meta {:charset "utf-8"}]
-     [:meta {:http-equiv "X-UA-Compatible", :content "IE=edge"}]
-     [:meta {:name "viewport", :content "width=device-width, initial-scale=1"}]
-     [:title (get opts :title (brand-name+ "템플릿"))]
-     (map include-css
-          (list* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
-                 "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
-                 "/css/ohucode.css"
-                 (:css opts)))]
-    [:body#app
-     (navigation)
-     [:div.container-fluid.main-wrap
-      [:main body]
-      (footer)]
-     (map include-js
-          (list* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
-                 "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
-                 "/js/vue.min.js"
-                 "/js/ohucode.js"
-                 (:js opts)))]]))
+  (html5 {:lang "ko"}
+         [:head
+          [:meta {:charset "utf-8"}]
+          [:meta {:http-equiv "X-UA-Compatible", :content "IE=edge"}]
+          [:meta {:name "viewport", :content "width=device-width, initial-scale=1"}]
+          [:title (get opts :title brand-name)]
+          (map include-css
+               (list* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+                      "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+                      "/css/ohucode.css"
+                      (:css opts)))]
+         [:body#app
+          (navigation)
+          [:div.container-fluid.main-wrap
+           [:main body]
+           (footer)]
+          (map include-js
+               (list* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
+                      "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+                      "/js/vue.min.js"
+                      "/js/ohucode.js"
+                      (:js opts)))]))
 
 (defn anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"
