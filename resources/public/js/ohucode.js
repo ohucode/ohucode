@@ -1,36 +1,12 @@
 (function (scope, $) {
     var App = Vue.extend();
 
-    var router = new VueRouter({history: true});
-    var validator = scope['vue-validator'];
-
-    Vue.use(validator);
-
-    var Root = Vue.extend({
-        template: "루트 본문"
-    });
-
-    var About = Vue.extend({
-        template: "텍스트"  
-    });
-
-    router.map({
-        '/': {
-            component: Root
-        },
-        '/about': {
-            component: About
-        }
-    });
-
-    //new Vue({el: "#app"});
-
     var ValidationRegex = {
         email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
         userid: /\w{4,16}/
     };
 
-    var VR = window. VR = ValidationRegex;
+    var VR = scope.VR = ValidationRegex;
 
     var is_valid_model = function(model) {
         return model.pattern.test(model.value);

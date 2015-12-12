@@ -37,6 +37,7 @@
 
 (defn layout [opts & body]
   "opts {:title "" :css [] :js []}"
+  {:pre (seq? (:js opts))}
   (html5
    [:html {:lang "ko"}
     [:head
@@ -46,6 +47,7 @@
      [:title (get opts :title (brand-name+ "템플릿"))]
      (map include-css
           (list* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+                 "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
                  "/css/ohucode.css"
                  (:css opts)))]
     [:body#app

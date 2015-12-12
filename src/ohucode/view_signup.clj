@@ -9,12 +9,12 @@
    [:div.form-group {:v-bind:class "email | validation_class"}
     [:label.control-label {:for "signup-email"} "이메일"]
     [:input#signup-email.form-control
-     {:type "email" :v-model "email.value"
+     {:type "email" :v-model "email.value" :name "email"
       :placeholder "username@yourmail.net" :autofocus true}]]
    [:div.form-group {:v-bind:class "userid | validation_class"}
     [:label.control-label {:for "signup-userid"} "사용할 아이디"]
     [:input#signup-userid.form-control
-     {:type "text" :placeholder "userid" :v-model "userid.value"}]]
+     {:type "text" :placeholder "userid" :name "userid" :v-model "userid.value"}]]
    (anti-forgery-field)
    [:div.form-group.pull-right
     [:button.btn.btn-primary {:type "submit" :disabled "{{!valid_form}}"} "다음 >"]]])
@@ -33,7 +33,7 @@
 
 (defn- signup-layout [active-step _ & body]
   (let [title (brand-name+ "가입 > " active-step "단계")]
-    (layout {:title title :js ["/js/signup.js"]}
+    (layout {:title title}
             [:div.container
              [:div.row
               [:div.page-header [:h1 title]]]
@@ -51,9 +51,9 @@
                   [:div.col-sm-7
                    (signup-form _)]]))
 
-(defn signup-step2 [_]
+(defn signup-step2 [req]
   "가입 2단계: 메일 확인코드 입력"
-  (signup-layout 2 _
+  (signup-layout 2 req
                  [:div.panel.panel-default
                   [:div.panel-body
                    [:form#confirm-form.form-horizontal
@@ -70,10 +70,7 @@
                  [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내드린 메일에 적혀있는 6자리 "
                   [:strong "확인코드"]
                   "를 입력해주세요."]
-                 [:div.row
-                  [:div.col-sm-3
-                   [:form#confirm-form
-                    ]]]
+                 [:p req]
                  [:p.text-right "다른 이메일 주소로 가입하시겠어요? > "
                   [:a {:href "#"} "1단계에서 다시 시작"]]))
 
