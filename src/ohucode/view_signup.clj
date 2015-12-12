@@ -28,28 +28,24 @@
 (defn- signup-progress [active-step]
   [:ul.nav.nav-pills.nav-stacked
    (for [[step text] (map vector (iterate inc 1) signup-step-texts)]
-     [:li.disabled {:class (if (= step active-step) "active" "disabled")}
+     [:li {:class (if (= step active-step) "active" "disabled")}
       [:a {:href "#"} (str step ". " text)]])])
 
 (defn- signup-layout [active-step _ & body]
   (let [title (brand-name+ "가입 > " active-step "단계")]
     (layout {:title title}
             [:div.container
-             [:div.row
-              [:div.page-header [:h1 title]]]
+             [:div.page-header [:h1 title]]
              [:div.row
               [:div.col-sm-3 (signup-progress active-step)]
               [:div.col-sm-9
-               [:div.row
-                [:h2 (signup-step-texts (dec active-step))]
-                body]]]])))
+               [:h2 (signup-step-texts (dec active-step))]
+               body]]])))
 
 (defn signup-step1 [_]
   "가입 1단계: 아이디와 이메일 접수"
   (signup-layout 1 _
-                 [:div.row
-                  [:div.col-sm-7
-                   (signup-form _)]]))
+                 [:div.row [:div.col-sm-7 (signup-form _)]]))
 
 (defn signup-step2 [req]
   "가입 2단계: 메일 확인코드 입력"
@@ -66,17 +62,26 @@
                       [:div.input-group
                        [:input#confirm-code.form-control {:v-model "code" :type "text"
                                                           :placeholder "######" :autofocus true}]
-                       [:span.input-group-btn [:button.btn.btn-primary "확인"]]]]]]]]
-                 [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내드린 메일에 적혀있는 6자리 "
+                       [:span.input-group-btn [:button.btn.btn-primary "확인"]]]]]
+                    (anti-forgery-field)]]]
+                 [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내 드린 메일에 적혀있는 6자리 "
                   [:strong "확인코드"]
                   "를 입력해주세요."]
                  [:p req]
                  [:p.text-right "다른 이메일 주소로 가입하시겠어요? > "
                   [:a {:href "#"} "1단계에서 다시 시작"]]))
 
-(defn signup-step3 [_]
+(defn signup-step3 [req]
   "기본 프로필 입력"
-  (signup-layout 3 _
-                 [:div.row
-                  [:div.col-sm-7
-                   (signup-form _)]]))
+  (letfn [(fg [label-text & input-section]
+            [:div.form-group
+             [:label.control-label.col-sm-3 label-text]
+             [:div.col-sm-9 input-section]])]
+    (signup-layout 3 req
+                   [:form#signup-profile-form.form-horizontal {:method "POST" :action "/me"}
+                    (fg "아이디" [:div.form-control-static "hatemogi"])
+                    (fg "이름" [:input.form-control {:type "text" :placeholder "홍길동" :autofocus true}])
+                    (fg "비밀번호" [:input.form-control {:type "password" :placeholder "********"}])
+                    (fg "비번확인" [:input.form-control {:type "password" :placeholder "********"}])
+                    (fg "" [:button.btn.btn-primary "가입"])
+                    ])))
