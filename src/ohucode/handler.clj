@@ -59,8 +59,8 @@
 
 (def app
   (routes
-   (route/resources "/js")
-   (route/resources "/css")
+   (route/resources "/js" {:root "public/js"})
+   (route/resources "/css" {:root "public/css"})
 
    ;; compojure.core/wrap-routes는 라우트 매칭시에만 미들웨어를 입힌다.
    ;; -> wrap-params 미들웨어가 핸들러 매치 여부와 무관하게,
