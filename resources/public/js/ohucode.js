@@ -11,7 +11,7 @@
     var is_valid_model = function(model) {
         return model.pattern.test(model.value);
     };
-    
+
     var validation_class = function(model) {
         var empty = model.value == "";
         var valid = is_valid_model(model);
@@ -40,6 +40,14 @@
             valid_userid: function() { return is_valid_model(this.userid); },
             valid_form: function() {
                 return this.valid_email && this.valid_userid;
+            }
+        },
+        methods: {
+            email_change: function(event) {
+                if (this.valid_email && this.userid.value == "") {
+                    this.userid.value = this.email.value.split("@")[0];
+
+                }
             }
         }
     });

@@ -14,7 +14,8 @@
          "이메일"
          [:input#signup-email.form-control
           {:type "email" :v-model "email.value" :name "email"
-           :placeholder "username@yourmail.net" :autofocus true}])
+           :placeholder "username@yourmail.net" :autofocus true
+           :v-on:blur "email_change"}])
      (fg {:v-bind:class "userid | validation_class"}
          "아이디"
          [:input#signup-userid.form-control
