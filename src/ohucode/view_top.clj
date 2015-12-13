@@ -37,7 +37,7 @@
      [:div.col-sm-6.col-md-4
       [:div.panel.panel-default
        [:div.panel-body
-        [:div.page-header [:h4 "가입 신청"]]
+        [:div.page-header [:h4 [:i.fa.fa-user-plus] " 가입 신청"]]
         (signup-form _)]]]]]
    [:div.container
     [:div.row

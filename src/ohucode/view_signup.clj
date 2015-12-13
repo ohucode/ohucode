@@ -3,6 +3,9 @@
         [hiccup.page]
         [ohucode.view]))
 
+(defn- next-btn [attrs]
+  [:button.btn.btn-primary attrs "다음 " [:i.fa.fa-angle-double-right]])
+
 ;; HTML5 validation과 vuejs와 bootstrap의 form validation css를 어떻게 잘 조립할지 고민중
 (defn signup-form [_]
   (letfn [(fg [attrs label-text & input-section]
@@ -22,7 +25,7 @@
           {:type "text" :placeholder "userid" :name "userid" :v-model "userid.value"}])
      (anti-forgery-field)
      (fg {} ""
-         [:button.btn.btn-primary {:type "submit" :disabled "{{!valid_form}}"} "다음 > "])]))
+         (next-btn {:type "submit" :disabled "{{!valid_form}}"}))]))
 
 (def ^:private signup-step-texts
   ["아이디/이메일 입력"
@@ -67,7 +70,7 @@
                           [:div.form-control-static "hatemogi@gmail.com"])
                       (fg "확인코드" [:input#confirm-code.form-control
                                       {:v-model "code" :type "text" :placeholder "######" :autofocus true}])
-                      (fg "" [:button.btn.btn-primary "다음 > "])
+                      (fg "" (next-btn {}))
                       (anti-forgery-field)]]]
                    [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내 드린 메일에 적혀있는 6자리 "
                     [:strong "확인코드"]
@@ -88,5 +91,5 @@
                     (fg "이름" [:input.form-control {:type "text" :placeholder "홍길동" :autofocus true}])
                     (fg "비밀번호" [:input.form-control {:type "password" :placeholder "********"}])
                     (fg "비번확인" [:input.form-control {:type "password" :placeholder "********"}])
-                    (fg "" [:button.btn.btn-primary "다음 >"])
+                    (fg "" (next-btn {}))
                     ])))

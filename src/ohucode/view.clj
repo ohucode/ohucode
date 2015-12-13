@@ -27,12 +27,12 @@
       [:li
        "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
      [:ul.nav.navbar-nav.navbar-right
-      [:li [:a {:href "/"} "로그인"]]]]]])
+      [:li [:a {:href "/"} [:i.fa.fa-sign-in] " 로그인"]]]]]])
 
 (defn footer []
   [:footer
    [:div.container [:div.row [:ul.list-inline
-                              [:li "Copyright 2015 " brand-name]
+                              [:li "Copyright " [:i.fa.fa-copyright] " 2015 " brand-name]
                               [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
                               [:li [:a {:href "/terms-of-service"} "이용약관"]]]]]])
 
