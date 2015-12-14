@@ -9,7 +9,7 @@
   (apply str (concat brand-name " " strs)))
 
 (defn navigation []
-  [:nav.navbar.navbar-inverse.navbar-fixed-top
+  [:nav.navbar.navbar-inverse.navbar-static-top
    [:div.container-fluid
     [:div.navbar-header
      [:button.navbar-toggle.collapsed {:type "button" :data-toggle "collapse"
@@ -17,7 +17,7 @@
                                        :aria-controls "navbar"}
       [:span.sr-only "내비게이션 여닫기"]
       (repeat 3 [:span.icon-bar])]
-     [:a.navbar-brand {:href "/"} brand-name]]
+     [:a.navbar-brand {:href "/"} [:i.fa.fa-git-square] " " brand-name]]
     [:div#navbar.collapse.navbar-collapse
      [:ul.nav.navbar-nav
       [:li {:class "active"}

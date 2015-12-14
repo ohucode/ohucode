@@ -42,13 +42,13 @@
 (defn- signup-layout [active-step _ & body]
   (let [title (brand-name+ "가입 > " active-step "단계")]
     (layout {:title title}
-            [:div.container
-             [:div.page-header [:h1 title]]
+            [:div.container.signup-container
+             [:div.page-header
+              [:h2 [:i.fa.fa-user-plus] " 회원가입 "
+               [:small (signup-step-texts (dec active-step))]]]
              [:div.row
-              [:div.col-sm-3 (signup-progress active-step)]
-              [:div.col-sm-9
-               [:h2 (signup-step-texts (dec active-step))]
-               body]]])))
+              [:div.col-sm-8 [:div.panel.panel-signup [:div.panel-body body]]]
+              [:div.col-sm-4 (signup-progress active-step)]]])))
 
 (defn signup-step1 [_]
   "가입 1단계: 아이디와 이메일 접수"
@@ -59,25 +59,21 @@
   "가입 2단계: 메일 확인코드 입력"
   (letfn [(fg [label-text & input-section]
             [:div.form-group
-             [:label.control-label.col-xs-3.col-sm-2 label-text]
-             [:div.col-xs-9.col-sm-10 input-section]])]
+             [:label.control-label.col-sm-3 label-text]
+             [:div.col-sm-9 input-section]])]
     (signup-layout 2 req
-                   [:div.panel.panel-default
-                    [:div.panel-body
-                     [:form#confirm-form.form-horizontal
-                      (fg "이메일"
-                          [:div.pull-right [:button.btn.btn-info "메일 재발송"]]
-                          [:div.form-control-static "hatemogi@gmail.com"])
-                      (fg "확인코드" [:input#confirm-code.form-control
-                                      {:v-model "code" :type "text" :placeholder "######" :autofocus true}])
-                      (fg "" (next-btn {}))
-                      (anti-forgery-field)]]]
-                   [:p "위 이메일 주소로 확인 코드를 보냈습니다. 보내 드린 메일에 적혀있는 6자리 "
-                    [:strong "확인코드"]
-                    "를 입력해주세요."]
-                   [:p req]
-                   [:p.text-right "다른 이메일 주소로 가입하시겠어요? > "
-                    [:a {:href "#"} "1단계에서 다시 시작"]])))
+                   [:form#confirm-form.form-horizontal
+                    (fg "이메일" [:div.form-control-static "hatemogi@gmail.com"])
+                    (fg "확인코드" [:input#confirm-code.form-control
+                                    {:v-model "code" :type "text"
+                                     :placeholder "######" :autofocus true}])
+                    (fg ""
+                        (next-btn {})
+                        [:div.pull-right
+                         [:button.btn.btn-info "재발송 " [:i.fa.fa-send]]
+                         " "
+                         [:button.btn.btn-success "처음부터 " [:i.fa.fa-undo]]])
+                    (anti-forgery-field)])))
 
 (defn signup-step3 [req]
   "기본 프로필 입력"
@@ -91,5 +87,4 @@
                     (fg "이름" [:input.form-control {:type "text" :placeholder "홍길동" :autofocus true}])
                     (fg "비밀번호" [:input.form-control {:type "password" :placeholder "********"}])
                     (fg "비번확인" [:input.form-control {:type "password" :placeholder "********"}])
-                    (fg "" (next-btn {}))
-                    ])))
+                    (fg "" (next-btn {}))])))
