@@ -3,7 +3,8 @@
 
     var ValidationRegex = {
         email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        userid: /\w{4,16}/
+        userid: /\w{4,16}/,
+        signup_code: /\d{6}/
     };
 
     var VR = scope.VR = ValidationRegex;
@@ -51,4 +52,28 @@
             }
         }
     });
+
+    new Vue({
+        el: '#signup-confirm-form',
+        data: {
+            email: "",
+            userid: "",
+            code: ""
+        },
+        computed: {
+            valid_form: function() {
+                console.log([this.email, this.userid, this.code]);
+                return VR.signup_code.test(this.code);
+            }
+        },
+        methods: {
+            submit: function(event) {
+                console.log("submit called");
+                event
+                return false;
+            }
+        }
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
 })(window, jQuery);

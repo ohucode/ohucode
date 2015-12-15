@@ -8,14 +8,20 @@
             [ohucode.password :as password])
   (:use [ohucode.view-signup]))
 
-(defn request-confirm-mail [userid email]
+(defn request-confirm-mail [email userid]
   (comment let [code (password/generate-passcode)]
     (future
-      (mail/send-signup-confirm userid email passcode))
-    (db/insert-signup userid email passcode)))
+      (mail/send-signup-confirm email userid passcode))
+    (db/insert-or-update-signup email userid passcode)))
 
 (def signup-routes
   (context "/signup" []
-    (POST "/" [userid email :as req]
-      (request-confirm-mail userid email)
-      (signup-step2 req))))
+    (POST "/" [email userid :as req]
+      (request-confirm-mail email userid)
+      (signup-step2 req))
+    (POST "/2" [email userid :as req]
+      (request-confirm-mail email userid)
+      (signup-step2 email userid))
+    (POST "/3" [email userid :as req]
+      (request-confirm-mail email userid)
+      (signup-step3 email userid))))

@@ -19,10 +19,10 @@
   (throw (UnsupportedOperationException.)))
 
 (def restricted-usernames
-  ["admin" "js" "css" "fonts" "sign-up" "login" "logout" "fonts"
+  ["admin" "js" "css" "static" "fonts" "signup" "login" "logout" "fonts"
    "settings" "help" "support" "notifications" "notification"
    "status" "components" "news" "account" "templates"
-   "terms-of-service" "privacy-policy"])
+   "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"])
 
 (def user-routes
   (context "/:user" [user]

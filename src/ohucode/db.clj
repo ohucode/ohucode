@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [update])
   (:require [taoensso.timbre :as timbre]
             [korma.db :refer :all]
-            [korma.core :refer :all]))
+            [korma.core :refer :all])
+  (:import [java.sql SQLException]))
 
 (def ^:private read-edn
   (comp eval read-string slurp))
@@ -18,14 +19,25 @@
 
 (defentity signups)
 
-(defn insert-signup [userid email passcode]
-  (insert signups
-          (values {:user_id userid :email email :passcode passcode})))
+(defn insert-or-update-signup [email userid passcode]
+  (try
+    (insert signups
+            (values {:userid userid :email email :passcode passcode}))
+    (catch SQLException e
+        (update signups
+                (set-fields {:passcode passcode})
+                (where {:userid userid :email email})))))
 
 (defentity emails)
 
+(defn email-available? [email]
+  (empty? (select emails (where {:email email}))))
+
 (defentity users
   (has-many emails {:fk :user_id}))
+
+(defn userid-available? [userid]
+  (empty? (select users (where {:userid userid}))))
 
 (defn select-users []
   (select users))
