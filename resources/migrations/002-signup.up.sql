@@ -1,8 +1,10 @@
 -- 가입 신청 정보
 CREATE TABLE signups (
-  id SERIAL PRIMARY KEY,
-  userid VARCHAR(32) NOT NULL UNIQUE,
-  email VARCHAR(256) NOT NULL UNIQUE,
-  passcode VARCHAR(8) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT now()
+  email VARCHAR(256),
+  userid VARCHAR(32),
+  code VARCHAR(8) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  PRIMARY KEY (email, userid)
 );
+
+CREATE INDEX signups_idx ON signups (created_at DESC);

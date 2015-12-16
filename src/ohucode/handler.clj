@@ -18,12 +18,6 @@
 (defn- not-implemented [req]
   (throw (UnsupportedOperationException.)))
 
-(def restricted-usernames
-  ["admin" "js" "css" "static" "fonts" "signup" "login" "logout" "fonts"
-   "settings" "help" "support" "notifications" "notification"
-   "status" "components" "news" "account" "templates"
-   "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"])
-
 (def user-routes
   (context "/:user" [user]
     (GET "/" [] v-top/not-found)

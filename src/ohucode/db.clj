@@ -30,13 +30,14 @@
 
 (defentity emails)
 
-(defn email-available? [email]
+
+(defn email-acceptable? [email]
   (empty? (select emails (where {:email email}))))
 
 (defentity users
   (has-many emails {:fk :user_id}))
 
-(defn userid-available? [userid]
+(defn userid-acceptable? [userid]
   (empty? (select users (where {:userid userid}))))
 
 (defn select-users []
