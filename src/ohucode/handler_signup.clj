@@ -37,11 +37,12 @@
     (GET "/email/:email" [email]
       {:status (if (email-acceptable? email) 200 409)})
     (POST "/" [email userid :as req]
-      (request-confirm-mail email userid)
-      (signup-step2 req))
-    (POST "/2" [email userid :as req]
+      (or (and (email-acceptable? email)
+               (userid-acceptable? userid))
+          )
       (request-confirm-mail email userid)
       (signup-step2 email userid))
+    (POST "/2" [email userid :as req]
+      (signup-step3 email userid))
     (POST "/3" [email userid :as req]
-      (request-confirm-mail email userid)
-      (signup-step3 email userid))))
+      (signup-step4 email userid))))

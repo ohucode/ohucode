@@ -103,3 +103,20 @@
           [:input.form-control
            {:type "password" :v-model "password2" :placeholder "********"}])
       (fg "" (next-btn {}))])))
+
+(defn signup-step4 [email userid]
+  "이용약관 동의"
+  (letfn [(fg [label-text & input-section]
+            [:div.form-group
+             [:label.control-label label-text]
+             input-section])]
+    (signup-layout
+     4
+     [:form#signup-profile-form.form {:method "POST" :action "/signup/4"}
+      (fg "이용약관" [:textarea.form-control {:rows 10 :cols 80} "사이트 이용약관 \n블라블라"])
+      [:div.checkbox [:label
+                      [:input {:type "checkbox" :name "agree" :value "true"}]
+                      "이용약관에 동의합니다"]]
+      (fg ""
+          [:button.btn.btn-warning.pull-right "가입취소"]
+          (next-btn {:disabled ""}))])))

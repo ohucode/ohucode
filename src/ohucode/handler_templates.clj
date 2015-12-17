@@ -15,9 +15,11 @@
                 [:ul.list-group
                  (for [[path text] [["/templates/signup-1" "가입1단계: 이메일 입력"]
                                     ["/templates/signup-2" "가입2단계"]
-                                    ["/templates/signup-3" "가입3단계"]]]
+                                    ["/templates/signup-3" "가입3단계"]
+                                    ["/templates/signup-3" "가입4단계"]]]
                    [:li.list-group-item
                     [:a {:href path} text]])]]]]))
    (GET "/templates/signup-1" [] signup/signup-step1)
    (GET "/templates/signup-2" [] (signup/signup-step2 "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/signup-3" [] (signup/signup-step3 "hatemogi@gmail.com" "hatemogi"))))
+   (GET "/templates/signup-3" [] (signup/signup-step3 "hatemogi@gmail.com" "hatemogi"))
+   (GET "/templates/signup-4" [] (signup/signup-step4 "hatemogi@gmail.com" "hatemogi"))))
