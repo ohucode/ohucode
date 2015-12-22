@@ -8,7 +8,7 @@
             [ohucode.password :as password])
   (:use [ohucode.view-signup]))
 
-(def ^:private restricted-userids
+(def restricted-userids
   #{"admin" "js" "css" "static" "fonts" "signup" "login" "logout"
     "settings" "help" "support" "notifications" "notification"
     "status" "components" "news" "account" "templates"
@@ -32,17 +32,21 @@
 
 (def signup-routes
   (context "/signup" []
+    (GET "/" [] signup-step1)
     (GET "/userid/:userid" [userid]
       {:status (if (userid-acceptable? userid) 200 409)})
     (GET "/email/:email" [email]
       {:status (if (email-acceptable? email) 200 409)})
     (POST "/" [email userid :as req]
-      (or (and (email-acceptable? email)
+      (if (and (email-acceptable? email)
                (userid-acceptable? userid))
-          )
-      (request-confirm-mail email userid)
-      (signup-step2 email userid))
-    (POST "/2" [email userid :as req]
-      (signup-step3 email userid))
+        (do
+          (request-confirm-mail email userid)
+          (signup-step2 email userid))
+        (do
+          ;; flash
+          (-> (response (signup-step1 email userid)))))
+      (POST "/2" [email userid :as req]
+        (signup-step3 email userid)))
     (POST "/3" [email userid :as req]
       (signup-step4 email userid))))

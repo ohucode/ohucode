@@ -4,6 +4,11 @@
             [ohucode.handler :as h]
             [ohucode.server :as s]
             [ohucode.db :as db]
+            [ohucode.handler-signup-test]
+            [ohucode.handler-test]
+            [ohucode.handler-git-test]
+            [ohucode.password-test]
+            [ohucode.db-test]
             [clojure.repl :refer :all]
             [clojure.tools.namespace.repl :refer [refresh]]
             [ragtime.jdbc :as jdbc]
@@ -19,10 +24,14 @@
 (defn rollback []
   (ragtime/rollback (config)))
 
-(defn T []
-  (run-tests 'ohucode.handler-test 'ohucode.handler-git-test
-             'ohucode.password-test 'ohucode.db-test))
+(defn T [& namespaces]
+  (apply run-tests (or namespaces
+                       ['ohucode.handler-test
+                        'ohucode.handler-git-test
+                        'ohucode.handler-signup-test
+                        'ohucode.password-test
+                        'ohucode.db-test])))
 
-(defn RT []
+(defn RT [& namespaces]
   (refresh)
   (T))

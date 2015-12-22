@@ -5,11 +5,12 @@
         [ohucode.view-signup]))
 
 (defn not-found [req]
-  (layout {:title (brand-name+ "> 찾을 수 없습니다")}
-          [:div.container
-           [:div.row
-            [:h1 "찾을 수 없습니다."]
-            [:p "요청하신 페이지를 찾을 수 없습니다."]]]))
+  {:status 404
+   :body (layout {:title (brand-name+ "> 찾을 수 없습니다")}
+                 [:div.container
+                  [:div.row
+                   [:h1 "찾을 수 없습니다."]
+                   [:p "요청하신 페이지를 찾을 수 없습니다."]]])})
 
 (defn terms-of-service [_]
   (layout {:title (brand-name+ "> 서비스 이용약관")}

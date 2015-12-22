@@ -9,12 +9,6 @@
     (let [response (app (mock/request :get "/"))]
       (is (= (:status response) 200))))
 
-  (testing "project home"
-    (let [response (app (mock/request :get "/u/p"))]
-      (is (= (:status response) 200))
-      (is (.contains (:body response) "u/p"))))
-  
   (testing "not-found route"
     (let [response (app (mock/request :get "/invalid/not/found"))]
       (is (= (:status response) 404)))))
-

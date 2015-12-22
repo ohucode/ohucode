@@ -13,10 +13,10 @@
                [:div.col-sm-12
                 [:div.page-header [:h2 "템플릿"]]
                 [:ul.list-group
-                 (for [[path text] [["/templates/signup-1" "가입1단계: 이메일 입력"]
+                 (for [[path text] [[]
                                     ["/templates/signup-2" "가입2단계"]
                                     ["/templates/signup-3" "가입3단계"]
-                                    ["/templates/signup-3" "가입4단계"]]]
+                                    ["/templates/signup-4" "가입4단계"]]]
                    [:li.list-group-item
                     [:a {:href path} text]])]]]]))
    (GET "/templates/signup-1" [] signup/signup-step1)
