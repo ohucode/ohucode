@@ -11,7 +11,7 @@
       "/11bL9NO6j7Ho7ZLw929RfZve0Y=" (pbkdf2 "other"    "0000salt" 100000 160)))
 
   (testing "digest and validate"
-    (dotimes [i 5]
+    (dotimes [i 3]
       (let [password (str "password-" (random-int))
             salt (str "salt-" (random-int))
             raw (password-digest password salt)]

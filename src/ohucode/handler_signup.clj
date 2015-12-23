@@ -21,13 +21,15 @@
     (db/insert-or-update-signup email userid passcode)))
 
 (defn userid-acceptable? [userid]
-  (and (re-matches #"^[a-z\d][a-z\d_]{3,15}$" userid)
+  (and userid
+       (re-matches #"^[a-z\d][a-z\d_]{3,15}$" userid)
        (not (contains? restricted-userids userid))
        (db/userid-acceptable? userid)))
 
 (defn email-acceptable? [email]
   ;; TODO: 이메일 포맷 검증 어찌할까?
-  (and (re-matches #".+\@.+\..+" email)
+  (and email
+       (re-matches #".+\@.+\..+" email)
        (db/email-acceptable? email)))
 
 (def signup-routes
@@ -44,9 +46,9 @@
           (request-confirm-mail email userid)
           (signup-step2 email userid))
         (do
-          ;; flash
-          (-> (response (signup-step1 email userid)))))
-      (POST "/2" [email userid :as req]
-        (signup-step3 email userid)))
+          (-> (response (signup-step1 email userid))
+              (assoc-in [:session :_flash] "test")))))
+    (POST "/2" [email userid :as req]
+      (signup-step3 email userid))
     (POST "/3" [email userid :as req]
       (signup-step4 email userid))))
