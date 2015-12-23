@@ -4,7 +4,9 @@
             [ring.mock.request :as mock]
             [ring.middleware.params :refer [wrap-params]]
             [ohucode.handler :refer [app]]
-            [ohucode.handler-signup :refer :all]))
+            [ohucode.handler-signup :refer :all]
+            [ohucode.db :as db]
+            [ohucode.db-test :as db-test]))
 
 (deftest test-signup
   (let [req (comp (wrap-params signup-routes)
@@ -20,5 +22,8 @@
                409))))
 
     (testing "step1: 확인코드 신청"
-      (let [res (req :post "/signup/2" {:userid "test"})]
-        (is (= (:status res) 200))))))
+      (let [res (req :post "/signup"
+                     {:email "test001@test.com" :userid "test001"})]
+        (is (= (:status res) 200))
+        (is (string? (db/signup-passcode "test001@test.com" "test001")))
+        ))))

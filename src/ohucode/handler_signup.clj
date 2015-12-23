@@ -15,10 +15,10 @@
     "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"})
 
 (defn request-confirm-mail [email userid]
-  (comment let [code (password/generate-passcode)]
-    (future
-      (mail/send-signup-confirm email userid passcode))
-    (db/insert-or-update-signup email userid passcode)))
+  (let [code (password/generate-passcode)]
+    (comment future
+      (mail/send-signup-confirm email userid code))
+    (db/insert-or-update-signup email userid code)))
 
 (defn userid-acceptable? [userid]
   (and userid
@@ -43,11 +43,13 @@
       (if (and (email-acceptable? email)
                (userid-acceptable? userid))
         (do
+          (println "acceptable")
           (request-confirm-mail email userid)
           (signup-step2 email userid))
         (do
-          (-> (response (signup-step1 email userid))
-              (assoc-in [:session :_flash] "test")))))
+          (println "not acceptable")
+          (-> (response (signup-step1 req))
+              (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))
     (POST "/2" [email userid :as req]
       (signup-step3 email userid))
     (POST "/3" [email userid :as req]

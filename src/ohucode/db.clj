@@ -22,14 +22,17 @@
 (defn insert-or-update-signup [email userid passcode]
   (try
     (insert signups
-            (values {:userid userid :email email :passcode passcode}))
+            (values {:userid userid :email email :code passcode}))
     (catch SQLException e
         (update signups
-                (set-fields {:passcode passcode})
+                (set-fields {:code passcode})
                 (where {:userid userid :email email})))))
 
-(defentity emails)
+(defn signup-passcode [email userid]
+  (-> (select signups (where {:email email :userid userid}))
+      first :code))
 
+(defentity emails)
 
 (defn email-acceptable? [email]
   (empty? (select emails (where {:email email}))))
