@@ -43,11 +43,9 @@
       (if (and (email-acceptable? email)
                (userid-acceptable? userid))
         (do
-          (println "acceptable")
           (request-confirm-mail email userid)
           (signup-step2 email userid))
         (do
-          (println "not acceptable")
           (-> (response (signup-step1 req))
               (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))
     (POST "/2" [email userid :as req]

@@ -20,13 +20,14 @@
 (defentity signups)
 
 (defn insert-or-update-signup [email userid passcode]
-  (try
-    (insert signups
-            (values {:userid userid :email email :code passcode}))
-    (catch SQLException e
-        (update signups
-                (set-fields {:code passcode})
-                (where {:userid userid :email email})))))
+  (let [key {:email email :userid userid}]
+    (if (empty? (select signups (where key)))
+      (insert signups
+              (values (assoc key :code passcode)))
+      (update signups
+              (set-fields {:code passcode})
+              (where key))
+      )))
 
 (defn signup-passcode [email userid]
   (-> (select signups (where {:email email :userid userid}))
