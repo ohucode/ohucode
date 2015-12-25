@@ -1,12 +1,14 @@
 (ns ohucode.db
   (:refer-clojure :exclude [update])
-  (:require [taoensso.timbre :as timbre]
+  (:require [ohucode.password :as pw]
+            [taoensso.timbre :as timbre]
             [korma.db :refer :all]
             [korma.core :refer :all])
   (:import [java.sql SQLException]))
 
 (def ^:private read-edn
   (comp eval read-string slurp))
+
 
 (defdb dev-db
   (read-edn "conf/db_dev.edn"))
@@ -25,9 +27,8 @@
       (insert signups
               (values (assoc key :code passcode)))
       (update signups
-              (set-fields {:code passcode})
-              (where key))
-      )))
+              (set-fields {:code passcode :created_at (now)})
+              (where key)))))
 
 (defn signup-passcode [email userid]
   (-> (select signups (where {:email email :userid userid}))
@@ -46,3 +47,19 @@
 
 (defn select-users []
   (select users))
+
+(def ^:private salt (partial str "ohucode/"))
+
+(defn insert-new-user [{email :email
+                        userid :userid
+                        password :password
+                        code :code
+                        username :name
+                        :as attrs}]
+  (transaction
+   (when (zero? (delete signups (where {:email email :userid userid :code code})))
+     (throw (RuntimeException. "code does not match")))
+   (insert users (values {:userid userid :primary_email email :name username
+                          :password_digest
+                          (pw/password-digest password (salt userid))}))
+   (insert emails (values {:email email :userid userid :verified_at (now)}))))

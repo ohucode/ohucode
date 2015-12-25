@@ -18,11 +18,12 @@
           cnt-signup
           (fn [] (-> (select signups (aggregate (count :*) :count))
                      first :count))]
-      (transaction {:isolation :read-committed}
+      (transaction
        (let [cnt (cnt-signup)]
          (insert-or-update-signup email userid passcode)
-         (is (= (inc cnt) (cnt-signup)))
+         (is (= (inc cnt) (cnt-signup)) "새 레코드가 추가 됐어야 해요.")
          (is (= passcode (signup-passcode email userid)))
+         ;; 같은 키의 경우 기존 레코드를 업데이트 합니다.
          (insert-or-update-signup email userid (generate-passcode))
-         (is (= (inc cnt) (cnt-signup))))
+         (is (= (inc cnt) (cnt-signup)) "이전 레코드를 업데이트해야 합니다."))
        (rollback)))))

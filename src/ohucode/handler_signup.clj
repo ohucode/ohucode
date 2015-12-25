@@ -48,7 +48,18 @@
         (do
           (-> (response (signup-step1 req))
               (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))
-    (POST "/2" [email userid :as req]
-      (signup-step3 email userid))
-    (POST "/3" [email userid :as req]
+    (POST "/2" [email userid code :as req]
+      (if (and (email-acceptable? email)
+               (userid-acceptable? userid)
+               (= code (db/signup-passcode email userid)))
+        (signup-step3 email userid code)
+        ({:status 403 :body "등록 코드 확인 실패"})))
+    (POST "/3" [email userid password code username :as req]
+      (if (and (email-acceptable? email)
+               (userid-acceptable? userid)
+               (= code (db/signup-passcode email userid)))
+        (do
+          (db/insert-new-user {:userid userid :email email
+                               :password password :code code
+                               :name username})))
       (signup-step4 email userid))))
