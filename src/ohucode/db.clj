@@ -21,14 +21,11 @@
 
 (defentity signups)
 
-(defn insert-or-update-signup [email userid passcode]
+(defn insert-or-update-signup [email userid code]
   (let [key {:email email :userid userid}]
-    (if (empty? (select signups (where key)))
-      (insert signups
-              (values (assoc key :code passcode)))
-      (update signups
-              (set-fields {:code passcode :created_at (now)})
-              (where key)))))
+    (transaction
+     (delete signups (where key))
+     (insert signups (values (assoc key :code code))))))
 
 (defn signup-passcode [email userid]
   (-> (select signups (where {:email email :userid userid}))
