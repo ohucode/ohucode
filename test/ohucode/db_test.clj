@@ -43,4 +43,5 @@
     (signup-transaction
      [email userid code]
      (insert-new-user {:code code :email email :userid userid
-                       :name "테스트유저" :password "anything"}))))
+                       :name "테스트유저" :password "anything"})
+     (is (nil? (signup-passcode email userid)) "가입 신청 정보는 삭제합니다"))))
