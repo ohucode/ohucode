@@ -1,4 +1,5 @@
 (ns ohucode.view-signup
+  (:require [taoensso.timbre :as timbre])
   (:use [hiccup.core]
         [hiccup.page]
         [ohucode.view]))
@@ -54,10 +55,10 @@
               [:div.col-sm-4 (signup-progress active-step)]]])))
 
 
-(defn signup-step1 [_]
+(defn signup-step1 [req]
   "가입 1단계: 아이디와 이메일 접수"
-  (signup-layout 1
-                 (signup-form _)))
+  (timbre/debug req)
+  (signup-layout 1 (signup-form req)))
 
 (defn signup-step2 [email userid]
   "가입 2단계: 메일 확인코드 입력"
@@ -68,23 +69,24 @@
     (signup-layout
      2
      [:form#signup-confirm-form.form-horizontal
-      {:method "POST" :action "/signup/verify_code"}
+      {:method "POST" :action "/signup/2"}
       (fg "이메일" [:div.form-control-static email])
       (fg "아이디" [:div.form-control-static userid])
       (fg "확인코드" [:input#confirm-code.form-control
-                      {:v-model "code" :type "text" :placeholder "######" :autofocus true }])
+                      {:v-model "code" :name "code" :type "text"
+                       :placeholder "######" :autofocus true}])
       (fg "" (next-btn {:disabled "{{!valid_form}}"})
           " "
           [:button.btn.btn-info {:v-on:click "resend" :title "확인 메일 재발송 요청하기"
                                  :data-toggle "tooltip" :data-placement "top"}
            "재발송 " [:i.fa.fa-send]])
-      [:input {:type "hidden" :v-model "email" :value email}]
-      [:input {:type "hidden" :v-model "userid" :value userid}]
+      [:input {:type "hidden" :v-model "email" :name "email" :value email}]
+      [:input {:type "hidden" :v-model "userid" :name "userid" :value userid}]
       (anti-forgery-field)]
      [:div.alert.alert-info.text-center
       "보내드린 메일에 있는 " [:strong "확인코드 "] "6자리 숫자를 입력해주세요. "])))
 
-(defn signup-step3 [email userid]
+(defn signup-step3 [email userid code]
   "기본 프로필 입력"
   (letfn [(fg [label-text & input-section]
             [:div.form-group
@@ -95,14 +97,19 @@
      [:form#signup-profile-form.form-horizontal {:method "POST" :action "/signup/3"}
       (fg "이메일" [:div.form-control-static email])
       (fg "아이디" [:div.form-control-static userid])
-      (fg "이름" [:input.form-control {:type "text" :placeholder "홍길동" :autofocus true}])
+      (fg "이름" [:input.form-control
+                  {:type "text" :name "username" :placeholder "홍길동" :autofocus true}])
       (fg "비밀번호"
           [:input.form-control
-           {:type "password" :v-model "password" :placeholder "********"}])
+           {:type "password" :v-model "password" :name "password" :placeholder "********"}])
       (fg "비번확인"
           [:input.form-control
            {:type "password" :v-model "password2" :placeholder "********"}])
-      (fg "" (next-btn {}))])))
+      (fg "" (next-btn {}))
+      [:input {:type "hidden" :name "code" :value code}]
+      [:input {:type "hidden" :name "email" :value email}]
+      [:input {:type "hidden" :name "userid" :value userid}]
+      (anti-forgery-field)])))
 
 (defn signup-step4 [email userid]
   "이용약관 동의"
@@ -112,11 +119,12 @@
              input-section])]
     (signup-layout
      4
-     [:form#signup-profile-form.form {:method "POST" :action "/signup/4"}
+     [:form#signup-profile-orm.form {:method "POST" :action "/signup/4"}
       (fg "이용약관" [:textarea.form-control {:rows 10 :cols 80} "사이트 이용약관 \n블라블라"])
       [:div.checkbox [:label
                       [:input {:type "checkbox" :name "agree" :value "true"}]
                       "이용약관에 동의합니다"]]
       (fg ""
           [:button.btn.btn-warning.pull-right "가입취소"]
-          (next-btn {:disabled ""}))])))
+          (next-btn {:disabled ""}))
+      (anti-forgery-field)])))

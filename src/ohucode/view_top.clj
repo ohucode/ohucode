@@ -6,11 +6,21 @@
 
 (defn not-found [req]
   {:status 404
+   :headers {"Content-Type" "text/html; charset=utf-8"}
    :body (layout {:title (brand-name+ "> 찾을 수 없습니다")}
                  [:div.container
                   [:div.row
                    [:h1 "찾을 수 없습니다."]
                    [:p "요청하신 페이지를 찾을 수 없습니다."]]])})
+
+(defn request-error [message]
+  {:status 403
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body (layout {:title (brand-name+ "> 입력 값 오류")}
+                 [:div.container
+                  [:div.row
+                   [:h1 "입력 값 오류"]
+                   [:p message]]])})
 
 (defn terms-of-service [_]
   (layout {:title (brand-name+ "> 서비스 이용약관")}

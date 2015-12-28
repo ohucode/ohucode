@@ -69,7 +69,6 @@
         methods: {
             submit: function(event) {
                 console.log("submit called");
-                event
                 return false;
             }
         }

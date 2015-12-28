@@ -5,7 +5,8 @@
             [ohucode.auth :as a]
             [ohucode.mail :as mail]
             [ohucode.db :as db]
-            [ohucode.password :as password])
+            [ohucode.password :as password]
+            [ohucode.view-top :as v-top])
   (:use [ohucode.view-signup]))
 
 (def restricted-userids
@@ -46,14 +47,14 @@
           (request-confirm-mail email userid)
           (signup-step2 email userid))
         (do
-          (-> (response (signup-step1 req))
+          (-> (redirect "/signup")
               (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))
     (POST "/2" [email userid code :as req]
       (if (and (email-acceptable? email)
                (userid-acceptable? userid)
                (= code (db/signup-passcode email userid)))
         (signup-step3 email userid code)
-        ({:status 403 :body "등록 코드 확인 실패"})))
+        (v-top/request-error "등록 코드 확인 실패")))
     (POST "/3" [email userid password code username :as req]
       (if (and (email-acceptable? email)
                (userid-acceptable? userid)
@@ -61,5 +62,6 @@
         (do
           (db/insert-new-user {:userid userid :email email
                                :password password :code code
-                               :name username})))
-      (signup-step4 email userid))))
+                               :name username})
+          (signup-step4 email userid))
+        (v-top/request-error "파라미터 오류")))))
