@@ -6,26 +6,41 @@
         [korma.db]
         [korma.core]))
 
+(defmacro signup-transaction [bindings & body]
+  `(let [code# (ohucode.password/generate-passcode)
+         userid# (str "test_" code#)
+         email# (str userid# "@test.com")]
+     (korma.db/transaction
+      (try
+        (ohucode.db/clean-insert-signup email# userid# code#)
+        (let [[~@bindings] [email# userid# code#]]
+          ~@body)
+        (finally (korma.db/rollback))))))
+
 (deftest db-test
   (testing "now 함수 확인"
     (is (instance? java.sql.Timestamp (now))))
   (testing "signups 테이블 확인"
     (is (seq? (select signups))))
-  (testing "signups 레코드 추가, 사용자 가입까지 확인"
-    (let [passcode (generate-passcode)
-          userid (str "test_" passcode)
-          email (str userid "@test.com")
-          cnt-signup
+  (testing "signups 레코드 추가"
+    (let [count-signup
           (fn [] (-> (select signups (aggregate (count :*) :count))
-                     first :count))]
-      (transaction
-       (let [cnt (cnt-signup)]
-         (clean-insert-signup email userid passcode)
-         (is (= (inc cnt) (cnt-signup)) "새 레코드가 추가 됐어야 해요.")
-         (is (= passcode (signup-passcode email userid)))
-         ;; 같은 키의 경우 기존 레코드를 업데이트 합니다.
-         (clean-insert-signup email userid (generate-passcode))
-         (is (= (inc cnt) (cnt-signup)) "이전 레코드 삭제하고 추가 됐어야 합니다.")
-
-         )
-       (rollback)))))
+                     first :count))
+          cnt (count-signup)]
+      (signup-transaction [email userid code]
+                          (is (= (inc cnt) (count-signup)) "새 레코드가 추가 됐어야 해요.")
+                          (is (= code) (signup-passcode email userid))
+                          (clean-insert-signup email userid (generate-passcode))
+                          (is (= (inc cnt) (count-signup)) "이전 레코드 삭제하고 추가 됐어야 합니다.")
+                          (is (not= code (signup-passcode email userid))))))
+  (testing "code 틀린 사용자 신규 가입"
+    (is (thrown? Exception
+                 (signup-transaction
+                  [email userid code]
+                  (insert-new-user {:code "not-a-valid-code" :email email :userid userid
+                                    :name "코드틀린유저" :password "anything"})))))
+  (testing "사용자 신규 가입"
+    (signup-transaction
+     [email userid code]
+     (insert-new-user {:code code :email email :userid userid
+                       :name "테스트유저" :password "anything"}))))

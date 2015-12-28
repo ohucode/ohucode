@@ -53,6 +53,8 @@
                         code :code
                         username :name
                         :as attrs}]
+  {:pre [(not-any? nil? [email userid code username password])]}
+
   (transaction
    (when (zero? (delete signups (where {:email email :userid userid :code code})))
      (throw (RuntimeException. "code does not match")))
