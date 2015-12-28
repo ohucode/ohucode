@@ -21,7 +21,7 @@
 
 (defentity signups)
 
-(defn insert-or-update-signup [email userid code]
+(defn clean-insert-signup [email userid code]
   (let [key {:email email :userid userid}]
     (transaction
      (delete signups (where key))

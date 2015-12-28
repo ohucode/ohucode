@@ -18,7 +18,7 @@
   (let [code (password/generate-passcode)]
     (comment future
       (mail/send-signup-confirm email userid code))
-    (db/insert-or-update-signup email userid code)))
+    (db/clean-insert-signup email userid code)))
 
 (defn userid-acceptable? [userid]
   (and userid
