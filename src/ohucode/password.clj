@@ -48,5 +48,12 @@
 (defn password-digest [password salt]
   (pbkdf2 password salt 100000 160))
 
-(defn valid-password-digest? [raw password salt]
+(defn valid-password-digest? [password salt raw]
   (= raw (password-digest password salt)))
+
+(let [saltfn (partial str "ohucode/")]
+  (defn ohucode-password-digest [userid password]
+    (password-digest password (saltfn userid)))
+
+  (defn ohucode-valid-password? [userid password raw]
+    (valid-password-digest? password (saltfn userid) raw)))

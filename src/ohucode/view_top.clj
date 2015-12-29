@@ -4,41 +4,30 @@
         [ohucode.view]
         [ohucode.view-signup]))
 
+(defn basic-content [req title & body]
+  (layout req {:title (brand-name+ "> " title)}
+          [:div.container [:div.row [:h1 title] body]]))
+
 (defn not-found [req]
   {:status 404
-   :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body (layout {:title (brand-name+ "> 찾을 수 없습니다")}
-                 [:div.container
-                  [:div.row
-                   [:h1 "찾을 수 없습니다."]
-                   [:p "요청하신 페이지를 찾을 수 없습니다."]]])})
+   :body (basic-content req "찾을 수 없습니다"
+                        [:p "요청하신 페이지를 찾을 수 없습니다."])})
 
-(defn request-error [message]
+(defn request-error [req message]
   {:status 403
-   :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body (layout {:title (brand-name+ "> 입력 값 오류")}
-                 [:div.container
-                  [:div.row
-                   [:h1 "입력 값 오류"]
-                   [:p message]]])})
+   :body (basic-content req "입력 값 오류"
+                        [:p message])})
 
-(defn terms-of-service [_]
-  (layout {:title (brand-name+ "> 서비스 이용약관")}
-          [:div.container
-           [:div.row
-            [:h1 "서비스 이용약관"]
-            [:p "오후코드 서비스를 이용하면..."]]]))
+(defn terms-of-service [req]
+  (basic-content req "서비스 이용약관"
+                 [:p "오후코드 서비스를 이용하면..."]))
 
-(defn privacy-policy [_]
-  (layout {:title (brand-name+ "> 개인정보 보호정책")}
-          [:div.container
-           [:div.row
-            [:h1 "개인정보 보호정책"]
-            [:p "오후코드 서비스를 이용하면..."]]]))
+(defn privacy-policy [req]
+  (basic-content req "개인정보 보호정책"
+                 [:p "오후코드 서비스를 이용하면..."]))
 
-(defn intro-guest [_]
-  (layout
-   {:title (brand-name+ "첫화면")}
+(defn intro-guest [req]
+  (layout req {:title (brand-name+ "첫화면")}
    [:div.jumbotron
     [:div.row
      [:div.col-xs-6.col-md-8
@@ -49,10 +38,9 @@
       [:div.panel.panel-signup
        [:div.panel-body
         [:div.page-header [:h4 [:i.fa.fa-user-plus] " 가입 신청"]]
-        (signup-form _)]]]]]
+        (signup-form req)]]]]]
    [:div.container
     [:div.row
      [:div.page-header [:h1 "Git 저장소 서비스"]]
      [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
-     [:div.page-header [:h1 "위키 페이지 작성"]]]]
-))
+     [:div.page-header [:h1 "위키 페이지 작성"]]]]))

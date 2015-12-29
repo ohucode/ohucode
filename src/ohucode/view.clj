@@ -8,7 +8,7 @@
 (defn brand-name+ [& strs]
   (apply str (concat brand-name " " strs)))
 
-(defn navigation []
+(defn navigation [req]
   [:nav.navbar.navbar-inverse.navbar-static-top
    [:div.container-fluid
     [:div.navbar-header
@@ -26,17 +26,20 @@
        "<a v-link=\"{ path: '/about' }\">소개</a>"]
       [:li
        "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
-     [:ul.nav.navbar-nav.navbar-right
-      [:li [:a {:href "/"} [:i.fa.fa-sign-in] " 로그인"]]]]]])
+     (if-let [user (get-in req [:session :user])]
+       [:ul.nav.navbar-nav.navbar-right
+        [:li [:a {:href "/logout"} (:userid user)]]]
+       [:ul.nav.navbar-nav.navbar-right
+        [:li [:a {:href "/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
 
-(defn footer []
+(defn footer [req]
   [:footer
    [:div.container [:div.row [:ul.list-inline
                               [:li "Copyright " [:i.fa.fa-copyright] " 2015 " brand-name]
                               [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
                               [:li [:a {:href "/terms-of-service"} "이용약관"]]]]]])
 
-(defn layout [opts & body]
+(defn layout [req opts & body]
   "opts {:title "" :css [] :js []}"
   {:pre (seq? (:js opts))}
   (html5 {:lang "ko"}
@@ -51,10 +54,10 @@
                       "/css/ohucode.css"
                       (:css opts)))]
          [:body#app
-          (navigation)
+          (navigation req)
           [:div.container-fluid.main-wrap
            [:main body]]
-          (footer)
+          (footer req)
           (map include-js
                (list* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
                       "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"

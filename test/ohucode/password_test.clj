@@ -15,7 +15,7 @@
       (let [password (str "password-" (random-int))
             salt (str "salt-" (random-int))
             raw (password-digest password salt)]
-        (is (valid-password-digest? raw password salt)))))
+        (is (valid-password-digest? password salt raw)))))
 
   (testing "random-6-digits should have no duplicates in a limited condition"
     (let [xs (repeatedly 100 generate-passcode)]
@@ -23,4 +23,13 @@
 
   (testing "random-digest should have no duplicates in a limited condition"
     (let [xs (repeatedly 10000 random-digest)]
-      (is (= (count xs) (count (set xs)))))))
+      (is (= (count xs) (count (set xs))))))
+
+  (testing "사이트 특정 salt 테스트"
+    (dotimes [i 5]
+      (let [r (random-int)
+            userid (str "test" r)
+            password (str "pass" r)]
+        (is (ohucode-valid-password?
+             userid password
+             (ohucode-password-digest userid password)))))))

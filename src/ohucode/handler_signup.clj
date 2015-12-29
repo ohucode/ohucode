@@ -45,7 +45,7 @@
                (userid-acceptable? userid))
         (do
           (request-confirm-mail email userid)
-          (signup-step2 email userid))
+          (signup-step2 req email userid))
         (do
           (-> (redirect "/signup")
               (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))
@@ -53,8 +53,8 @@
       (if (and (email-acceptable? email)
                (userid-acceptable? userid)
                (= code (db/signup-passcode email userid)))
-        (signup-step3 email userid code)
-        (v-top/request-error "등록 코드 확인 실패")))
+        (signup-step3 req email userid code)
+        (v-top/request-error req "등록 코드 확인 실패")))
     (POST "/3" [email userid password code username :as req]
       (if (and (email-acceptable? email)
                (userid-acceptable? userid)
@@ -63,5 +63,5 @@
           (db/insert-new-user {:userid userid :email email
                                :password password :code code
                                :name username})
-          (signup-step4 email userid))
+          (signup-step4 req email userid))
         (v-top/request-error "파라미터 오류")))))

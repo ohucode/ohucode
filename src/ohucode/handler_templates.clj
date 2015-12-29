@@ -19,7 +19,7 @@
                                     ["/templates/signup-4" "가입4단계"]]]
                    [:li.list-group-item
                     [:a {:href path} text]])]]]]))
-   (GET "/templates/signup-1" [] signup/signup-step1)
-   (GET "/templates/signup-2" [] (signup/signup-step2 "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/signup-3" [] (signup/signup-step3 "hatemogi@gmail.com" "hatemogi" "123456"))
-   (GET "/templates/signup-4" [] (signup/signup-step4 "hatemogi@gmail.com" "hatemogi"))))
+   (GET "/templates/signup-1" req signup/signup-step1)
+   (GET "/templates/signup-2" req (signup/signup-step2 req "hatemogi@gmail.com" "hatemogi"))
+   (GET "/templates/signup-3" req (signup/signup-step3 req "hatemogi@gmail.com" "hatemogi" "123456"))
+   (GET "/templates/signup-4" req (signup/signup-step4 req "hatemogi@gmail.com" "hatemogi"))))

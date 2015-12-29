@@ -42,6 +42,10 @@
 (defn userid-acceptable? [userid]
   (empty? (select users (where {:userid userid}))))
 
+(defn select-user [userid]
+  (-> (select users (where {:userid userid}))
+      first))
+
 (defn select-users []
   (select users))
 

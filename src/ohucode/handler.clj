@@ -5,10 +5,11 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.lint :refer [wrap-lint]]
+            [ring.middleware.session.memory :refer [memory-store]]
             [ring.logger.timbre :refer [wrap-with-logger]]
             [prone.middleware :refer [wrap-exceptions]]
             [taoensso.timbre :as timbre]
-            [ohucode.auth :as a]
+            [ohucode.db :as db]
             [ohucode.view-top :as v-top]
             [ohucode.handler-git :refer [smart-http-routes]]
             [ohucode.handler-admin :refer [admin-routes]]
@@ -17,6 +18,26 @@
 
 (defn- not-implemented [req]
   (throw (UnsupportedOperationException.)))
+
+(defn user-info [req]
+  (get-in req [:session :user]))
+
+(def signed-in? (comp not nil? user-info))
+
+(def ^:dynamic
+  ^{:doc "로그인한 사용자 정보"}
+  *signed-user*)
+
+(defn wrap-user-info [handler]
+  (fn [req]
+    (binding [*signed-user* (get-in req [:session :user])]
+      (handler req))))
+
+(defn wrap-signed-user-only [handler]
+  (fn [req]
+    (if-let [signed-user (get-in req [:session :user])]
+      (handler req)
+      (v-top/request-error "로그인이 필요합니다."))))
 
 (def user-routes
   (context "/:user" [user]
@@ -40,9 +61,19 @@
 (def web-routes
   (routes
    (GET "/" req
-     (if (a/auth? req)
-       (v-top/intro-guest req) (v-top/intro-guest req)))
-   (GET "/logout" [] "로그아웃처리")
+     (if (signed-in? req)
+       v-top/intro-guest
+       v-top/intro-guest))
+   (GET "/login" req
+     (-> (v-top/basic-content req "로그인" "로그인 테스트")
+         response
+         (assoc-in [:session :user]
+                   (-> (db/select-user "hatemogi")
+                       (dissoc :password_digest :created_at :updated_at)))))
+   (GET "/logout" req
+     (-> (v-top/basic-content req "로그아웃" "로그아웃처리")
+         response
+         (update :session dissoc :user)))
    (GET "/throw" [] (throw (RuntimeException. "스택트레이스 실험")))
    (GET "/terms-of-service" [] v-top/terms-of-service)
    (GET "/privacy-policy" [] v-top/privacy-policy)
@@ -51,19 +82,33 @@
    user-routes
    project-routes))
 
+(defn- wrap-html-content-type [handler]
+  (fn [req]
+    (if-let [res (handler req)]
+      (if (find-header res "Content-Type")
+        res
+        (content-type res "text/html; charset=utf-8")))))
+
+(defonce ^:private
+  ^{:doc "리로드 해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
+  session-store (memory-store))
+
 (def app
   (routes
    (route/resources "/js" {:root "public/js"})
    (route/resources "/css" {:root "public/css"})
 
-   ;; compojure.core/wrap-routes는 라우트 매칭시에만 미들웨어를 입힌다.
-   ;; -> wrap-params 미들웨어가 핸들러 매치 여부와 무관하게,
-   ;;    form-encoded 본문을 먼저 읽는 문제를 해결.
    (wrap-routes smart-http-routes
                 wrap-defaults api-defaults)
 
-   (wrap-defaults web-routes
-                  (dissoc site-defaults :static))
+   (-> web-routes
+       wrap-user-info
+       wrap-html-content-type
+       (wrap-defaults (-> site-defaults
+                          ;; static 자원은 앞에서 미리 처리합니다
+                          (dissoc :static)
+                          (assoc-in [:session :store] session-store))))
+
    (ANY "*" [] v-top/not-found)))
 
 (def app-dev
