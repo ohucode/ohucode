@@ -5,6 +5,7 @@ CREATE TABLE users (
   name VARCHAR(64),
   password_digest VARCHAR(32),
   agreement_id INT REFERENCES agreements(id) ON DELETE RESTRICT,
+  cohort INT DEFAULT 0,
   company VARCHAR(64),
   title VARCHAR(64),
   url VARCHAR(256),
