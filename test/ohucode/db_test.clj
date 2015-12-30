@@ -19,9 +19,16 @@
 
 (deftest db-test
   (testing "now 함수 확인"
-    (is (instance? java.sql.Timestamp (now))))
+    (is (instance? java.sql.Timestamp (now)))
+    (is (instance? java.sql.Timestamp (now -60))))
+
   (testing "signups 테이블 확인"
     (is (seq? (select signups))))
+
+  (testing "가입 이메일 인증코드 유효시간 처리"
+    (binding [*passcode-expire-sec* -10]
+      (signup-transaction [email userid code]
+                          (is (nil? (signup-passcode email userid))))))
   (testing "signups 레코드 추가"
     (let [count-signup
           (fn [] (-> (select signups (aggregate (count :*) :count))
@@ -33,12 +40,14 @@
                           (clean-insert-signup email userid (generate-passcode))
                           (is (= (inc cnt) (count-signup)) "이전 레코드 삭제하고 추가 됐어야 합니다.")
                           (is (not= code (signup-passcode email userid))))))
+
   (testing "code 틀린 사용자 신규 가입"
     (is (thrown? Exception
                  (signup-transaction
                   [email userid code]
                   (insert-new-user {:code "not-a-valid-code" :email email :userid userid
                                     :name "코드틀린유저" :password "anything"})))))
+
   (testing "사용자 신규 가입"
     (signup-transaction
      [email userid code]

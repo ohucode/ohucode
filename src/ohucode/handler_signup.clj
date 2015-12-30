@@ -15,7 +15,8 @@
     "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"})
 
 (defn request-confirm-mail [email userid]
-  (let [code (password/generate-passcode)]
+  (let [code (or (db/signup-passcode email userid)
+                 (password/generate-passcode))]
     (comment future
       (mail/send-signup-confirm email userid code))
     (db/clean-insert-signup email userid code)))

@@ -16,8 +16,12 @@
 (comment defdb test-db
   (read-edn "conf/db_test.edn"))
 
-(defn now []
-  (java.sql.Timestamp. (.getTime (java.util.Date.))))
+(defn now
+  "현재 시각 in java.sql.Timestamp.
+  현재 시각에서 [dsec]초 이후 시간."
+  ([] (now 0))
+  ([dsec] (java.sql.Timestamp. (+ (.getTime (java.util.Date.))
+                                  (* 1000 dsec)))))
 
 (defentity signups)
 
@@ -27,8 +31,12 @@
      (delete signups (where key))
      (insert signups (values (assoc key :code code))))))
 
+(def ^:dynamic *passcode-expire-sec* (* 30 60))
+
 (defn signup-passcode [email userid]
-  (-> (select signups (where {:email email :userid userid}))
+  (-> (select signups (where
+                       {:email email :userid userid
+                        :created_at [> (now (- *passcode-expire-sec*))]}))
       first :code))
 
 (defentity emails)
