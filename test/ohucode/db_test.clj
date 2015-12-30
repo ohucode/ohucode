@@ -19,8 +19,10 @@
 
 (deftest db-test
   (testing "now 함수 확인"
-    (is (instance? java.sql.Timestamp (now)))
-    (is (instance? java.sql.Timestamp (now -60))))
+    (let [n (now) n-1m (now -60)]
+      (are [t] (instance? java.sql.Timestamp t) n n-1m)
+      (is (= (* 60 1000)
+             (- (.getTime n) (.getTime n-1m))))))
 
   (testing "signups 테이블 확인"
     (is (seq? (select signups))))
