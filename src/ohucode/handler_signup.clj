@@ -2,7 +2,6 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.util.response :refer :all]
-            [ohucode.auth :as a]
             [ohucode.mail :as mail]
             [ohucode.db :as db]
             [ohucode.password :as password]

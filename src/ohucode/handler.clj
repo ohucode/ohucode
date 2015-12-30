@@ -19,10 +19,10 @@
 (defn- not-implemented [req]
   (throw (UnsupportedOperationException.)))
 
-(defn user-info [req]
+(defn session-user [req]
   (get-in req [:session :user]))
 
-(def signed-in? (comp not nil? user-info))
+(def signed-in? (comp not nil? session-user))
 
 (def ^:dynamic
   ^{:doc "로그인한 사용자 정보"}
@@ -30,20 +30,32 @@
 
 (defn wrap-user-info [handler]
   (fn [req]
-    (binding [*signed-user* (get-in req [:session :user])]
+    (binding [*signed-user* (session-user req)]
       (handler req))))
 
 (defn wrap-signed-user-only [handler]
   (fn [req]
-    (if-let [signed-user (get-in req [:session :user])]
+    (if-let [signed-in? req]
       (handler req)
       (v-top/request-error "로그인이 필요합니다."))))
 
 (def user-routes
-  (context "/:user" [user]
-    (GET "/" [] v-top/not-found)
-    (GET "/settings" [] not-implemented)
-    (GET "/profile" [] not-implemented)))
+  (routes
+   (context "/user" []
+     (GET "/login" req
+       (-> (redirect "/")
+           (assoc :flash "플래시 메시지 간단히")
+           (assoc-in [:session :user]
+                     (-> (db/select-user "hatemogi")
+                         (dissoc :password_digest :created_at :updated_at)))))
+     (GET "/logout" req
+       (-> (v-top/basic-content req "로그아웃" "로그아웃처리")
+           response
+           (update :session dissoc :user))))
+   (context "/:user" [user]
+     (GET "/" [] v-top/not-found)
+     (GET "/settings" [] not-implemented)
+     (GET "/profile" [] not-implemented))))
 
 (def project-routes
   (context "/:user/:project" [user project]
@@ -62,18 +74,8 @@
   (routes
    (GET "/" req
      (if (signed-in? req)
-       v-top/intro-guest
+       v-top/dashboard
        v-top/intro-guest))
-   (GET "/login" req
-     (-> (v-top/basic-content req "로그인" "로그인 테스트")
-         response
-         (assoc-in [:session :user]
-                   (-> (db/select-user "hatemogi")
-                       (dissoc :password_digest :created_at :updated_at)))))
-   (GET "/logout" req
-     (-> (v-top/basic-content req "로그아웃" "로그아웃처리")
-         response
-         (update :session dissoc :user)))
    (GET "/throw" [] (throw (RuntimeException. "스택트레이스 실험")))
    (GET "/terms-of-service" [] v-top/terms-of-service)
    (GET "/privacy-policy" [] v-top/privacy-policy)

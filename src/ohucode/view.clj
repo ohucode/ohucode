@@ -28,9 +28,9 @@
        "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
      (if-let [user (get-in req [:session :user])]
        [:ul.nav.navbar-nav.navbar-right
-        [:li [:a {:href "/logout"} (:userid user)]]]
+        [:li [:a {:href "/user/logout"} (:userid user)]]]
        [:ul.nav.navbar-nav.navbar-right
-        [:li [:a {:href "/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
+        [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
 
 (defn footer [req]
   [:footer
@@ -55,6 +55,8 @@
                       (:css opts)))]
          [:body#app
           (navigation req)
+          (if-let [flash (:flash req)]
+            flash)
           [:div.container-fluid.main-wrap
            [:main body]]
           (footer req)
