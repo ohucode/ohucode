@@ -56,6 +56,9 @@
   (testing "사용자 신규 가입"
     (signup-transaction
      [email userid code]
-     (insert-new-user {:code code :email email :userid userid
-                       :name "테스트유저" :password "anything"})
-     (is (nil? (signup-passcode email userid)) "가입 신청 정보는 삭제합니다"))))
+     (let [password (str "pass" code)]
+       (insert-new-user {:code code :email email :userid userid
+                         :name "테스트유저" :password password})
+       (is (nil? (signup-passcode email userid)) "가입 신청 정보는 삭제합니다")
+       (is (not= password (:password_digest (select-user userid))) "패스워드 해시 보관")
+       (is (valid-user-password? userid password)) "패스워드 확인"))))

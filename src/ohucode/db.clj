@@ -80,3 +80,8 @@
                           (pw/ohucode-password-digest userid password)}))
    (insert emails (values {:email email :userid userid :verified_at (now)}))
    (insert-audit userid "signup" {:email email})))
+
+(defn valid-user-password? [userid password]
+  (pw/ohucode-valid-password? userid password
+                              (-> (select-user userid)
+                                  :password_digest)))

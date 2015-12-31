@@ -36,15 +36,22 @@
       (handler req)
       (v-top/request-error "로그인이 필요합니다."))))
 
+(defn- login [res userid]
+  (assoc-in res [:session :user]
+            (-> (db/select-user userid)
+                (dissoc :password_digest :created_at :updated_at))))
+
 (def user-routes
   (routes
    (context "/user" []
      (GET "/login" req
        (-> (redirect "/")
            (assoc :flash "플래시 메시지 간단히")
-           (assoc-in [:session :user]
-                     (-> (db/select-user "hatemogi")
-                         (dissoc :password_digest :created_at :updated_at)))))
+           (login "hatemogi")))
+     (POST "/login" [userid password]
+       (if (db/valid-user-password? userid password)
+         "OK"
+         "INVALID"))
      (GET "/logout" req
        (-> (v-top/basic-content req "로그아웃" "로그아웃처리")
            response
