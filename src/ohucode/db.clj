@@ -82,6 +82,10 @@
    (insert-audit userid "signup" {:email email})))
 
 (defn valid-user-password? [userid password]
-  (pw/ohucode-valid-password? userid password
-                              (-> (select-user userid)
-                                  :password_digest)))
+  (if-let [raw (-> (select-user userid)
+                   :password_digest)]
+    (let [valid? (pw/ohucode-valid-password? userid password raw)]
+      (insert-audit userid "login" {:success valid?})
+      valid?)
+    (do (insert-audit "guest" "login" {:success false :userid userid})
+        false)))

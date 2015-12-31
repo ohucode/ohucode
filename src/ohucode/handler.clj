@@ -53,6 +53,9 @@
          (-> (redirect "/user/login")
              (assoc :flash "인증 실패"))))
      (GET "/logout" req
+       (db/insert-audit (or (:userid (session-user req))
+                            "guest")
+                        "logout" {})
        (-> (v-top/basic-content req "로그아웃" "로그아웃처리")
            response
            (update :session dissoc :user))))
