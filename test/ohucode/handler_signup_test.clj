@@ -3,6 +3,7 @@
             [clojure.java.io :as io]
             [ring.mock.request :as mock]
             [ring.middleware.params :refer [wrap-params]]
+            [korma.db :refer [transaction rollback]]
             [ohucode.handler :refer [app]]
             [ohucode.handler-signup :refer :all]
             [ohucode.db :as db]
@@ -22,8 +23,9 @@
                409))))
 
     (testing "step1: 확인코드 신청"
-      (let [res (req :post "/signup"
-                     {:email "test001@test.com" :userid "test001"})]
-        (is (= (:status res) 200))
-        (is (string? (db/signup-passcode "test001@test.com" "test001")))
-        ))))
+      (transaction
+       (let [res (req :post "/signup"
+                      {:email "test001@test.com" :userid "test001"})]
+         (is (= (:status res) 200))
+         (is (string? (db/signup-passcode "test001@test.com" "test001"))))
+       (rollback)))))
