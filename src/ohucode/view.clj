@@ -1,12 +1,8 @@
 (ns ohucode.view
   (:require [ring.middleware.anti-forgery :refer [*anti-forgery-token*]])
-  (:use [hiccup.core]
+  (:use [ohucode.core]
+        [hiccup.core]
         [hiccup.page]))
-
-(def brand-name "오후코드")
-
-(defn brand-name+ [& strs]
-  (apply str (concat brand-name " " strs)))
 
 (defn navigation [req]
   [:nav.navbar.navbar-inverse.navbar-static-top

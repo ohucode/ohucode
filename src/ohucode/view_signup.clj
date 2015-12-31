@@ -2,6 +2,7 @@
   (:require [taoensso.timbre :as timbre])
   (:use [hiccup.core]
         [hiccup.page]
+        [ohucode.core]
         [ohucode.view]))
 
 (defn- next-btn [attrs]

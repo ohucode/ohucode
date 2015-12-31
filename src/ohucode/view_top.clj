@@ -1,6 +1,7 @@
 (ns ohucode.view-top
   (:use [hiccup.core]
         [hiccup.page]
+        [ohucode.core]
         [ohucode.view]
         [ohucode.view-signup]))
 

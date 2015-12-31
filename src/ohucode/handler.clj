@@ -9,6 +9,7 @@
             [ring.logger.timbre :refer [wrap-with-logger]]
             [prone.middleware :refer [wrap-exceptions]]
             [taoensso.timbre :as timbre]
+            [ohucode.core :refer :all]
             [ohucode.db :as db]
             [ohucode.view-top :as v-top]
             [ohucode.handler-git :refer [smart-http-routes]]
@@ -23,10 +24,6 @@
   (get-in req [:session :user]))
 
 (def signed-in? (comp not nil? session-user))
-
-(def ^:dynamic
-  ^{:doc "로그인한 사용자 정보"}
-  *signed-user*)
 
 (defn wrap-user-info [handler]
   (fn [req]
@@ -91,6 +88,11 @@
         res
         (content-type res "text/html; charset=utf-8")))))
 
+(defn wrap-bind-client-ip [handler]
+  (fn [req]
+    (binding [*client-ip* (:remote-addr req)]
+      (handler req))))
+
 (defonce ^:private
   ^{:doc "리로드 해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
   session-store (memory-store))
@@ -105,6 +107,7 @@
 
    (-> web-routes
        wrap-user-info
+       wrap-bind-client-ip
        wrap-html-content-type
        (wrap-defaults (-> site-defaults
                           ;; static 자원은 앞에서 미리 처리합니다

@@ -1,14 +1,15 @@
 (ns ohucode.db
   (:refer-clojure :exclude [update])
-  (:require [ohucode.password :as pw]
+  (:require [ohucode.core :refer :all]
+            [ohucode.password :as pw]
             [taoensso.timbre :as timbre]
             [korma.db :refer :all]
-            [korma.core :refer :all])
+            [korma.core :refer :all]
+            [clojure.data.json :as json])
   (:import [java.sql SQLException]))
 
 (def ^:private read-edn
   (comp eval read-string slurp))
-
 
 (defdb dev-db
   (read-edn "conf/db_dev.edn"))
@@ -25,15 +26,19 @@
 
 (defentity audits)
 
+(defn insert-audit [userid action data]
+  (insert audits (values {:userid userid :action action
+                          :ip (sqlfn "inet" *client-ip*)
+                          :data (sqlfn "to_json" (json/write-str data))})))
+
 (defentity signups)
 
 (defn clean-insert-signup [email userid code]
-  (let [key {:email email :userid userid}]
+  (let [attrs {:email email :userid userid :code code}]
     (transaction
-     (delete signups (where key))
-     (insert signups (values (assoc key :code code))))))
-
-(def ^:dynamic *passcode-expire-sec* (* 30 60))
+     (delete signups (where (dissoc attrs :code)))
+     (insert signups (values attrs))
+     (insert-audit "guest" "reqcode" attrs))))
 
 (defn signup-passcode [email userid]
   (-> (select signups (where
@@ -73,4 +78,5 @@
    (insert users (values {:userid userid :email email :name username
                           :password_digest
                           (pw/ohucode-password-digest userid password)}))
-   (insert emails (values {:email email :userid userid :verified_at (now)}))))
+   (insert emails (values {:email email :userid userid :verified_at (now)}))
+   (insert-audit userid "signup" {:email email})))
