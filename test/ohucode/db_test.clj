@@ -1,6 +1,7 @@
 (ns ohucode.db-test
   (:refer-clojure :exclude [update])
   (:use [clojure.test]
+        [ohucode.core]
         [ohucode.db]
         [ohucode.password]
         [korma.db]
@@ -21,8 +22,10 @@
   (testing "now 함수 확인"
     (let [n (now) n-1m (now -60)]
       (are [t] (instance? java.sql.Timestamp t) n n-1m)
-      (is (= (* 60 1000)
-             (- (.getTime n) (.getTime n-1m))))))
+      (is (> 5
+             (Math/abs (- (.getTime n)
+                          (.getTime n-1m)
+                          60000))))))
 
   (testing "signups 테이블 확인"
     (is (seq? (select signups))))
