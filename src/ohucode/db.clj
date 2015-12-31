@@ -23,6 +23,8 @@
   ([dsec] (java.sql.Timestamp. (+ (.getTime (java.util.Date.))
                                   (* 1000 dsec)))))
 
+(defentity audits)
+
 (defentity signups)
 
 (defn clean-insert-signup [email userid code]
