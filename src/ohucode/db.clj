@@ -57,8 +57,6 @@
 (defn select-users []
   (select users))
 
-(def ^:private salt (partial str "ohucode/"))
-
 (defn insert-new-user [{email :email
                         userid :userid
                         password :password
@@ -70,7 +68,7 @@
   (transaction
    (when (zero? (delete signups (where {:email email :userid userid :code code})))
      (throw (RuntimeException. "code does not match")))
-   (insert users (values {:userid userid :primary_email email :name username
+   (insert users (values {:userid userid :email email :name username
                           :password_digest
-                          (pw/password-digest password (salt userid))}))
+                          (pw/ohucode-password-digest userid password)}))
    (insert emails (values {:email email :userid userid :verified_at (now)}))))

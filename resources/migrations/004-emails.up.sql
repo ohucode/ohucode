@@ -8,6 +8,11 @@ CREATE TABLE emails (
   verified_at TIMESTAMP
 );
 
+INSERT INTO emails (email, userid, verified_at) VALUES
+  ('admin@ohucode.com', 'admin', now()),
+  ('system@ohucode.com', 'system', now()),
+  ('guest@ohucode.com', 'guest', now());
+
 -- 이메일 확인용 테이블
 CREATE TABLE email_verifications (
   email VARCHAR(256) NOT NULL REFERENCES emails ON DELETE CASCADE,
