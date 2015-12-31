@@ -20,16 +20,6 @@
 (defn- not-implemented [req]
   (throw (UnsupportedOperationException.)))
 
-(defn session-user [req]
-  (get-in req [:session :user]))
-
-(def signed-in? (comp not nil? session-user))
-
-(defn wrap-user-info [handler]
-  (fn [req]
-    (binding [*signed-user* (session-user req)]
-      (handler req))))
-
 (defn wrap-signed-user-only [handler]
   (fn [req]
     (if-let [signed-in? req]

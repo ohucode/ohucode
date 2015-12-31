@@ -16,3 +16,13 @@
 (def ^:dynamic
   ^{:doc "가입 인증코드 발급후 유효시간 (단위: 초)"}
   *passcode-expire-sec* (* 30 60))
+
+(defn session-user [req]
+  (get-in req [:session :user]))
+
+(def signed-in? (comp not nil? session-user))
+
+(defn wrap-user-info [handler]
+  (fn [req]
+    (binding [*signed-user* (session-user req)]
+      (handler req))))

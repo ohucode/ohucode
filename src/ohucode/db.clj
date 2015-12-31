@@ -62,7 +62,7 @@
       first))
 
 (defn select-users []
-  (select users))
+  (select users (order :created_at :DESC)))
 
 (defn insert-new-user [{email :email
                         userid :userid
