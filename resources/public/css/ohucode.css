@@ -19,11 +19,11 @@ footer {
   height: 150px;
 }
 
-.signup-container {
+.signup-container, .narrow-container {
   max-width: 750px;
 }
 
-.panel-signup {
+.panel-ohucode {
   border-radius: 5px;
   background-color: #fcfcfc;
   border: 1px solid #eee;

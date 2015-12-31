@@ -44,14 +44,14 @@
 (def user-routes
   (routes
    (context "/user" []
-     (GET "/login" req
-       (-> (redirect "/")
-           (assoc :flash "플래시 메시지 간단히")
-           (login "hatemogi")))
+     (GET "/login" req v-top/login-page)
      (POST "/login" [userid password]
        (if (db/valid-user-password? userid password)
-         "OK"
-         "INVALID"))
+         (-> (redirect "/")
+             (assoc :flash "로그인 성공")
+             (login userid))
+         (-> (redirect "/user/login")
+             (assoc :flash "인증 실패"))))
      (GET "/logout" req
        (-> (v-top/basic-content req "로그아웃" "로그아웃처리")
            response

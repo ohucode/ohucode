@@ -59,3 +59,26 @@
             [:div.page-header [:h1 "Git 저장소 서비스"]]
             [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
             [:div.page-header [:h1 "위키 페이지 작성"]]]]))
+
+(defn login-form [req]
+  (letfn [(fg [label-text & input-section]
+            [:div.form-group
+             [:label.control-label.col-sm-3 label-text]
+             [:div.col-sm-9 input-section]])]
+    [:form#login-form.form-horizontal {:method "POST" :action "/user/login"}
+     (fg "아이디" [:input.form-control
+                   {:type "text" :name "userid" :autofocus true}])
+     (fg "비밀번호" [:input.form-control
+                     {:type "password" :v-model "password" :name "password" :placeholder "********"}])
+     (fg "" [:button.btn.btn-primary "로그인"])
+     (anti-forgery-field)]))
+
+(defn login-page [req]
+  "로그인 입력 창"
+  (layout req {:title (brand-name+ "> 로그인")}
+          [:div.container.narrow-container
+           [:div.page-header
+            [:h2 [:i.fa.fa-sign-in] " 로그인 "]]
+           [:div.row
+            [:div.col-sm-12
+             [:div.panel.panel-ohucode [:div.panel-body (login-form req)]]]]]))

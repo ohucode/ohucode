@@ -46,13 +46,13 @@
   (let [title (brand-name+ "가입 > " active-step "단계")]
     (layout req
             {:title title}
-            [:div.container.signup-container
+            [:div.container.narrow-container
              [:div.page-header
               [:h2 [:i.fa.fa-user-plus] " 회원가입 "
                [:small (signup-step-texts (dec active-step))]]]
              [:div.row
               [:div.col-sm-8
-               [:div.panel.panel-signup [:div.panel-body form]]
+               [:div.panel.panel-ohucode [:div.panel-body form]]
                body]
               [:div.col-sm-4 (signup-progress active-step)]]])))
 
