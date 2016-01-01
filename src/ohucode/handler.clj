@@ -17,9 +17,6 @@
             [ohucode.handler-signup :refer [signup-routes]]
             [ohucode.handler-templates :refer [template-routes]]))
 
-(defn- not-implemented [req]
-  (throw (UnsupportedOperationException.)))
-
 (defn wrap-signed-user-only [handler]
   (fn [req]
     (if-let [signed-in? req]
@@ -51,21 +48,21 @@
            (update :session dissoc :user))))
    (context "/:user" [user]
      (GET "/" [] v-top/not-found)
-     (GET "/settings" [] not-implemented)
-     (GET "/profile" [] not-implemented))))
+     (GET "/settings" [] v-top/not-implemented)
+     (GET "/profile" [] v-top/not-implemented))))
 
 (def project-routes
   (context "/:user/:project" [user project]
     (GET "/" [] v-top/not-found)
-    (GET "/commits" [] not-implemented)
-    (GET "/commits/:ref" [ref] not-implemented)
-    (GET "/commit/:commit-id" not-implemented-yet)
-    (GET "/settings" [] not-implemented)
-    (GET "/tree/:ref/:path" [ref path] not-implemented)
-    (GET "/blob/:ref/:path" [ref path] not-implemented)
-    (GET "/tags" [] not-implemented)
-    (GET "/branches" [] not-implemented)
-    (GET "/issues" [] not-implemented)))
+    (GET "/commits" [] v-top/not-implemented)
+    (GET "/commits/:ref" [ref] v-top/not-implemented)
+    (GET "/commit/:commit-id" [commit-id] v-top/not-implemented)
+    (GET "/settings" [] v-top/not-implemented)
+    (GET "/tree/:ref/:path" [ref path] v-top/not-implemented)
+    (GET "/blob/:ref/:path" [ref path] v-top/not-implemented)
+    (GET "/tags" [] v-top/not-implemented)
+    (GET "/branches" [] v-top/not-implemented)
+    (GET "/issues" [] v-top/not-implemented)))
 
 (def web-routes
   (routes

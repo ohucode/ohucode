@@ -14,6 +14,11 @@
    :body (basic-content req "찾을 수 없습니다"
                         [:p "요청하신 페이지를 찾을 수 없습니다."])})
 
+(defn not-implemented [req]
+  {:status 404
+   :body (basic-content req "아직 구현하지 못한 기능입니다."
+                        [:p "요청하신 페이지를 찾을 수 없습니다."])})
+
 (defn request-error [req message]
   {:status 403
    :body (basic-content req "입력 값 오류"

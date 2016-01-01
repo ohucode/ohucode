@@ -4,6 +4,7 @@
             [ohucode.handler :as h]
             [ohucode.server :as s]
             [ohucode.db :as db]
+            [ohucode.password :as pw]
             [ohucode.handler-signup-test]
             [ohucode.handler-test]
             [ohucode.handler-git-test]

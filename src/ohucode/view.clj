@@ -24,6 +24,8 @@
        "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
      (if-let [user (get-in req [:session :user])]
        [:ul.nav.navbar-nav.navbar-right
+        (if (admin? req)
+          [:li [:a {:href "/admin"} "관리자"]])
         [:li [:a {:href "/user/logout"} (:userid user)]]]
        [:ul.nav.navbar-nav.navbar-right
         [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
@@ -66,3 +68,38 @@
 (defn anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"
            :value *anti-forgery-token*}])
+
+(defprotocol TimeRenderer
+  (^String to-human-time [t] "읽기 좋은 시간 표현. ex. 5분전")
+  (^String to-exact-time [t] "정확한 일시 표현. ex. 2015-01-01 14:35:03"))
+
+(let [df (java.text.SimpleDateFormat. "yyyy/MM/dd HH:mm:ss")]
+  (defn- exact-time [ms]
+    (.format df (java.util.Date. ms))))
+
+(defn- human-time [ms]
+  (let [now   (System/currentTimeMillis)
+        dsec  (quot (- now ms) 1000)
+        dmin  (quot dsec 60)
+        dhour (quot dmin 60)
+        dday  (quot dhour 24)]
+    (cond
+      (< dsec 60) (str dsec "초 전")
+      (< dmin 60) (str dmin "분 전")
+      (< dhour 24) (str dhour "시간 전")
+      (<= dday 15) (str dday "일 전")
+      :else (exact-time ms))))
+
+(extend-protocol TimeRenderer
+  java.sql.Timestamp
+  (to-human-time [ts] (human-time (.getTime ts)))
+  (to-exact-time [ts] (exact-time (.getTime ts)))
+  java.util.Date
+  (to-human-time [d] (human-time (.getTime d)))
+  (to-exact-time [d] (exact-time (.getTime d))))
+
+(extend-protocol hiccup.compiler/HtmlRenderer
+  java.sql.Timestamp
+  (render-html [ts] (to-human-time ts))
+  java.util.Date
+  (render-html [d] (to-human-time d)))

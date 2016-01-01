@@ -22,6 +22,9 @@
 
 (def signed-in? (comp not nil? session-user))
 
+(defn admin? [req]
+  (= "admin" (:userid (session-user req))))
+
 (defn wrap-user-info [handler]
   (fn [req]
     (binding [*signed-user* (session-user req)]

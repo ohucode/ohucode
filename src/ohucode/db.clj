@@ -31,6 +31,9 @@
                           :ip (sqlfn "inet" *client-ip*)
                           :data (sqlfn "to_json" (json/write-str data))})))
 
+(defn select-audits []
+  (select audits (order :created_at :DESC) (limit 100)))
+
 (defentity signups)
 
 (defn clean-insert-signup [email userid code]
