@@ -33,7 +33,7 @@
 (defn footer [req]
   [:footer
    [:div.container [:div.row [:ul.list-inline
-                              [:li "Copyright " [:i.fa.fa-copyright] " 2015 " brand-name]
+                              [:li "Copyright " [:i.fa.fa-copyright] " 2016 " brand-name]
                               [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
                               [:li [:a {:href "/terms-of-service"} "이용약관"]]]]]])
 
