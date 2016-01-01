@@ -36,7 +36,8 @@
    [:div.container [:div.row [:ul.list-inline
                               [:li "Copyright " [:i.fa.fa-copyright] " 2016 " brand-name]
                               [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
-                              [:li [:a {:href "/terms-of-service"} "이용약관"]]]]]])
+                              [:li [:a {:href "/terms-of-service"} "이용약관"]]
+                              [:li [:a {:href "/credits"} "감사의 말"]]]]]])
 
 (defn layout [req opts & body]
   "opts {:title "" :css [] :js []}"
@@ -64,6 +65,7 @@
                (list* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
                       "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
                       "/js/vue.min.js"
+                      "/js/marked.min.js"
                       "/js/ohucode.js"
                       (:js opts)))]))
 

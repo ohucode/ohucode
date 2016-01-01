@@ -73,6 +73,7 @@
    (GET "/throw" [] (throw (RuntimeException. "스택트레이스 실험")))
    (GET "/terms-of-service" [] v-top/terms-of-service)
    (GET "/privacy-policy" [] v-top/privacy-policy)
+   (GET "/credits" [] v-top/credits)
    signup-routes
    admin-routes
    user-routes

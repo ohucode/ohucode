@@ -32,6 +32,10 @@
   (basic-content req "개인정보 보호정책"
                  [:p "오후코드 서비스를 이용하면..."]))
 
+(defn credits [req]
+  (basic-content req "감사의 말"
+                 [:div.markdown (slurp "CREDITS.md")]))
+
 (defn intro-guest [req]
   (layout req {:title (brand-name+ "첫화면")}
           [:div.jumbotron

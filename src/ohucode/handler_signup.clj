@@ -12,7 +12,8 @@
   #{"admin" "js" "css" "static" "fonts" "signup" "login" "logout"
     "settings" "help" "support" "notifications" "notification"
     "status" "components" "news" "account" "templates"
-    "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"})
+    "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"
+    "credits"})
 
 (defn request-confirm-mail [email userid]
   (let [code (or (db/signup-passcode email userid)
