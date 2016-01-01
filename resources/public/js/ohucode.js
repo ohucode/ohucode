@@ -75,4 +75,9 @@
     });
 
     $('[data-toggle="tooltip"]').tooltip();
+
+    $('.markdown').html(function(idx, text) {
+        return marked(text);
+    });
+
 })(window, jQuery);

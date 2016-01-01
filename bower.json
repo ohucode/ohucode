@@ -19,6 +19,7 @@
     "bootstrap": "~3.3.6",
     "octicons": "~3.3.0",
     "vue-router": "~0.7.7",
-    "vue-validator": "~1.4.4"
+    "vue-validator": "~1.4.4",
+    "marked": "~0.3.5"
   }
 }
