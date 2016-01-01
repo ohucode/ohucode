@@ -26,6 +26,7 @@
        [:ul.nav.navbar-nav.navbar-right
         (if (admin? req)
           [:li [:a {:href "/admin"} "관리자"]])
+        [:li [:a {:href "#" :title "새 저장소"} [:span.octicon.octicon-plus]]]
         [:li [:a {:href "/user/logout"} (:userid user)]]]
        [:ul.nav.navbar-nav.navbar-right
         [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
@@ -49,6 +50,7 @@
           (map include-css
                (list* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
                       "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+                      "/css/octicons/octicons.css"
                       "/css/ohucode.css"
                       (:css opts)))]
          [:body#app
