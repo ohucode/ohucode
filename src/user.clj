@@ -1,6 +1,9 @@
 (ns user
-  (:require [clojure.test :refer :all]
-            [ohucode.git :as git]
+  (:use [misaeng.core]
+        [misaeng.test]
+        [clojure.test]
+        [clojure.repl])
+  (:require [ohucode.git :as git]
             [ohucode.handler :as h]
             [ohucode.server :as s]
             [ohucode.db :as db]
@@ -10,7 +13,6 @@
             [ohucode.handler-git-test]
             [ohucode.password-test]
             [ohucode.db-test]
-            [clojure.repl :refer :all]
             [clojure.tools.namespace.repl :refer [refresh]]
             [ragtime.jdbc :as jdbc]
             [ragtime.repl :as ragtime]))

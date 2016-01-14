@@ -1,6 +1,9 @@
 (ns ohucode.handler
-  (:require [compojure.core :refer :all]
-            [compojure.route :as route]
+  (:use [misaeng.core]
+        [compojure.core]
+        [ring.util.response]
+        [ohucode.core])
+  (:require [compojure.route :as route]
             [ring.util.response :refer :all]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :refer [wrap-reload]]
@@ -9,7 +12,6 @@
             [ring.logger.timbre :refer [wrap-with-logger]]
             [prone.middleware :refer [wrap-exceptions]]
             [taoensso.timbre :as timbre]
-            [ohucode.core :refer :all]
             [ohucode.db :as db]
             [ohucode.view-top :as v-top]
             [ohucode.handler-git :refer [smart-http-routes]]
@@ -17,18 +19,18 @@
             [ohucode.handler-signup :refer [signup-routes]]
             [ohucode.handler-templates :refer [template-routes]]))
 
-(defn wrap-signed-user-only [handler]
+(함수 wrap-signed-user-only [handler]
   (fn [req]
-    (if-let [signed-in? req]
+    (만약-가정 [signed-in? req]
       (handler req)
       (v-top/request-error "로그인이 필요합니다."))))
 
-(defn- login [res userid]
+(함수- 로그인 [res userid]
   (assoc-in res [:session :user]
             (-> (db/select-user userid)
                 (dissoc :password_digest :created_at :updated_at))))
 
-(def user-routes
+(정의 user-routes
   (routes
    (context "/user" []
      (GET "/login" req v-top/login-page)
@@ -36,7 +38,7 @@
        (if (db/valid-user-password? userid password)
          (-> (redirect "/")
              (assoc :flash "로그인 성공")
-             (login userid))
+             (로그인 userid))
          (-> (redirect "/user/login")
              (assoc :flash "인증 실패"))))
      (GET "/logout" req
@@ -51,7 +53,7 @@
      (GET "/settings" [] v-top/not-implemented)
      (GET "/profile" [] v-top/not-implemented))))
 
-(def project-routes
+(정의 project-routes
   (context "/:user/:project" [user project]
     (GET "/" [] v-top/not-found)
     (GET "/commits" [] v-top/not-implemented)
@@ -64,10 +66,10 @@
     (GET "/branches" [] v-top/not-implemented)
     (GET "/issues" [] v-top/not-implemented)))
 
-(def web-routes
+(정의 web-routes
   (routes
    (GET "/" req
-     (if (signed-in? req)
+     (만약 (signed-in? req)
        v-top/dashboard
        v-top/intro-guest))
    (GET "/throw" [] (throw (RuntimeException. "스택트레이스 실험")))
@@ -79,23 +81,23 @@
    user-routes
    project-routes))
 
-(defn- wrap-html-content-type [handler]
+(함수- wrap-html-content-type [handler]
   (fn [req]
-    (if-let [res (handler req)]
-      (if (find-header res "Content-Type")
+    (만약-가정 [res (handler req)]
+      (만약 (find-header res "Content-Type")
         res
         (content-type res "text/html; charset=utf-8")))))
 
-(defn wrap-bind-client-ip [handler]
+(함수 wrap-bind-client-ip [handler]
   (fn [req]
     (binding [*client-ip* (:remote-addr req)]
       (handler req))))
 
 (defonce ^:private
   ^{:doc "리로드 해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
-  session-store (memory-store))
+  세션저장소 (memory-store))
 
-(def app
+(정의 app
   (routes
    (route/resources "/js" {:root "public/js"})
    (route/resources "/css" {:root "public/css"})
@@ -110,11 +112,11 @@
        (wrap-defaults (-> site-defaults
                           ;; static 자원은 앞에서 미리 처리합니다
                           (dissoc :static)
-                          (assoc-in [:session :store] session-store))))
+                          (assoc-in [:session :store] 세션저장소))))
 
    (ANY "*" [] v-top/not-found)))
 
-(def app-dev
+(정의 app-dev
   (-> (routes template-routes app)
       (wrap-exceptions)
       (wrap-reload)))
