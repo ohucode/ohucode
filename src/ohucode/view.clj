@@ -1,10 +1,11 @@
 (ns ohucode.view
   (:require [ring.middleware.anti-forgery :refer [*anti-forgery-token*]])
-  (:use [ohucode.core]
+  (:use [misaeng.core]
+        [ohucode.core]
         [hiccup.core]
         [hiccup.page]))
 
-(defn navigation [req]
+(함수 navigation [req]
   [:nav.navbar.navbar-inverse.navbar-static-top
    [:div.container-fluid
     [:div.navbar-header
@@ -13,7 +14,7 @@
                                        :aria-controls "navbar"}
       [:span.sr-only "내비게이션 여닫기"]
       (repeat 3 [:span.icon-bar])]
-     [:a.navbar-brand {:href "/"} [:i.fa.fa-git-square] " " brand-name]]
+     [:a.navbar-brand {:href "/"} [:i.fa.fa-git-square] " " 서비스명]]
     [:div#navbar.collapse.navbar-collapse
      [:ul.nav.navbar-nav
       [:li {:class "active"}
@@ -31,15 +32,15 @@
        [:ul.nav.navbar-nav.navbar-right
         [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
 
-(defn footer [req]
+(함수 footer [req]
   [:footer
    [:div.container [:div.row [:ul.list-inline
-                              [:li "Copyright " [:i.fa.fa-copyright] " 2016 " brand-name]
+                              [:li "Copyright " [:i.fa.fa-copyright] " 2016 " 서비스명]
                               [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
                               [:li [:a {:href "/terms-of-service"} "이용약관"]]
                               [:li [:a {:href "/credits"} "감사의 말"]]]]]])
 
-(defn layout [req opts & body]
+(함수 layout [req opts & body]
   "opts {:title "" :css [] :js []}"
   {:pre (seq? (:js opts))}
   (html5 {:lang "ko"}
@@ -47,7 +48,7 @@
           [:meta {:charset "utf-8"}]
           [:meta {:http-equiv "X-UA-Compatible", :content "IE=edge"}]
           [:meta {:name "viewport", :content "width=device-width, initial-scale=1"}]
-          [:title (get opts :title brand-name)]
+          [:title (get opts :title 서비스명)]
           (map include-css
                (list* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
                       "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
@@ -69,7 +70,7 @@
                       "/js/ohucode.js"
                       (:js opts)))]))
 
-(defn anti-forgery-field []
+(함수 anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"
            :value *anti-forgery-token*}])
 
@@ -77,17 +78,17 @@
   (^String to-human-time [t] "읽기 좋은 시간 표현. ex. 5분전")
   (^String to-exact-time [t] "정확한 일시 표현. ex. 2015-01-01 14:35:03"))
 
-(let [df (java.text.SimpleDateFormat. "yyyy/MM/dd HH:mm:ss")]
-  (defn- exact-time [ms]
+(가정 [df (java.text.SimpleDateFormat. "yyyy/MM/dd HH:mm:ss")]
+  (함수- exact-time [ms]
     (.format df (java.util.Date. ms))))
 
-(defn- human-time [ms]
-  (let [now   (System/currentTimeMillis)
+(함수- human-time [ms]
+  (가정 [now   (System/currentTimeMillis)
         dsec  (quot (- now ms) 1000)
         dmin  (quot dsec 60)
         dhour (quot dmin 60)
         dday  (quot dhour 24)]
-    (cond
+    (조건
       (< dsec 60) (str dsec "초 전")
       (< dmin 60) (str dmin "분 전")
       (< dhour 24) (str dhour "시간 전")

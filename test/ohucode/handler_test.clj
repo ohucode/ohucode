@@ -1,14 +1,15 @@
 (ns ohucode.handler-test
-  (:require [clojure.test :refer :all]
-            [clojure.java.io :as io]
+  (:use [misaeng.core]
+        [misaeng.test])
+  (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]
             [ohucode.handler :refer :all]))
 
-(deftest test-app
-  (testing "main route"
-    (let [response (app (mock/request :get "/"))]
-      (is (= (:status response) 200))))
+(실험함수 test-app
+  (실험 "main route"
+    (가정 [response (app (mock/request :get "/"))]
+      (확인 (= (:status response) 200))))
 
-  (testing "not-found route"
-    (let [response (app (mock/request :get "/invalid/not/found"))]
-      (is (= (:status response) 404)))))
+  (실험 "not-found route"
+    (가정 [response (app (mock/request :get "/invalid/not/found"))]
+      (확인 (= (:status response) 404)))))

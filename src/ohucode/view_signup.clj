@@ -43,7 +43,7 @@
       [:a {:href "#"} text]])])
 
 (defn- signup-layout [req active-step form & body]
-  (let [title (brand-name+ "가입 > " active-step "단계")]
+  (let [title (서비스명+ "가입 > " active-step "단계")]
     (layout req
             {:title title}
             [:div.container.narrow-container

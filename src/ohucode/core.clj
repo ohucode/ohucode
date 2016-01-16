@@ -1,31 +1,32 @@
-(ns ohucode.core)
+(ns ohucode.core
+  (:use [misaeng.core]))
 
-(def ^:dynamic
+(정의 ^:dynamic
   ^{:doc "클라이언트 IP"}
   *client-ip* "0.0.0.0")
 
-(def ^:dynamic
+(정의 ^:dynamic
   ^{:doc "로그인한 사용자 정보"}
   *signed-user*)
 
-(def brand-name "오후코드")
+(정의 서비스명 "오후코드")
 
-(defn brand-name+ [& strs]
-  (apply str (concat brand-name " " strs)))
+(함수 서비스명+ [& strs]
+  (apply str (concat 서비스명 " " strs)))
 
-(def ^:dynamic
+(정의 ^:dynamic
   ^{:doc "가입 인증코드 발급후 유효시간 (단위: 초)"}
   *passcode-expire-sec* (* 30 60))
 
-(defn session-user [req]
+(함수 session-user [req]
   (get-in req [:session :user]))
 
-(def signed-in? (comp not nil? session-user))
+(정의 signed-in? (comp not nil? session-user))
 
-(defn admin? [req]
+(함수 admin? [req]
   (= "admin" (:userid (session-user req))))
 
-(defn wrap-user-info [handler]
+(함수 wrap-user-info [handler]
   (fn [req]
     (binding [*signed-user* (session-user req)]
       (handler req))))

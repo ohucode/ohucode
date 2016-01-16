@@ -14,7 +14,7 @@
    [:li [:a {:href "/admin/stats"} "통계"]]])
 
 (defn admin-layout [req title & body]
-  (v/layout req {:title (brand-name+ "> 관리자 > " title)}
+  (v/layout req {:title (서비스명+ "> 관리자 > " title)}
           [:div.container
            [:div.row (admin-nav req)]
            [:p]

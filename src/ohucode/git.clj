@@ -1,4 +1,5 @@
 (ns ohucode.git
+  (:use [misaeng.core])
   (:import (org.eclipse.jgit.lib Ref Repository FileMode)
            (org.eclipse.jgit.api Git)
            (org.eclipse.jgit.storage.file FileRepositoryBuilder)
@@ -10,14 +11,14 @@
 
 (defrecord Cursor [owner project head path])
 
-(defn ^Repository open [path]
+(함수 ^Repository open [path]
   "build a local FileRepository from the path"
   (.build (doto (FileRepositoryBuilder.)
             (.readEnvironment)
             (.findGitDir (.getAbsoluteFile (File. path))))))
 
-(defn ^RevTree rev-tree [repo refname]
-  (let [walk (RevWalk. repo)]
+(함수 ^RevTree rev-tree [repo refname]
+  (가정 [walk (RevWalk. repo)]
     (try
       (->> (.getRef repo refname)
            (.getObjectId)
@@ -28,7 +29,7 @@
       (finally
         (.dispose walk)))))
 
-(defn ^TreeWalk tree-walk
+(함수 ^TreeWalk tree-walk
   ([repo ^String refname]
    (if-let [rev (rev-tree repo refname)]
      (doto (TreeWalk. repo)
@@ -44,18 +45,18 @@
        (throw (FileNotFoundException. path)))
      (throw (RefNotFoundException. refname)))))
 
-(defn- tree-walk->map [^TreeWalk walk]
+(함수- tree-walk->map [^TreeWalk walk]
   {:name (.getNameString walk)
    :object-id (.name (.getObjectId walk 0))
    :tree? (= FileMode/TREE (.getFileMode walk 0))})
 
-(defn tree
+(함수 tree
   ([repo path]
    (tree repo "HEAD" path))
   ([repo ref path]
    (tree repo ref path tree-walk->map))
   ([repo ref path conv]
-   (with-open [walk (if (empty? path)
+   (with-open [walk (만약 (empty? path)
                       (tree-walk repo ref)
                       (tree-walk repo ref path))]
      (loop [r []]
@@ -63,10 +64,10 @@
          (recur (conj r (conv walk)))
          r)))))
 
-(defn blob [repo ref path]
+(함수 blob [repo ref path]
   "특정 커밋 해당 경로에 있는 파일의 기본 정보와 InputStream을 얻는다"
   (with-open [walk (tree-walk repo ref path)]
-    (let [sha (.getObjectId walk 0)
+    (가정 [sha (.getObjectId walk 0)
           loader (.open repo sha)]
       {:size (.getSize loader)
        :type (.getType loader)
@@ -75,16 +76,16 @@
 
 ;;(println  (blob (open ".git") "master" "src/ohucode/repository.clj"))
 
-(defn- git-command [repo commandf]
+(함수- git-command [repo commandf]
   (with-open [git (Git. repo)]
     (-> git commandf .call)))
 
-(defn log [repo ref]
+(함수 log [repo ref]
   (if-let [object-id (.resolve repo ref)]
     (git-command repo #(-> (.log %) (.add object-id)))
     (throw (RefNotFoundException. ref))))
 
-(defn recent-commit-for-path [repo ref path]
+(함수 recent-commit-for-path [repo ref path]
   (if-let [object-id (.resolve repo ref)]
     (-> (git-command repo #(-> (.log %)
                                (.add object-id)
@@ -95,14 +96,14 @@
     (throw (RefNotFoundException. ref))))
 
 
-(defn- ref->hash [ref]
+(함수- ref->hash [ref]
   {:name (.getName ref)
    :object-id (.name (.getObjectId ref))})
 
-(defn branches [repo]
-  (map ref->hash
-       (git-command repo (memfn branchList))))
+(함수 branches [repo]
+  (맵 ref->hash
+      (git-command repo (memfn branchList))))
 
-(defn tags [repo]
-  (map ref->hash
+(함수 tags [repo]
+  (맵 ref->hash
        (git-command repo (memfn tagList))))
