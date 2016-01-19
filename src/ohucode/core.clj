@@ -23,7 +23,7 @@
 
 (정의 signed-in? (comp not nil? session-user))
 
-(함수 admin? [req]
+(함수 관리자? [req]
   (= "admin" (:userid (session-user req))))
 
 (함수 wrap-user-info [handler]

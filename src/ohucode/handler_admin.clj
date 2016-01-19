@@ -1,32 +1,33 @@
 (ns ohucode.handler-admin
-  (:require [compojure.core :refer :all]
-            [ring.util.response :refer :all]
-            [ohucode.db :as db]
-            [hiccup.core :refer :all]
-            [ohucode.core :refer :all]
+  (:use [misaeng.core]
+        [compojure.core]
+        [ring.util.response]
+        [hiccup.core]
+        [ohucode.core])
+  (:require [ohucode.db :as db]
             [ohucode.view :as v]
             [ohucode.view-top :as v-top]))
 
-(defn admin-nav [req]
+(함수 admin-nav [req]
   [:ul.nav.nav-tabs
    [:li.active [:a {:href "/admin/users"} "가입자"]]
    [:li [:a {:href "/admin/audits"} "사용자행위"]]
    [:li [:a {:href "/admin/stats"} "통계"]]])
 
-(defn admin-layout [req title & body]
+(함수 admin-layout [req title & body]
   (v/layout req {:title (서비스명+ "> 관리자 > " title)}
-          [:div.container
-           [:div.row (admin-nav req)]
-           [:p]
-           [:div.row body]]))
+            [:div.container
+             [:div.row (admin-nav req)]
+             [:p]
+             [:div.row body]]))
 
-(defn- userid-link [userid]
+(함수- userid-link [userid]
   [:a {:href (str "/admin/users/" userid)} userid])
 
-(defn- timestamp [^java.sql.Timestamp ts]
+(함수- timestamp [^java.sql.Timestamp ts]
   [:span {:data-toggle "tooltip" :title (v/to-exact-time ts)} ts])
 
-(defn dashboard [users]
+(함수 dashboard [users]
   [:main
    [:h2 "사용자 리스트"]
    [:div.container
@@ -46,12 +47,12 @@
                        [:td.location (:location u)]
                        [:td.date (timestamp (:created_at u))]])]]]]])
 
-(defn users [req]
-  (let [u (db/select-users)]
+(함수 users [req]
+  (가정 [u (db/select-users)]
     (admin-layout req "홈" (dashboard u))))
 
-(defn recent-audits [req]
-  (let [audits (db/select-audits)]
+(함수 recent-audits [req]
+  (가정 [audits (db/select-audits)]
     (admin-layout req "행위"
                   [:table#audit-list.table.table-striped
                    [:tbody
@@ -68,13 +69,13 @@
                                      [:td.ip (:ip a)]
                                      [:td.date (timestamp (:created_at a))]])]])))
 
-(defn- wrap-admin-only [handler]
+(함수- wrap-admin-only [handler]
   (fn [req]
-    (if (= "admin" (:userid (session-user req)))
+    (만약 (관리자? req)
       (handler req)
       (v-top/request-error req "관리자 권한 필요"))))
 
-(def admin-routes
+(정의 admin-routes
   (wrap-routes
    (context "/admin" [admin]
      (GET "/" req users)

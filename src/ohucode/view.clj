@@ -13,7 +13,7 @@
                                        :data-target "#navbar" :aria-expanded false
                                        :aria-controls "navbar"}
       [:span.sr-only "내비게이션 여닫기"]
-      (repeat 3 [:span.icon-bar])]
+      (반복 3 [:span.icon-bar])]
      [:a.navbar-brand {:href "/"} [:i.fa.fa-git-square] " " 서비스명]]
     [:div#navbar.collapse.navbar-collapse
      [:ul.nav.navbar-nav
@@ -23,9 +23,9 @@
        "<a v-link=\"{ path: '/about' }\">소개</a>"]
       [:li
        "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
-     (if-let [user (get-in req [:session :user])]
+     (만약-가정 [user (get-in req [:session :user])]
        [:ul.nav.navbar-nav.navbar-right
-        (if (admin? req)
+        (if (관리자? req)
           [:li [:a {:href "/admin"} "관리자"]])
         [:li [:a {:href "#" :title "새 저장소"} [:span.octicon.octicon-plus]]]
         [:li [:a {:href "/user/logout"} (:userid user)]]]
@@ -57,24 +57,24 @@
                       (:css opts)))]
          [:body#app
           (navigation req)
-          (if-let [flash (:flash req)]
+          (만약-가정 [flash (:flash req)]
             flash)
           [:div.container-fluid.main-wrap
            [:main body]]
           (footer req)
-          (map include-js
-               (list* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
-                      "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
-                      "/js/vue.min.js"
-                      "/js/marked.min.js"
-                      "/js/ohucode.js"
-                      (:js opts)))]))
+          (맵 include-js
+              (리스트* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
+                       "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+                       "/js/vue.min.js"
+                       "/js/marked.min.js"
+                       "/js/ohucode.js"
+                       (:js opts)))]))
 
 (함수 anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"
            :value *anti-forgery-token*}])
 
-(defprotocol TimeRenderer
+(프로토콜 TimeRenderer
   (^String to-human-time [t] "읽기 좋은 시간 표현. ex. 5분전")
   (^String to-exact-time [t] "정확한 일시 표현. ex. 2015-01-01 14:35:03"))
 
@@ -95,7 +95,7 @@
       (<= dday 15) (str dday "일 전")
       :else (exact-time ms))))
 
-(extend-protocol TimeRenderer
+(프로토콜-확장 TimeRenderer
   java.sql.Timestamp
   (to-human-time [ts] (human-time (.getTime ts)))
   (to-exact-time [ts] (exact-time (.getTime ts)))
@@ -103,7 +103,7 @@
   (to-human-time [d] (human-time (.getTime d)))
   (to-exact-time [d] (exact-time (.getTime d))))
 
-(extend-protocol hiccup.compiler/HtmlRenderer
+(프로토콜-확장 hiccup.compiler/HtmlRenderer
   java.sql.Timestamp
   (render-html [ts] (to-human-time ts))
   java.util.Date

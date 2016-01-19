@@ -1,5 +1,6 @@
 (ns ohucode.view-top
   (:use [misaeng.core]
+        [misaeng.korean]
         [hiccup.core]
         [hiccup.page]
         [ohucode.core]
@@ -44,7 +45,7 @@
             [:div.col-xs-6.col-md-8
              [:h1 서비스명]
              [:p "즐겁고 효율적인 프로그래밍의 동반자, " 서비스명 "에 오신 것을 환영합니다. "
-              서비스명 "는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git 리모트 리포지토리)를 편리하게 제공합니다."]]
+              (은|는 서비스명) " 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git 리모트 리포지토리)를 편리하게 제공합니다."]]
             [:div.col-xs-6.col-md-4
              [:div.panel.panel-signup
               [:div.panel-body
