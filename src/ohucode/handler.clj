@@ -21,7 +21,7 @@
 
 (함수 wrap-signed-user-only [handler]
   (fn [req]
-    (만약-가정 [signed-in? req]
+    (만약-가정 [로그인? req]
       (handler req)
       (v-top/request-error "로그인이 필요합니다."))))
 
@@ -69,7 +69,7 @@
 (정의 web-routes
   (routes
    (GET "/" req
-     (만약 (signed-in? req)
+     (만약 (로그인? req)
        v-top/dashboard
        v-top/intro-guest))
    (GET "/throw" [] (throw (RuntimeException. "스택트레이스 실험")))

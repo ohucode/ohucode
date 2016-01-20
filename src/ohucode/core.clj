@@ -12,7 +12,7 @@
 (정의 서비스명 "오후코드")
 
 (함수 서비스명+ [& strs]
-  (apply str (concat 서비스명 " " strs)))
+  (적용 str (concat 서비스명 " " strs)))
 
 (정의 ^:dynamic
   ^{:doc "가입 인증코드 발급후 유효시간 (단위: 초)"}
@@ -21,7 +21,7 @@
 (함수 session-user [req]
   (get-in req [:session :user]))
 
-(정의 signed-in? (comp not nil? session-user))
+(정의 로그인? (조합 부정 공? session-user))
 
 (함수 관리자? [req]
   (= "admin" (:userid (session-user req))))

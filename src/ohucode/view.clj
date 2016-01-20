@@ -84,10 +84,10 @@
 
 (함수- human-time [ms]
   (가정 [now   (System/currentTimeMillis)
-        dsec  (quot (- now ms) 1000)
-        dmin  (quot dsec 60)
-        dhour (quot dmin 60)
-        dday  (quot dhour 24)]
+        dsec  (몫 (- now ms) 1000)
+        dmin  (몫 dsec 60)
+        dhour (몫 dmin 60)
+        dday  (몫 dhour 24)]
     (조건
       (< dsec 60) (str dsec "초 전")
       (< dmin 60) (str dmin "분 전")
