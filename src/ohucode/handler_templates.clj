@@ -1,14 +1,14 @@
 (ns ohucode.handler-templates
-  (:require [compojure.core :refer :all]
-            [compojure.route :as route]
-            [ohucode.view-signup :as signup]
-            [ohucode.view-top :as top])
-  (:use [ohucode.view]))
+  (:require [ohucode.view-signup :as 가입]
+            [ohucode.view-top :as 최상])
+  (:use [misaeng.core]
+        [ohucode.view]
+        [compojure.core]))
 
-(def template-routes
+(정의 템플릿-라우트
   (routes
    (GET "/templates" []
-     (layout {} {:title "템플릿 확인"}
+     (레이아웃 {} {:title "템플릿 확인"}
              [:div.container
               [:div.row
                [:div.col-sm-12
@@ -21,8 +21,8 @@
                                     ["/templates/login" "로그인"]]]
                    [:li.list-group-item
                     [:a {:href path} text]])]]]]))
-   (GET "/templates/signup-1" req signup/signup-step1)
-   (GET "/templates/signup-2" req (signup/signup-step2 req "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/signup-3" req (signup/signup-step3 req "hatemogi@gmail.com" "hatemogi" "123456"))
-   (GET "/templates/signup-4" req (signup/signup-step4 req "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/login" req top/login-page)))
+   (GET "/templates/signup-1" 요청 가입/가입-1단계)
+   (GET "/templates/signup-2" 요청 (가입/가입-2단계 요청 "hatemogi@gmail.com" "hatemogi"))
+   (GET "/templates/signup-3" 요청 (가입/가입-3단계 요청 "hatemogi@gmail.com" "hatemogi" "123456"))
+   (GET "/templates/signup-4" 요청 (가입/가입-4단계 요청 "hatemogi@gmail.com" "hatemogi"))
+   (GET "/templates/login" 요청 최상/로그인-페이지)))

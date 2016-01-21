@@ -3,67 +3,65 @@
             [ohucode.mail :as mail]
             [ohucode.db :as db]
             [ohucode.password :as password]
-            [ohucode.view-top :as v-top])
+            [ohucode.view-top :refer [요청에러]])
   (:use [misaeng.core]
         [compojure.core]
         [ring.util.response]
         [ohucode.view-signup]))
 
-(정의 restricted-userids
+(정의 금지아이디
   #{"admin" "js" "css" "static" "fonts" "signup" "login" "logout"
     "settings" "help" "support" "notifications" "notification"
     "status" "components" "news" "account" "templates"
     "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"
     "credits"})
 
-(함수 request-confirm-mail [email userid]
-  (가정 [code (or (db/signup-passcode email userid)
+(함수 확인메일발송 [이메일 아이디]
+  (가정 [코드 (or (db/signup-passcode 이메일 아이디)
                   (password/generate-passcode))]
     (주석 future
-      (mail/send-signup-confirm email userid code))
-    (db/clean-insert-signup email userid code)))
+      (mail/send-signup-confirm 이메일 아이디 코드))
+    (db/clean-insert-signup 이메일 아이디 코드)))
 
-(함수 userid-acceptable? [userid]
-  (and userid
-       (re-matches #"^[a-z\d][a-z\d_]{3,15}$" userid)
-       (not (contains? restricted-userids userid))
-       (db/userid-acceptable? userid)))
+(함수 가용아이디? [아이디]
+  (and 아이디
+       (re-matches #"^[a-z\d][a-z\d_]{3,15}$" 아이디)
+       (부정 (contains? 금지아이디 아이디))
+       (db/가용아이디? 아이디)))
 
-(함수 email-acceptable? [email]
+(함수 가용이메일? [이메일]
   ;; TODO: 이메일 포맷 검증 어찌할까?
-  (and email
-       (re-matches #".+\@.+\..+" email)
-       (db/email-acceptable? email)))
+  (and 이메일
+       (re-matches #".+\@.+\..+" 이메일)
+       (db/가용이메일? 이메일)))
 
-(정의 signup-routes
+(정의 가입-라우트
   (context "/signup" []
-    (GET "/" [] signup-step1)
+    (GET "/" [] 가입-1단계)
     (GET "/userid/:userid" [userid]
-      {:status (if (userid-acceptable? userid) 200 409)})
+      {:status (만약 (가용아이디? userid) 200 409)})
     (GET "/email/:email" [email]
-      {:status (if (email-acceptable? email) 200 409)})
-    (POST "/" [email userid :as req]
-      (만약 (and (email-acceptable? email)
-               (userid-acceptable? userid))
+      {:status (만약 (가용이메일? email) 200 409)})
+    (POST "/" [email userid :as 요청]
+      (만약 (and (가용이메일? email) (가용아이디? userid))
         (묶음
-          (request-confirm-mail email userid)
-          (signup-step2 req email userid))
+          (확인메일발송 email userid)
+          (가입-2단계 요청 email userid))
         (묶음
           (-> (redirect "/signup")
               (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))
-    (POST "/2" [email userid code :as req]
-      (if (and (email-acceptable? email)
-               (userid-acceptable? userid)
-               (= code (db/signup-passcode email userid)))
-        (signup-step3 req email userid code)
-        (v-top/request-error req "등록 코드 확인 실패")))
-    (POST "/3" [email userid password code username :as req]
-      (만약 (and (email-acceptable? email)
-                 (userid-acceptable? userid)
+    (POST "/2" [email userid code :as 요청]
+      (만약 (and (가용이메일? email)
+                 (가용아이디? userid)
+                 (= code (db/signup-passcode email userid)))
+        (가입-3단계 요청 email userid code)
+        (요청에러 요청 "등록 코드 확인 실패")))
+    (POST "/3" [email userid password code username :as 요청]
+      (만약 (and (가용이메일? email) (가용아이디? userid)
                  (= code (db/signup-passcode email userid)))
         (묶음
           (db/insert-new-user {:userid userid :email email
                                :password password :code code
                                :name username})
-          (signup-step4 req email userid))
-        (v-top/request-error "파라미터 오류")))))
+          (가입-4단계 요청 email userid))
+        (요청에러 "파라미터 오류")))))

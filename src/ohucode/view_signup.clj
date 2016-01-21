@@ -1,20 +1,21 @@
 (ns ohucode.view-signup
   (:require [taoensso.timbre :as timbre])
-  (:use [hiccup.core]
+  (:use [misaeng.core]
+        [hiccup.core]
         [hiccup.page]
         [ohucode.core]
         [ohucode.view]))
 
-(defn- next-btn [attrs]
+(함수- 다음버튼 [속성]
   [:button.btn.btn-primary
-   (merge {:type "submit" }attrs) "다음 " [:i.fa.fa-angle-double-right]])
+   (병합 {:type "submit" } 속성) "다음 " [:i.fa.fa-angle-double-right]])
 
 ;; HTML5 validation과 vuejs와 bootstrap의 form validation css를 어떻게 잘 조립할지 고민중
-(defn signup-form [req]
-  (letfn [(fg [attrs label-text & input-section]
-            [:div.form-group attrs
-             [:label.control-label.col-sm-3 label-text]
-             [:div.col-sm-9 input-section]])]
+(함수 가입양식1 [요청]
+  (가정함 [(fg [속성 라벨 & 입력부]
+            [:div.form-group 속성
+             [:label.control-label.col-sm-3 라벨]
+             [:div.col-sm-9 입력부]])]
     [:form#signup-form.form-horizontal {:method "POST" :action "/signup" :novalidate true}
      (fg {:v-bind:class "email | validation_class"}
          "이메일"
@@ -28,74 +29,74 @@
           {:type "text" :placeholder "userid" :name "userid" :v-model "userid.value"}])
      (anti-forgery-field)
      (fg {} ""
-         (next-btn {:disabled "{{!valid_form}}"}))]))
+         (다음버튼 {:disabled "{{!valid_form}}"}))]))
 
-(def ^:private signup-step-texts
+(정의 ^:private signup-step-texts
   ["아이디/이메일 입력"
    "확인 코드 입력"
    "기본 프로필"
    "이용약관 동의"])
 
-(defn- signup-progress [active-step]
+(함수- signup-progress [active-step]
   [:ul.nav.nav-pills.nav-stacked
    (for [[step text] (map vector (iterate inc 1) signup-step-texts)]
      [:li.disabled {:class (if (= step active-step) "active")}
       [:a {:href "#"} text]])])
 
-(defn- signup-layout [req active-step form & body]
-  (let [title (서비스명+ "가입 > " active-step "단계")]
-    (layout req
-            {:title title}
-            [:div.container.narrow-container
-             [:div.page-header
-              [:h2 [:i.fa.fa-user-plus] " 회원가입 "
-               [:small (signup-step-texts (dec active-step))]]]
-             [:div.row
-              [:div.col-sm-8
-               [:div.panel.panel-ohucode [:div.panel-body form]]
-               body]
-              [:div.col-sm-4 (signup-progress active-step)]]])))
+(함수- 가입-레이아웃 [요청 active-step form & body]
+  (가정 [제목 (서비스명+ "가입 > " active-step "단계")]
+    (레이아웃 요청
+              {:title 제목}
+              [:div.container.narrow-container
+               [:div.page-header
+                [:h2 [:i.fa.fa-user-plus] " 회원가입 "
+                 [:small (signup-step-texts (감소 active-step))]]]
+               [:div.row
+                [:div.col-sm-8
+                 [:div.panel.panel-ohucode [:div.panel-body form]]
+                 body]
+                [:div.col-sm-4 (signup-progress active-step)]]])))
 
 
-(defn signup-step1 [req]
+(함수 가입-1단계 [요청]
   "가입 1단계: 아이디와 이메일 접수"
-  (signup-layout req 1 (signup-form req)))
+  (가입-레이아웃 요청 1 (가입양식1 요청)))
 
-(defn signup-step2 [req email userid]
+(함수 가입-2단계 [요청 이메일 아이디]
   "가입 2단계: 메일 확인코드 입력"
-  (letfn [(fg [label-text & input-section]
+  (가정함 [(fg [라벨 & 입력부]
             [:div.form-group
-             [:label.control-label.col-sm-3 label-text]
-             [:div.col-sm-9 input-section]])]
-    (signup-layout req 2
+             [:label.control-label.col-sm-3 라벨]
+             [:div.col-sm-9 입력부]])]
+    (가입-레이아웃 요청 2
      [:form#signup-confirm-form.form-horizontal
       {:method "POST" :action "/signup/2"}
-      (fg "이메일" [:div.form-control-static email])
-      (fg "아이디" [:div.form-control-static userid])
+      (fg "이메일" [:div.form-control-static 이메일])
+      (fg "아이디" [:div.form-control-static 아이디])
       (fg "확인코드" [:input#confirm-code.form-control
                       {:v-model "code" :name "code" :type "text"
                        :placeholder "######" :autofocus true}])
-      (fg "" (next-btn {:disabled "{{!valid_form}}"})
+      (fg "" (다음버튼 {:disabled "{{!valid_form}}"})
           " "
           [:button.btn.btn-info {:v-on:click "resend" :title "확인 메일 재발송 요청하기"
                                  :data-toggle "tooltip" :data-placement "top"}
            "재발송 " [:i.fa.fa-send]])
-      [:input {:type "hidden" :v-model "email" :name "email" :value email}]
-      [:input {:type "hidden" :v-model "userid" :name "userid" :value userid}]
+      [:input {:type "hidden" :v-model "email" :name "email" :value 이메일}]
+      [:input {:type "hidden" :v-model "userid" :name "userid" :value 아이디}]
       (anti-forgery-field)]
      [:div.alert.alert-info.text-center
       "보내드린 메일에 있는 " [:strong "확인코드 "] "6자리 숫자를 입력해주세요. "])))
 
-(defn signup-step3 [req email userid code]
+(함수 가입-3단계 [요청 이메일 아이디 코드]
   "기본 프로필 입력"
-  (letfn [(fg [label-text & input-section]
+  (가정함 [(fg [라벨 & 입력부]
             [:div.form-group
-             [:label.control-label.col-sm-3 label-text]
-             [:div.col-sm-9 input-section]])]
-    (signup-layout req 3
+             [:label.control-label.col-sm-3 라벨]
+             [:div.col-sm-9 입력부]])]
+    (가입-레이아웃 요청 3
      [:form#signup-profile-form.form-horizontal {:method "POST" :action "/signup/3"}
-      (fg "이메일" [:div.form-control-static email])
-      (fg "아이디" [:div.form-control-static userid])
+      (fg "이메일" [:div.form-control-static 이메일])
+      (fg "아이디" [:div.form-control-static 아이디])
       (fg "이름" [:input.form-control
                   {:type "text" :name "username" :placeholder "홍길동" :autofocus true}])
       (fg "비밀번호"
@@ -104,19 +105,19 @@
       (fg "비번확인"
           [:input.form-control
            {:type "password" :v-model "password2" :placeholder "********"}])
-      (fg "" (next-btn {}))
-      [:input {:type "hidden" :name "code" :value code}]
-      [:input {:type "hidden" :name "email" :value email}]
-      [:input {:type "hidden" :name "userid" :value userid}]
+      (fg "" (다음버튼 {}))
+      [:input {:type "hidden" :name "code" :value 코드}]
+      [:input {:type "hidden" :name "email" :value 이메일}]
+      [:input {:type "hidden" :name "userid" :value 아이디}]
       (anti-forgery-field)])))
 
-(defn signup-step4 [req email userid]
+(함수 가입-4단계 [요청 이메일 아이디]
   "이용약관 동의"
-  (letfn [(fg [label-text & input-section]
+  (가정함 [(fg [라벨 & 입력부]
             [:div.form-group
-             [:label.control-label label-text]
-             input-section])]
-    (signup-layout req 4
+             [:label.control-label 라벨]
+             입력부])]
+    (가입-레이아웃 요청 4
      [:form#signup-profile-orm.form {:method "POST" :action "/signup/4"}
       (fg "이용약관" [:textarea.form-control {:rows 10 :cols 80} "사이트 이용약관 \n블라블라"])
       [:div.checkbox [:label
@@ -124,5 +125,5 @@
                       "이용약관에 동의합니다"]]
       (fg ""
           [:button.btn.btn-warning.pull-right "가입취소"]
-          (next-btn {:disabled ""}))
+          (다음버튼 {:disabled ""}))
       (anti-forgery-field)])))

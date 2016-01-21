@@ -1,31 +1,32 @@
 (ns ohucode.handler-signup-test
-  (:require [clojure.test :refer :all]
-            [clojure.java.io :as io]
+  (:use [misaeng.core]
+        [misaeng.test]
+        [ohucode.handler-signup])
+  (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]
             [ring.middleware.params :refer [wrap-params]]
             [korma.db :refer [transaction rollback]]
             [ohucode.handler :refer [app]]
-            [ohucode.handler-signup :refer :all]
             [ohucode.db :as db]
             [ohucode.db-test :as db-test]))
 
-(deftest test-signup
-  (let [req (comp (wrap-params signup-routes)
-                  mock/request)]
-    (comment testing "show step1"
-      (let [res (req :get "/signup")]
-        (is (= (:status res) 200))))
+(실험함수 가입-테스트
+  (가정 [요청 (조합 (wrap-params 가입-라우트)
+                    mock/request)]
+    (주석 testing "show step1"
+      (가정 [응답 (요청 :get "/signup")]
+        (확인 (= (:status 응답) 200))))
 
-    (comment testing "금지한 아이디 확인"
-      (doseq [restricted (take 3 (shuffle restricted-userids))]
-        (is (= (:status
-                (req :get (str "/signup/userid/" restricted)))
-               409))))
+    (주석 testing "금지한 아이디 확인"
+      (doseq [금지어 (가짐 3 (섞기 금지아이디))]
+        (확인 (= (:status
+                  (요청 :get (str "/signup/userid/" 금지어)))
+                 409))))
 
-    (testing "step1: 확인코드 신청"
+    (실험 "step1: 확인코드 신청"
       (transaction
-       (let [res (req :post "/signup"
-                      {:email "test001@test.com" :userid "test001"})]
-         (is (= (:status res) 200))
-         (is (string? (db/signup-passcode "test001@test.com" "test001"))))
+       (가정 [응답 (요청 :post "/signup"
+                         {:email "test001@test.com" :userid "test001"})]
+             (확인 (= (:status 응답) 200))
+         (확인 (string? (db/signup-passcode "test001@test.com" "test001"))))
        (rollback)))))

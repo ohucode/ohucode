@@ -18,15 +18,15 @@
   ^{:doc "가입 인증코드 발급후 유효시간 (단위: 초)"}
   *passcode-expire-sec* (* 30 60))
 
-(함수 session-user [req]
-  (get-in req [:session :user]))
+(함수 session-user [요청]
+  (get-in 요청 [:session :user]))
 
 (정의 로그인? (조합 부정 공? session-user))
 
-(함수 관리자? [req]
-  (= "admin" (:userid (session-user req))))
+(함수 관리자? [요청]
+  (= "admin" (:userid (session-user 요청))))
 
-(함수 wrap-user-info [handler]
-  (fn [req]
-    (binding [*signed-user* (session-user req)]
-      (handler req))))
+(함수 wrap-user-info [핸들러]
+  (fn [요청]
+    (binding [*signed-user* (session-user 요청)]
+      (핸들러 요청))))

@@ -15,7 +15,7 @@
    [:li [:a {:href "/admin/stats"} "통계"]]])
 
 (함수 admin-layout [req title & body]
-  (v/layout req {:title (서비스명+ "> 관리자 > " title)}
+  (v/레이아웃 req {:title (서비스명+ "> 관리자 > " title)}
             [:div.container
              [:div.row (admin-nav req)]
              [:p]
@@ -27,7 +27,7 @@
 (함수- timestamp [^java.sql.Timestamp ts]
   [:span {:data-toggle "tooltip" :title (v/to-exact-time ts)} ts])
 
-(함수 dashboard [users]
+(함수 대시보드 [users]
   [:main
    [:h2 "사용자 리스트"]
    [:div.container
@@ -49,7 +49,7 @@
 
 (함수 users [req]
   (가정 [u (db/select-users)]
-    (admin-layout req "홈" (dashboard u))))
+    (admin-layout req "홈" (대시보드 u))))
 
 (함수 recent-audits [req]
   (가정 [audits (db/select-audits)]
@@ -73,14 +73,14 @@
   (fn [req]
     (만약 (관리자? req)
       (handler req)
-      (v-top/request-error req "관리자 권한 필요"))))
+      (v-top/요청에러 req "관리자 권한 필요"))))
 
 (정의 admin-routes
   (wrap-routes
    (context "/admin" [admin]
      (GET "/" req users)
      (GET "/users" req users)
-     (GET "/users/:userid" [userid :as req] v-top/not-implemented)
+     (GET "/users/:userid" [userid :as req] v-top/미구현)
      (GET "/audits" req recent-audits)
-     (GET "/audits/:action" [action :as req] v-top/not-implemented))
+     (GET "/audits/:action" [action :as req] v-top/미구현))
    wrap-admin-only))

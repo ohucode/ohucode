@@ -27,10 +27,10 @@
 
 (defentity audits)
 
-(함수 insert-audit [userid action data]
-  (insert audits (values {:userid userid :action action
+(함수 insert-audit [아이디 행동 데이터]
+  (insert audits (values {:userid 아이디 :action 행동
                           :ip (sqlfn "inet" *client-ip*)
-                          :data (sqlfn "to_json" (json/write-str data))})))
+                          :data (sqlfn "to_json" (json/write-str 데이터))})))
 
 (함수 select-audits []
   (select audits (order :created_at :DESC) (limit 100)))
@@ -44,26 +44,26 @@
      (insert signups (values attrs))
      (insert-audit "guest" "reqcode" attrs))))
 
-(함수 signup-passcode [email userid]
+(함수 signup-passcode [이메일 아이디]
   (-> (select signups (where
-                       {:email email :userid userid
+                       {:email 이메일 :userid 아이디
                         :created_at [> (now (- *passcode-expire-sec*))]}))
-      first :code))
+      첫째 :code))
 
 (defentity emails)
 
-(함수 email-acceptable? [email]
-  (empty? (select emails (where {:email email}))))
+(함수 가용이메일? [이메일]
+  (empty? (select emails (where {:email 이메일}))))
 
 (defentity users
   (has-many emails {:fk :user_id}))
 
-(함수 userid-acceptable? [userid]
-  (empty? (select users (where {:userid userid}))))
+(함수 가용아이디? [아이디]
+  (empty? (select users (where {:userid 아이디}))))
 
-(함수 select-user [userid]
-  (-> (select users (where {:userid userid}))
-      first))
+(함수 select-user [아이디]
+  (-> (select users (where {:userid 아이디}))
+      첫째))
 
 (함수 select-users []
   (select users (order :created_at :DESC)))
@@ -74,10 +74,10 @@
                         code :code
                         username :name
                         :as attrs}]
-  {:pre [(not-any? nil? [email userid code username password])]}
+  {:pre [(not-any? 공? [email userid code username password])]}
 
   (transaction
-   (when (zero? (delete signups (where {:email email :userid userid :code code})))
+   (when (영? (delete signups (where {:email email :userid userid :code code})))
      (throw (RuntimeException. "code does not match")))
    (insert users (values {:userid userid :email email :name username
                           :password_digest
@@ -85,11 +85,11 @@
    (insert emails (values {:email email :userid userid :verified_at (now)}))
    (insert-audit userid "signup" {:email email})))
 
-(함수 valid-user-password? [userid password]
-  (if-let [raw (-> (select-user userid)
-                   :password_digest)]
-    (가정 [valid? (pw/ohucode-valid-password? userid password raw)]
-      (insert-audit userid "login" {:success valid?})
+(함수 valid-user-password? [아이디 비밀번호]
+  (만약-가정 [raw (-> (select-user 아이디)
+                      :password_digest)]
+    (가정 [valid? (pw/ohucode-valid-password? 아이디 비밀번호 raw)]
+      (insert-audit 아이디 "login" {:success valid?})
       valid?)
-    (do (insert-audit "guest" "login" {:success false :userid userid})
-        false)))
+    (묶음 (insert-audit "guest" "login" {:success 거짓 :userid 아이디})
+          거짓)))
