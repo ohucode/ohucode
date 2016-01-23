@@ -1,6 +1,6 @@
 (ns ohucode.handler-signup-test
-  (:use [misaeng.core]
-        [misaeng.test]
+  (:use [미생.기본]
+        [미생.실험]
         [ohucode.handler-signup])
   (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]
@@ -26,7 +26,7 @@
     (실험 "step1: 확인코드 신청"
       (transaction
        (가정 [응답 (요청 :post "/signup"
-                         {:email "test001@test.com" :userid "test001"})]
+                         {:이메일 "test001@test.com" :아이디 "test001"})]
              (확인 (= (:status 응답) 200))
          (확인 (string? (db/signup-passcode "test001@test.com" "test001"))))
        (rollback)))))

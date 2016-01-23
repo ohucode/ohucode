@@ -20,7 +20,7 @@
                  [com.amazonaws/aws-java-sdk-s3 "1.10.23"]
                  [com.amazonaws/aws-java-sdk-ses "1.10.23"]
                  [com.amazonaws/aws-java-sdk-route53 "1.10.23"]
-                 [misaeng "0.0.1"]]
+                 [misaeng "0.1.0"]]
   :plugins [[lein-ring "0.9.6"]]
   :ring {:handler ohucode.handler/app-dev}
   :main ohucode.server/start

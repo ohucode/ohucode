@@ -1,6 +1,6 @@
 (ns ohucode.view
   (:require [ring.middleware.anti-forgery :refer [*anti-forgery-token*]])
-  (:use [misaeng.core]
+  (:use [미생.기본]
         [ohucode.core]
         [hiccup.core]
         [hiccup.page]))

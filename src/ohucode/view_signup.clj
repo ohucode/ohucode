@@ -1,6 +1,6 @@
 (ns ohucode.view-signup
   (:require [taoensso.timbre :as timbre])
-  (:use [misaeng.core]
+  (:use [미생.기본]
         [hiccup.core]
         [hiccup.page]
         [ohucode.core]
@@ -20,13 +20,13 @@
      (fg {:v-bind:class "email | validation_class"}
          "이메일"
          [:input#signup-email.form-control
-          {:type "email" :v-model "email.value" :name "email"
+          {:type "email" :v-model "email.value" :name "이메일"
            :placeholder "username@yourmail.net" :autofocus true
            :v-on:blur "email_change"}])
      (fg {:v-bind:class "userid | validation_class"}
          "아이디"
          [:input#signup-userid.form-control
-          {:type "text" :placeholder "userid" :name "userid" :v-model "userid.value"}])
+          {:type "text" :placeholder "userid" :name "아이디" :v-model "userid.value"}])
      (anti-forgery-field)
      (fg {} ""
          (다음버튼 {:disabled "{{!valid_form}}"}))]))

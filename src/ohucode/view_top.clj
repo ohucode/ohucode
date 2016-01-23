@@ -1,6 +1,6 @@
 (ns ohucode.view-top
-  (:use [misaeng.core]
-        [misaeng.korean]
+  (:use [미생.기본]
+        [미생.한글]
         [hiccup.core]
         [hiccup.page]
         [ohucode.core]

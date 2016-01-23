@@ -4,7 +4,7 @@
             [ohucode.db :as db]
             [ohucode.password :as password]
             [ohucode.view-top :refer [요청에러]])
-  (:use [misaeng.core]
+  (:use [미생.기본]
         [compojure.core]
         [ring.util.response]
         [ohucode.view-signup]))
@@ -42,11 +42,11 @@
       {:status (만약 (가용아이디? userid) 200 409)})
     (GET "/email/:email" [email]
       {:status (만약 (가용이메일? email) 200 409)})
-    (POST "/" [email userid :as 요청]
-      (만약 (and (가용이메일? email) (가용아이디? userid))
+    (POST "/" [이메일 아이디 :as 요청]
+      (만약 (and (가용이메일? 이메일) (가용아이디? 아이디))
         (묶음
-          (확인메일발송 email userid)
-          (가입-2단계 요청 email userid))
+          (확인메일발송 이메일 아이디)
+          (가입-2단계 요청 이메일 아이디))
         (묶음
           (-> (redirect "/signup")
               (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))

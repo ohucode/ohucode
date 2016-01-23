@@ -1,10 +1,9 @@
 (ns ohucode.handler
-  (:use [misaeng.core]
+  (:use [미생.기본]
         [compojure.core]
         [ring.util.response]
         [ohucode.core])
   (:require [compojure.route :as route]
-            [ring.util.response :refer :all]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.lint :refer [wrap-lint]]
@@ -35,7 +34,7 @@
    (context "/user" []
      (GET "/login" 요청 최상뷰/로그인-페이지)
      (POST "/login" [userid password]
-       (if (db/valid-user-password? userid password)
+       (만약 (db/valid-user-password? userid password)
          (-> (redirect "/")
              (assoc :flash "로그인 성공")
              (로그인 userid))
@@ -93,8 +92,8 @@
     (binding [*client-ip* (:remote-addr 요청)]
       (핸들러 요청))))
 
-(defonce ^:private
-  ^{:doc "리로드 해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
+(한번정의 ^:private
+  ^{:doc "리로드해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
   세션저장소 (memory-store))
 
 (정의 app

@@ -1,6 +1,6 @@
 (ns user
-  (:use [misaeng.core]
-        [misaeng.test]
+  (:use [미생.기본]
+        [미생.실험]
         [clojure.test]
         [clojure.repl])
   (:require [ohucode.git :as git]

@@ -1,5 +1,5 @@
 (ns ohucode.git
-  (:use [misaeng.core])
+  (:use [미생.기본])
   (:import (org.eclipse.jgit.lib Ref Repository FileMode)
            (org.eclipse.jgit.api Git)
            (org.eclipse.jgit.storage.file FileRepositoryBuilder)

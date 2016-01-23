@@ -1,5 +1,5 @@
 (ns ohucode.handler-admin
-  (:use [misaeng.core]
+  (:use [미생.기본]
         [compojure.core]
         [ring.util.response]
         [hiccup.core]

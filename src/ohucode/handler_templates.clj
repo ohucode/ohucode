@@ -1,7 +1,7 @@
 (ns ohucode.handler-templates
   (:require [ohucode.view-signup :as 가입]
             [ohucode.view-top :as 최상])
-  (:use [misaeng.core]
+  (:use [미생.기본]
         [ohucode.view]
         [compojure.core]))
 

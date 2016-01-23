@@ -1,7 +1,7 @@
 (ns ohucode.db
   (:refer-clojure :exclude [update])
   (:use [ohucode.core]
-        [misaeng.core]
+        [미생.기본]
         [korma.db]
         [korma.core])
   (:require [ohucode.password :as pw]

@@ -1,6 +1,6 @@
 (ns ohucode.db-test
   (:refer-clojure :exclude [update])
-  (:use [misaeng.core]
+  (:use [미생.기본]
         [clojure.test]
         [ohucode.core]
         [ohucode.db]

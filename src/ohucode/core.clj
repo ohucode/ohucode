@@ -1,5 +1,5 @@
 (ns ohucode.core
-  (:use [misaeng.core]))
+  (:use [미생.기본]))
 
 (정의 ^:dynamic
   ^{:doc "클라이언트 IP"}
