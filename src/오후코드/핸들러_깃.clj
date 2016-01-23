@@ -1,8 +1,8 @@
-(ns ohucode.handler-git
-  (:require [ohucode.git :as git]
-            [compojure.core :refer :all]
-            [ring.util.response :refer :all]
-            )
+(ns 오후코드.핸들러-깃
+  (:use [미생.기본]
+        [compojure.core]
+        [ring.util.response])
+  (:require [오후코드.git :as git])
   (:import [java.io InputStream OutputStream ByteArrayOutputStream
             PipedInputStream PipedOutputStream]
            [java.util.zip GZIPInputStream GZIPOutputStream]

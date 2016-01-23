@@ -1,11 +1,11 @@
-(ns ohucode.server
+(ns 오후코드.서버
   (:require [aleph.http :as http]
-            [ohucode.handler :refer [app-dev]]
+            [오후코드.핸들러 :refer [app-dev]]
             [taoensso.timbre :as timbre]
             [clojure.tools.nrepl.server :refer [start-server stop-server]])
   (:import [java.util Locale]))
 
-(defn start []
+(defn 시작 []
   (defonce http-server
     (let [port 10000]
       (Locale/setDefault Locale/US)
@@ -17,6 +17,6 @@
       (timbre/info (str "Starting nREPL on " port))
       (start-server :port port))))
 
-(defn stop []
+(defn 중단 []
   (.close http-server)
   (stop-server repl-server))

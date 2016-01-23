@@ -1,13 +1,13 @@
-(ns ohucode.handler-signup
+(ns 오후코드.핸들러-가입
   (:require [compojure.route :as route]
-            [ohucode.mail :as mail]
-            [ohucode.db :as db]
-            [ohucode.password :as password]
-            [ohucode.view-top :refer [요청에러]])
+            [오후코드.메일 :as 메일]
+            [오후코드.db :as db]
+            [오후코드.password :as password]
+            [오후코드.뷰-최상 :refer [요청에러]])
   (:use [미생.기본]
+        [오후코드.뷰-가입]
         [compojure.core]
-        [ring.util.response]
-        [ohucode.view-signup]))
+        [ring.util.response]))
 
 (정의 금지아이디
   #{"admin" "js" "css" "static" "fonts" "signup" "login" "logout"
@@ -19,8 +19,8 @@
 (함수 확인메일발송 [이메일 아이디]
   (가정 [코드 (or (db/signup-passcode 이메일 아이디)
                   (password/generate-passcode))]
-    (주석 future
-      (mail/send-signup-confirm 이메일 아이디 코드))
+    (주석 미래
+      (메일/send-signup-confirm 이메일 아이디 코드))
     (db/clean-insert-signup 이메일 아이디 코드)))
 
 (함수 가용아이디? [아이디]

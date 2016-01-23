@@ -1,4 +1,4 @@
-(ns ohucode.core
+(ns 오후코드.기본
   (:use [미생.기본]))
 
 (정의 ^:dynamic

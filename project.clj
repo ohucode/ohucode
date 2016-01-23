@@ -22,8 +22,8 @@
                  [com.amazonaws/aws-java-sdk-route53 "1.10.23"]
                  [misaeng "0.1.0"]]
   :plugins [[lein-ring "0.9.6"]]
-  :ring {:handler ohucode.handler/app-dev}
-  :main ohucode.server/start
+  :ring {:handler 오후코드.핸들러/app-dev}
+  :main 오후코드.서버/시작
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]

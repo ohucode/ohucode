@@ -1,8 +1,8 @@
-(ns ohucode.handler-templates
-  (:require [ohucode.view-signup :as 가입]
-            [ohucode.view-top :as 최상])
+(ns 오후코드.핸들러-템플릿
+  (:require [오후코드.뷰-가입 :as 가입뷰]
+            [오후코드.뷰-최상 :as 최상뷰])
   (:use [미생.기본]
-        [ohucode.view]
+        [오후코드.뷰]
         [compojure.core]))
 
 (정의 템플릿-라우트
@@ -21,8 +21,8 @@
                                     ["/templates/login" "로그인"]]]
                    [:li.list-group-item
                     [:a {:href path} text]])]]]]))
-   (GET "/templates/signup-1" 요청 가입/가입-1단계)
-   (GET "/templates/signup-2" 요청 (가입/가입-2단계 요청 "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/signup-3" 요청 (가입/가입-3단계 요청 "hatemogi@gmail.com" "hatemogi" "123456"))
-   (GET "/templates/signup-4" 요청 (가입/가입-4단계 요청 "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/login" 요청 최상/로그인-페이지)))
+   (GET "/templates/signup-1" 요청 가입뷰/가입-1단계)
+   (GET "/templates/signup-2" 요청 (가입뷰/가입-2단계 요청 "hatemogi@gmail.com" "hatemogi"))
+   (GET "/templates/signup-3" 요청 (가입뷰/가입-3단계 요청 "hatemogi@gmail.com" "hatemogi" "123456"))
+   (GET "/templates/signup-4" 요청 (가입뷰/가입-4단계 요청 "hatemogi@gmail.com" "hatemogi"))
+   (GET "/templates/login" 요청 최상뷰/로그인-페이지)))

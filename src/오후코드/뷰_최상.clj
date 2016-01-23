@@ -1,11 +1,11 @@
-(ns ohucode.view-top
+(ns 오후코드.뷰-최상
   (:use [미생.기본]
         [미생.한글]
+        [오후코드.기본]
+        [오후코드.뷰]
+        [오후코드.뷰-가입]
         [hiccup.core]
-        [hiccup.page]
-        [ohucode.core]
-        [ohucode.view]
-        [ohucode.view-signup]))
+        [hiccup.page]))
 
 (함수 basic-content [요청 제목 & 본문]
   (레이아웃 요청 {:title (서비스명+ "> " 제목)}

@@ -1,10 +1,10 @@
-(ns ohucode.view-signup
+(ns 오후코드.뷰-가입
   (:require [taoensso.timbre :as timbre])
   (:use [미생.기본]
+        [오후코드.기본]
+        [오후코드.뷰]
         [hiccup.core]
-        [hiccup.page]
-        [ohucode.core]
-        [ohucode.view]))
+        [hiccup.page]))
 
 (함수- 다음버튼 [속성]
   [:button.btn.btn-primary

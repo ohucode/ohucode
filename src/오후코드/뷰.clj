@@ -1,7 +1,7 @@
-(ns ohucode.view
+(ns 오후코드.뷰
   (:require [ring.middleware.anti-forgery :refer [*anti-forgery-token*]])
   (:use [미생.기본]
-        [ohucode.core]
+        [오후코드.기본]
         [hiccup.core]
         [hiccup.page]))
 

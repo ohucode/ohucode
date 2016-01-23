@@ -3,16 +3,16 @@
         [미생.실험]
         [clojure.test]
         [clojure.repl])
-  (:require [ohucode.git :as git]
-            [ohucode.handler :as h]
-            [ohucode.server :as s]
-            [ohucode.db :as db]
-            [ohucode.password :as pw]
-            [ohucode.handler-signup-test]
-            [ohucode.handler-test]
-            [ohucode.handler-git-test]
-            [ohucode.password-test]
-            [ohucode.db-test]
+  (:require [오후코드.git :as git]
+            [오후코드.핸들러 :as h]
+            [오후코드.서버 :as s]
+            [오후코드.db :as db]
+            [오후코드.password :as pw]
+            [오후코드.핸들러-가입-실험]
+            [오후코드.핸들러-실험]
+            [오후코드.핸들러-깃-실험]
+            [오후코드.password-실험]
+            [오후코드.db-실험]
             [clojure.tools.namespace.repl :refer [refresh]]
             [ragtime.jdbc :as jdbc]
             [ragtime.repl :as ragtime]))
@@ -29,11 +29,11 @@
 
 (defn T [& namespaces]
   (apply run-tests (or namespaces
-                       ['ohucode.handler-test
-                        'ohucode.handler-git-test
-                        'ohucode.handler-signup-test
-                        'ohucode.password-test
-                        'ohucode.db-test])))
+                       ['오후코드.핸들러-실험
+                        '오후코드.핸들러-깃-실험
+                        '오후코드.핸들러-가입-실험
+                        '오후코드.password-실험
+                        '오후코드.db-실험])))
 
 (defn RT [& namespaces]
   (refresh)

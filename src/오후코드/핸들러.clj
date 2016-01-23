@@ -1,8 +1,8 @@
-(ns ohucode.handler
+(ns 오후코드.핸들러
   (:use [미생.기본]
+        [오후코드.기본]
         [compojure.core]
-        [ring.util.response]
-        [ohucode.core])
+        [ring.util.response])
   (:require [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :refer [wrap-reload]]
@@ -11,12 +11,12 @@
             [ring.logger.timbre :refer [wrap-with-logger]]
             [prone.middleware :refer [wrap-exceptions]]
             [taoensso.timbre :as timbre]
-            [ohucode.db :as db]
-            [ohucode.view-top :as 최상뷰]
-            [ohucode.handler-git :refer [smart-http-routes]]
-            [ohucode.handler-admin :refer [admin-routes]]
-            [ohucode.handler-signup :refer [가입-라우트]]
-            [ohucode.handler-templates :refer [템플릿-라우트]]))
+            [오후코드.db :as db]
+            [오후코드.뷰-최상 :as 최상뷰]
+            [오후코드.핸들러-깃 :refer [smart-http-routes]]
+            [오후코드.핸들러-관리 :refer [관리-라우트]]
+            [오후코드.핸들러-가입 :refer [가입-라우트]]
+            [오후코드.핸들러-템플릿 :refer [템플릿-라우트]]))
 
 (함수 wrap-signed-user-only [핸들러]
   (fn [요청]
@@ -76,7 +76,7 @@
    (GET "/privacy-policy" [] 최상뷰/privacy-policy)
    (GET "/credits" [] 최상뷰/credits)
    가입-라우트
-   admin-routes
+   관리-라우트
    user-routes
    project-routes))
 

@@ -1,10 +1,10 @@
-(ns ohucode.db
+(ns 오후코드.db
   (:refer-clojure :exclude [update])
-  (:use [ohucode.core]
+  (:use [오후코드.기본]
         [미생.기본]
         [korma.db]
         [korma.core])
-  (:require [ohucode.password :as pw]
+  (:require [오후코드.password :as pw]
             [taoensso.timbre :as timbre]
             [clojure.data.json :as json])
   (:import [java.sql SQLException]))

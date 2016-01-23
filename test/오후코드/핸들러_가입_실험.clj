@@ -1,14 +1,13 @@
-(ns ohucode.handler-signup-test
+(ns 오후코드.핸들러-가입-실험
   (:use [미생.기본]
         [미생.실험]
-        [ohucode.handler-signup])
+        [오후코드.핸들러-가입])
   (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]
             [ring.middleware.params :refer [wrap-params]]
             [korma.db :refer [transaction rollback]]
-            [ohucode.handler :refer [app]]
-            [ohucode.db :as db]
-            [ohucode.db-test :as db-test]))
+            [오후코드.핸들러 :refer [app]]
+            [오후코드.db :as db]))
 
 (실험함수 가입-테스트
   (가정 [요청 (조합 (wrap-params 가입-라우트)

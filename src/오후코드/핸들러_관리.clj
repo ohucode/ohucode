@@ -1,12 +1,12 @@
-(ns ohucode.handler-admin
+(ns 오후코드.핸들러-관리
   (:use [미생.기본]
+        [오후코드.기본]
         [compojure.core]
         [ring.util.response]
-        [hiccup.core]
-        [ohucode.core])
-  (:require [ohucode.db :as db]
-            [ohucode.view :as v]
-            [ohucode.view-top :as v-top]))
+        [hiccup.core])
+  (:require [오후코드.db :as db]
+            [오후코드.뷰 :as 뷰]
+            [오후코드.뷰-최상 :as 최상뷰]))
 
 (함수 admin-nav [req]
   [:ul.nav.nav-tabs
@@ -15,17 +15,17 @@
    [:li [:a {:href "/admin/stats"} "통계"]]])
 
 (함수 admin-layout [req title & body]
-  (v/레이아웃 req {:title (서비스명+ "> 관리자 > " title)}
-            [:div.container
-             [:div.row (admin-nav req)]
-             [:p]
-             [:div.row body]]))
+  (뷰/레이아웃 req {:title (서비스명+ "> 관리자 > " title)}
+               [:div.container
+                [:div.row (admin-nav req)]
+                [:p]
+                [:div.row body]]))
 
 (함수- userid-link [userid]
   [:a {:href (str "/admin/users/" userid)} userid])
 
 (함수- timestamp [^java.sql.Timestamp ts]
-  [:span {:data-toggle "tooltip" :title (v/to-exact-time ts)} ts])
+  [:span {:data-toggle "tooltip" :title (뷰/to-exact-time ts)} ts])
 
 (함수 대시보드 [users]
   [:main
@@ -73,14 +73,14 @@
   (fn [req]
     (만약 (관리자? req)
       (handler req)
-      (v-top/요청에러 req "관리자 권한 필요"))))
+      (최상뷰/요청에러 req "관리자 권한 필요"))))
 
-(정의 admin-routes
+(정의 관리-라우트
   (wrap-routes
    (context "/admin" [admin]
      (GET "/" req users)
      (GET "/users" req users)
-     (GET "/users/:userid" [userid :as req] v-top/미구현)
+     (GET "/users/:userid" [userid :as req] 최상뷰/미구현)
      (GET "/audits" req recent-audits)
-     (GET "/audits/:action" [action :as req] v-top/미구현))
+     (GET "/audits/:action" [action :as req] 최상뷰/미구현))
    wrap-admin-only))

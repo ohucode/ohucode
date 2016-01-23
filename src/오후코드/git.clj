@@ -1,4 +1,4 @@
-(ns ohucode.git
+(ns 오후코드.git
   (:use [미생.기본])
   (:import (org.eclipse.jgit.lib Ref Repository FileMode)
            (org.eclipse.jgit.api Git)
