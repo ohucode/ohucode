@@ -14,14 +14,14 @@
                  [korma "0.4.2"]
                  [ragtime "0.5.2"]
                  [prone "0.8.2"]
-                 [org.clojure/clojurescript "1.7.145"]
+                 [org.clojure/clojurescript "1.7.228"]
                  [org.postgresql/postgresql "9.4-1203-jdbc42"]
-                 [org.eclipse.jgit/org.eclipse.jgit "4.1.0.201509280440-r"]
+                 [org.eclipse.jgit/org.eclipse.jgit "4.2.0.201601211800-r"]
                  [com.amazonaws/aws-java-sdk-s3 "1.10.23"]
                  [com.amazonaws/aws-java-sdk-ses "1.10.23"]
                  [com.amazonaws/aws-java-sdk-route53 "1.10.23"]
                  [misaeng "0.1.0"]]
-  :plugins [[lein-ring "0.9.6"]]
+  :plugins [[lein-figwheel "0.5.0-4"]]
   :ring {:handler 오후코드.핸들러/app-dev}
   :main 오후코드.서버/시작
   :profiles
