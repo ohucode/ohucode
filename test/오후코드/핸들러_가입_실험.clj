@@ -9,9 +9,8 @@
             [오후코드.핸들러 :refer [app]]
             [오후코드.db :as db]))
 
-(실험함수 가입-테스트
-  (가정 [요청 (조합 (wrap-params 가입-라우트)
-                    mock/request)]
+(실험정의 가입-테스트
+  (가정 [요청 (합성 (wrap-params 가입-라우트) mock/request)]
     (주석 testing "show step1"
       (가정 [응답 (요청 :get "/signup")]
         (확인 (= (:status 응답) 200))))

@@ -19,7 +19,7 @@
           ~@body)
         (finally (korma.db/rollback))))))
 
-(실험함수 db-test
+(실험정의 db-test
   (실험 "now 함수 확인"
     (가정 [n (now) n-1m (now -60)]
       (확인* [t] (instance? java.sql.Timestamp t) n n-1m)
@@ -32,7 +32,7 @@
     (확인 (seq? (select signups))))
 
   (실험 "가입 이메일 인증코드 유효시간 처리"
-    (binding [*passcode-expire-sec* -10]
+    (바인딩 [*passcode-expire-sec* -10]
       (signup-transaction [email userid code]
                           (확인 (nil? (signup-passcode email userid))))))
   (실험 "signups 레코드 추가"

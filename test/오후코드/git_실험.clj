@@ -10,6 +10,6 @@
       (f)
       (finally (.close repo) (ns-unmap *ns* 'repo)))))
 
-(실험함수 test-repo
+(실험정의 test-repo
   (실험 "open returns a Repository"
     (확인 (인스턴스? org.eclipse.jgit.lib.Repository repo))))

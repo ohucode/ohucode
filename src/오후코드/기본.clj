@@ -21,7 +21,7 @@
 (함수 session-user [요청]
   (get-in 요청 [:session :user]))
 
-(정의 로그인? (조합 부정 공? session-user))
+(정의 로그인? (합성 부정 공? session-user))
 
 (함수 관리자? [요청]
   (= "admin" (:userid (session-user 요청))))

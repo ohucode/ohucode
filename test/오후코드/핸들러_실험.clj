@@ -5,7 +5,7 @@
   (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]))
 
-(실험함수 앱실험
+(실험정의 앱실험
   (실험 "main route"
     (가정 [응답 (app (mock/request :get "/"))]
       (확인 (= (:status 응답) 200))))

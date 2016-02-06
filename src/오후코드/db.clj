@@ -91,5 +91,5 @@
     (가정 [valid? (pw/ohucode-valid-password? 아이디 비밀번호 raw)]
       (insert-audit 아이디 "login" {:success valid?})
       valid?)
-    (묶음 (insert-audit "guest" "login" {:success 거짓 :userid 아이디})
+    (작용 (insert-audit "guest" "login" {:success 거짓 :userid 아이디})
           거짓)))
