@@ -17,9 +17,7 @@
                  [org.clojure/clojurescript "1.7.228"]
                  [org.postgresql/postgresql "9.4-1203-jdbc42"]
                  [org.eclipse.jgit/org.eclipse.jgit "4.2.0.201601211800-r"]
-                 [com.amazonaws/aws-java-sdk-s3 "1.10.23"]
-                 [com.amazonaws/aws-java-sdk-ses "1.10.23"]
-                 [com.amazonaws/aws-java-sdk-route53 "1.10.23"]
+                 [amazonica "0.3.49"]
                  [misaeng "0.1.0"]]
   :plugins [[lein-figwheel "0.5.0-4"]]
   :ring {:handler 오후코드.핸들러/app-dev}
