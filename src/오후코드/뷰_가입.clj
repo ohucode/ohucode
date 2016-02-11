@@ -27,6 +27,10 @@
          "아이디"
          [:input#signup-userid.form-control
           {:type "text" :placeholder "userid" :name "아이디" :v-model "userid.value"}])
+     (fg {:v-bind:class "userid | validation_class"}
+         "비밀번호"
+         [:input#signup-password.form-control
+          {:type "password" :placeholder "********" :name "비밀번호" :v-model "password.value"}])
      (anti-forgery-field)
      (fg {} ""
          (다음버튼 {:disabled "{{!valid_form}}"}))]))

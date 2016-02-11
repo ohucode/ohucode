@@ -2,7 +2,8 @@
   (:require [aleph.http :as http]
             [오후코드.핸들러 :refer [app-dev]]
             [taoensso.timbre :as timbre]
-            [clojure.tools.nrepl.server :refer [start-server stop-server]])
+            [clojure.tools.nrepl.server :refer [start-server stop-server]]
+            [cider.nrepl :refer [cider-nrepl-handler]])
   (:import [java.util Locale]))
 
 (defn 시작 []
@@ -15,7 +16,7 @@
   (defonce repl-server
     (let [port 7888]
       (timbre/info (str "Starting nREPL on " port))
-      (start-server :port port))))
+      (start-server :port port :handler cider-nrepl-handler))))
 
 (defn 중단 []
   (.close http-server)

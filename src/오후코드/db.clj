@@ -37,8 +37,8 @@
 
 (defentity signups)
 
-(함수 clean-insert-signup [email userid code]
-  (가정 [attrs {:email email :userid userid :code code}]
+(함수 clean-insert-signup [email userid code digest]
+  (가정 [attrs {:email email :userid userid :code code :password_digest digest}]
     (transaction
      (delete signups (where (dissoc attrs :code)))
      (insert signups (values attrs))

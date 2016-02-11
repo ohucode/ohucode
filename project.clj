@@ -4,7 +4,10 @@
   :min-lein-version "2.1.2"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/tools.nrepl "0.2.12"]
+                 [cider/cider-nrepl "0.11.0-SNAPSHOT"]
                  [org.clojure/data.json "0.2.6"]
+                 [misaeng "0.1.0"]
+
                  [compojure "1.4.0"]
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
@@ -14,12 +17,18 @@
                  [korma "0.4.2"]
                  [ragtime "0.5.2"]
                  [prone "0.8.2"]
-                 [org.clojure/clojurescript "1.7.228"]
+                 [com.taoensso/timbre "4.2.1"]
+                 [org.slf4j/slf4j-api "1.7.14"]
+                 [com.fzakaria/slf4j-timbre "0.3.0"]
+
                  [org.postgresql/postgresql "9.4-1203-jdbc42"]
                  [org.eclipse.jgit/org.eclipse.jgit "4.2.0.201601211800-r"]
                  [amazonica "0.3.49"]
-                 [misaeng "0.1.0"]]
-  :plugins [[lein-figwheel "0.5.0-4"]]
+
+                 [org.clojure/clojurescript "1.7.228"]
+                 [cljsjs/react-with-addons "0.14.3-0"]
+                 [reagent "0.5.1" :exclusions [cljsjs/react]]]
+  :plugins [[lein-figwheel "0.5.0-6"]]
   :ring {:handler 오후코드.핸들러/app-dev}
   :main 오후코드.서버/시작
   :profiles
@@ -27,4 +36,11 @@
                         [ring/ring-mock "0.3.0"]
                         [org.clojure/tools.namespace "0.2.11"]]}}
   :repl-options {:init-ns user
-                 :init (set! *print-length* 50)})
+                 :init (set! *print-length* 50)}
+  :cljsbuild {:builds [{:id "main"
+                        :source-paths ["src-cljs/"]
+                        :figwheel true
+                        :compiler {:main "ohucode.main"
+                                   :asset-path "js"
+                                   :output-to "resources/public/js/main.js"
+                                   :output-dir "resources/public/js"}}]})

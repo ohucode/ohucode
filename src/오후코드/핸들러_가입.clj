@@ -16,17 +16,17 @@
     "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"
     "credits"})
 
-(함수 확인메일발송 [이메일 아이디]
+(함수 확인메일발송 [이메일 아이디 비밀번호]
   (가정 [코드 (or (db/signup-passcode 이메일 아이디)
                   (password/generate-passcode))]
     (주석 미래
       (메일/send-signup-confirm 이메일 아이디 코드))
-    (db/clean-insert-signup 이메일 아이디 코드)))
+    (db/clean-insert-signup 이메일 아이디 코드 비밀번호)))
 
 (함수 가용아이디? [아이디]
   (and 아이디
        (re-matches #"^[a-z\d][a-z\d_]{3,15}$" 아이디)
-       (부정 (contains? 금지아이디 아이디))
+       (부정 (금지아이디 아이디))
        (db/가용아이디? 아이디)))
 
 (함수 가용이메일? [이메일]
@@ -42,11 +42,11 @@
       {:status (만약 (가용아이디? userid) 200 409)})
     (GET "/email/:email" [email]
       {:status (만약 (가용이메일? email) 200 409)})
-    (POST "/" [이메일 아이디 :as 요청]
+    (POST "/" [이메일 아이디 비밀번호 :as 요청]
       (만약 (and (가용이메일? 이메일) (가용아이디? 아이디))
         (작용
           (확인메일발송 이메일 아이디)
-          (가입-2단계 요청 이메일 아이디))
+          (가입-2단계 요청 이메일 아이디 비밀번호))
         (작용
           (-> (redirect "/signup")
               (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))

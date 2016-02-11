@@ -49,7 +49,7 @@
           [:meta {:http-equiv "X-UA-Compatible", :content "IE=edge"}]
           [:meta {:name "viewport", :content "width=device-width, initial-scale=1"}]
           [:title (get 옵션 :title 서비스명)]
-          (맵 include-css
+          (사상 include-css
               (리스트* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
                        "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
                        "/css/octicons/octicons.css"
@@ -62,7 +62,7 @@
           [:div.container-fluid.main-wrap
            [:main 본문]]
           (꼬리말 요청)
-          (맵 include-js
+          (사상 include-js
               (리스트* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
                        "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
                        "/js/vue.min.js"

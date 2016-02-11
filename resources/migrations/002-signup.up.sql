@@ -3,6 +3,7 @@ CREATE TABLE signups (
   email VARCHAR(256),
   userid VARCHAR(32),
   code VARCHAR(8) NOT NULL,
+  password_digest VARCHAR(32) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT now(),
   PRIMARY KEY (email, userid)
 );

@@ -101,9 +101,9 @@
    :object-id (.name (.getObjectId ref))})
 
 (함수 branches [repo]
-  (맵 ref->hash
+  (사상 ref->hash
       (git-command repo (memfn branchList))))
 
 (함수 tags [repo]
-  (맵 ref->hash
+  (사상 ref->hash
        (git-command repo (memfn tagList))))
