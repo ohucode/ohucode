@@ -11,3 +11,4 @@ pom.xml.asc
 .idea
 *.iml
 bower_components
+*.log
