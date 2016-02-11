@@ -55,19 +55,16 @@
                        "/css/octicons/octicons.css"
                        "/css/ohucode.css"
                        (:css 옵션)))]
-         [:body#app
+         [:body
           (navigation 요청)
           (만약-가정 [flash (:flash 요청)]
             flash)
           [:div.container-fluid.main-wrap
-           [:main 본문]]
+           [:main 본문]
+           [:div#app]]
           (꼬리말 요청)
           (사상 include-js
-              (리스트* "//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
-                       "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
-                       "/js/vue.min.js"
-                       "/js/marked.min.js"
-                       "/js/ohucode.js"
+                (리스트* "/cljs/main.js"
                        (:js 요청)))]))
 
 (함수 anti-forgery-field []

@@ -99,6 +99,7 @@
 (정의 app
   (routes
    (route/resources "/js" {:root "public/js"})
+   (route/resources "/cljs" {:root "public/cljs"})
    (route/resources "/css" {:root "public/css"})
 
    (wrap-routes smart-http-routes

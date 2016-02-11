@@ -26,8 +26,9 @@
                  [amazonica "0.3.49"]
 
                  [org.clojure/clojurescript "1.7.228"]
-                 [cljsjs/react-with-addons "0.14.3-0"]
-                 [reagent "0.5.1" :exclusions [cljsjs/react]]]
+                 [reagent "0.6.0-alpha"]
+                 [cljsjs/marked "0.3.5-0"]
+                 [cljsjs/highlight "8.4-0"]]
   :plugins [[lein-figwheel "0.5.0-6"]]
   :ring {:handler 오후코드.핸들러/app-dev}
   :main 오후코드.서버/시작
@@ -37,10 +38,18 @@
                         [org.clojure/tools.namespace "0.2.11"]]}}
   :repl-options {:init-ns user
                  :init (set! *print-length* 50)}
-  :cljsbuild {:builds [{:id "main"
+  :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src-cljs/"]
                         :figwheel true
                         :compiler {:main "ohucode.main"
-                                   :asset-path "js"
-                                   :output-to "resources/public/js/main.js"
-                                   :output-dir "resources/public/js"}}]})
+                                   :optimizations :none
+                                   :asset-path "cljs"
+                                   :output-to "resources/public/cljs/main.js"
+                                   :output-dir "resources/public/cljs"}}
+                       {:id "prod"
+                        :source-paths ["src-cljs/"]
+                        :compiler {:main "ohucode.main"
+                                   :optimizations :advanced
+                                   :asset-path "cljs"
+                                   :output-to "resources/public/cljs.min/main.js"
+                                   :output-dir "resources/public/cljs.min"}}]})
