@@ -52,6 +52,7 @@
           (사상 include-css
               (리스트* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
                        "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+                       "/css/color-brewer.css"
                        "/css/octicons/octicons.css"
                        "/css/ohucode.css"
                        (:css 옵션)))]
@@ -60,8 +61,7 @@
           (만약-가정 [flash (:flash 요청)]
             flash)
           [:div.container-fluid.main-wrap
-           [:main 본문]
-           [:div#app]]
+           [:main 본문]]
           (꼬리말 요청)
           (사상 include-js
                 (리스트* "/cljs/main.js"

@@ -27,8 +27,10 @@
 
                  [org.clojure/clojurescript "1.7.228"]
                  [reagent "0.6.0-alpha"]
+                 [cljsjs/jquery "2.1.4-0"]
                  [cljsjs/marked "0.3.5-0"]
                  [cljsjs/highlight "8.4-0"]]
+
   :plugins [[lein-figwheel "0.5.0-6"]]
   :ring {:handler 오후코드.핸들러/app-dev}
   :main 오후코드.서버/시작

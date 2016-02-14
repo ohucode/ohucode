@@ -36,7 +36,7 @@
 
 (함수 credits [요청]
   (basic-content 요청 "감사의 말"
-                 [:div.markdown (slurp "CREDITS.md")]))
+                 [:div {:data-markdown true} (slurp "CREDITS.md")]))
 
 (함수 intro-guest [요청]
   (레이아웃 요청 {:title (서비스명+ "첫화면")}
@@ -51,7 +51,7 @@
                [:div.panel.panel-signup
                 [:div.panel-body
                  [:div.page-header [:h4 [:i.fa.fa-user-plus] " 가입 신청"]]
-                 (가입양식1 요청)]]]]]
+                 [:div#signup-form]]]]]]
             [:div.container
              [:div.row
               [:div.page-header [:h1 "Git 저장소 서비스"]]
