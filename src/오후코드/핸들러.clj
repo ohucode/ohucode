@@ -100,6 +100,7 @@
   (routes
    (route/resources "/js" {:root "public/js"})
    (route/resources "/cljs" {:root "public/cljs"})
+   (route/resources "/cljs.min" {:root "public/cljs.min"})
    (route/resources "/css" {:root "public/css"})
 
    (wrap-routes smart-http-routes

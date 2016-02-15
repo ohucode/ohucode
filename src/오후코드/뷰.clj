@@ -5,40 +5,7 @@
         [hiccup.core]
         [hiccup.page]))
 
-(함수 navigation [요청]
-  [:nav.navbar.navbar-inverse.navbar-static-top
-   [:div.container-fluid
-    [:div.navbar-header
-     [:button.navbar-toggle.collapsed {:type "button" :data-toggle "collapse"
-                                       :data-target "#navbar" :aria-expanded false
-                                       :aria-controls "navbar"}
-      [:span.sr-only "내비게이션 여닫기"]
-      (반복 3 [:span.icon-bar])]
-     [:a.navbar-brand {:href "/"} [:i.fa.fa-git-square] " " 서비스명]]
-    [:div#navbar.collapse.navbar-collapse
-     [:ul.nav.navbar-nav
-      [:li {:class "active"}
-       "<a v-link=\"{ path: '/' }\">홈</a>"]
-      [:li
-       "<a v-link=\"{ path: '/about' }\">소개</a>"]
-      [:li
-       "<a v-link=\"{ path: '/help' }\">도움말</a>"]]
-     (만약-가정 [사용자 (get-in 요청 [:session :user])]
-       [:ul.nav.navbar-nav.navbar-right
-        (만약 (관리자? 요청)
-          [:li [:a {:href "/admin"} "관리자"]])
-        [:li [:a {:href "#" :title "새 저장소"} [:span.octicon.octicon-plus]]]
-        [:li [:a {:href "/user/logout"} (:userid 사용자)]]]
-       [:ul.nav.navbar-nav.navbar-right
-        [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
 
-(함수 꼬리말 [요청]
-  [:footer
-   [:div.container [:div.row [:ul.list-inline
-                              [:li "Copyright " [:i.fa.fa-copyright] " 2016 " 서비스명]
-                              [:li [:a {:href "/privacy-policy"} "개인정보보호정책"]]
-                              [:li [:a {:href "/terms-of-service"} "이용약관"]]
-                              [:li [:a {:href "/credits"} "감사의 말"]]]]]])
 
 (함수 레이아웃 [요청 옵션 & 본문]
   "opts {:title "" :css [] :js []}"
@@ -57,12 +24,7 @@
                        "/css/ohucode.css"
                        (:css 옵션)))]
          [:body
-          (navigation 요청)
-          (만약-가정 [flash (:flash 요청)]
-            flash)
-          [:div.container-fluid.main-wrap
-           [:main 본문]]
-          (꼬리말 요청)
+          [:div#app]
           (사상 include-js
                 (리스트* "/cljs/main.js"
                        (:js 요청)))]))
