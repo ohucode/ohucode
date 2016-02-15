@@ -54,32 +54,32 @@
     (.setPathPrefix
      (str js/window.location.protocol "//" js/window.location.host))
     (.setUseFragment false)
+    (.setEnabled true)
     (events/listen EventType/NAVIGATE
-                   (fn [e] (secretary/dispatch! (.-token e))))
-    (.setEnabled true)))
+                   (fn [e]
+                     (let [path (.-token e)]
+                       (secretary/dispatch! (if (empty? path)
+                                              js/window.location.pathname
+                                              path)))))))
 
-(defn link [url]
-  )
-
-(defonce app-state (r/atom {:page welcome-guest}))
+(defonce app-state (r/atom {}))
 
 (defn admin?
   "로그인한 사용자에게 관리자 권한이 있나?"
   [] (= "admin" (get-in @app-state [:user :userid])))
 
-(defn app-routes []
+(defroute "/" []
+  (js/console.log "route / called")
+  (swap! app-state assoc :page welcome-guest))
 
-  (defroute "/" []
-    (swap! app-state assoc :page welcome-guest))
+(defroute "/terms-of-service" []
+  (js/console.log "route /terms-of-service called")
+  (swap! app-state assoc :page terms-of-service))
 
-  (defroute "/terms-of-service" []
-    (swap! app-state assoc :page terms-of-service))
+(defroute "/privacy-policy" []
+  (js/console.log "/privacy-policy route called")
+  (swap! app-state assoc :page privacy-policy))
 
-  (defroute "/privacy-policy" []
-    (js/console.log "/privacy-policy route called")
-    (swap! app-state assoc :page privacy-policy))
-
-  )
 
 (defn a-link
   "a 태그와 동일하지만, 페이지를 바꾸지 않고 라우팅 처리한다."
@@ -121,20 +121,28 @@
      [:li "Copyright " [:i.fa.fa-copyright] " 2016 " 서비스명]
      [:li [a-link {:href "/privacy-policy"} "개인정보보호정책"]]
      [:li [a-link {:href "/terms-of-service"} "이용약관"]]
-     [:li [a-link {:href "/credits"} "감사의 말"]]]]])
+     [:li [a-link {:href "/credits"} "감사의 말"]]
+     [:li (str (:page @app-state))]]]])
+
+(defn empty-page []
+  [:div])
 
 (defn app-page []
   [:div
    [:nav [navigation]]
-   [:main [:div.container-fluid [(:page @app-state)]]]
+   [:main [:div.container-fluid [(or (:page @app-state) empty-page)]]]
    [:footer [꼬리말]]])
 
 (defn ^:export main []
-  (app-routes)
+  (reset! app-state {})
   (aset js/marked.options "highlight"
         (fn [code] (.-value (.highlightAuto js/hljs code))))
   (-> (js/$ "[data-markdown]")
       (.html (fn [idx text] (js/marked text))))
-  (r/render-component [app-page] (.getElementById js/document "app")))
+  (r/render-component [(with-meta app-page {:component-did-mount
+                                            (fn [] (let [path js/window.location.pathname]
+                                                    (js/console.log "마운트 콜: " path)
+                                                    (secretary/dispatch! path)) )})] (.getElementById js/document "app"))
+  )
 
 (main)
