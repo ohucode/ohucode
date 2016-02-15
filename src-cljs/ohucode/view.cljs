@@ -30,6 +30,15 @@
 (defn privacy-policy []
   [:div "개인정보 보호정책"])
 
+(defn markdown [props]
+  (let [src (r/atom "<i class='fa fa-spin fa-spinner'></i>")]
+    (js/$.ajax #js {:url (:url props)
+                    :success (fn [body] (reset! src (js/marked body #js {:sanitize true})))})
+    (fn [props] [:div {:data-markdown true :dangerouslySetInnerHTML #js {:__html @src}}])))
+
+(defn credits []
+  (markdown {:url "/md/CREDITS.md"}))
+
 (defn welcome-guest []
   [:div.jumbotron
    [:div.row

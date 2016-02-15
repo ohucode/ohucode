@@ -14,3 +14,7 @@
 (defroute "/privacy-policy" []
   (js/console.log "/privacy-policy route called")
   (swap! app-state assoc :page v/privacy-policy))
+
+(defroute "/credits" []
+  (js/console.log "/credits route called")
+  (swap! app-state assoc :page v/credits))

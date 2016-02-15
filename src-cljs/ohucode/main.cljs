@@ -1,6 +1,7 @@
 (ns ohucode.main
   (:require [reagent.core :as r]
-            [ohucode.view :as v]))
+            [ohucode.view :as v]
+            [ohucode.route :as route]))
 
 (defn ^:export main []
   (aset js/marked.options "highlight"
