@@ -24,6 +24,10 @@
           :on-change (on-change :password)})
      [:div (:email @signup-state) ", " (:userid @signup-state) ", " (:password @signup-state)]]))
 
+(defn section [header-title & body]
+  (into [:div [:div.page-header>h2 header-title]]
+        body))
+
 (defn terms-of-service []
   [:div "서비스 이용약관"])
 
@@ -32,12 +36,17 @@
 
 (defn markdown [props]
   (let [src (r/atom "<i class='fa fa-spin fa-spinner'></i>")]
+    (js/console.log "requesting " (:url props))
     (js/$.ajax #js {:url (:url props)
-                    :success (fn [body] (reset! src (js/marked body #js {:sanitize true})))})
-    (fn [props] [:div {:data-markdown true :dangerouslySetInnerHTML #js {:__html @src}}])))
+                    :cache false
+                    :success (fn [body]
+                               (js/console.log body)
+                               (reset! src (js/marked body #js {:sanitize true})))})
+    (fn [props] [:div {:dangerouslySetInnerHTML #js {:__html @src}}])))
 
 (defn credits []
-  (markdown {:url "/md/CREDITS.md"}))
+  (section "고마움을 전합니다"
+           [markdown {:url "/md/CREDITS.md"}]))
 
 (defn welcome-guest []
   [:div.jumbotron
@@ -74,7 +83,7 @@
                                        :data-target "#navbar" :aria-expanded false
                                        :aria-controls "navbar"}
       [:span.sr-only "내비게이션 여닫기"]
-      (vec (repeat 3 [:span.icon-bar]))]
+      [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
      [a-link {:class "navbar-brand" :href "/"} [:i.fa.fa-git-square] " " 서비스명]]
     [:div#navbar.collapse.navbar-collapse
      [:ul.nav.navbar-nav

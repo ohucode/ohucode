@@ -7,3 +7,4 @@
 * [Bootstrap - A HTML, CSS, and JS framework](http://getbootstrap.com/)
 * [marked.js - A markdown parser and compiler](https://github.com/chjj/marked)
 * [Git - A free and open source distributed version control system](https://git-scm.com)
+* [React.js - A Javascript library for building user interfaces](https://facebook.github.io/react/index.html)
