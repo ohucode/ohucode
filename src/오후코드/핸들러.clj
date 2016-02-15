@@ -102,6 +102,7 @@
    (route/resources "/cljs" {:root "public/cljs"})
    (route/resources "/cljs.min" {:root "public/cljs.min"})
    (route/resources "/css" {:root "public/css"})
+   (route/resources "/md" {:root "public/md"})
 
    (wrap-routes smart-http-routes
                 wrap-defaults api-defaults)

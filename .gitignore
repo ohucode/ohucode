@@ -12,3 +12,4 @@ pom.xml.asc
 *.iml
 bower_components
 *.log
+resources/public/cljs*
