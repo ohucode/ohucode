@@ -6,10 +6,6 @@
         [hiccup.core]
         [hiccup.page]))
 
-(함수- 다음버튼 [속성]
-  [:button.btn.btn-primary
-   (병합 {:type "submit" } 속성) "다음 " [:i.fa.fa-angle-double-right]])
-
 ;; HTML5 validation과 vuejs와 bootstrap의 form validation css를 어떻게 잘 조립할지 고민중
 (함수 가입양식1 [요청]
   (가정함 [(fg [속성 라벨 & 입력부]

@@ -8,20 +8,40 @@
 
 (def 서비스명 "오후코드")
 
+(defn 다음버튼 [속성]
+  [:button.btn.btn-primary
+   (assoc 속성 :type "submit") "다음 " [:i.fa.fa-angle-double-right]])
+
+(defn input-control [속성 & 본문]
+  (into [:input.form-control 속성] 본문))
+
 (defn signup-form []
-  (let [fg (fn [props] [:div.form-group
-                       [:label.control-label.col-sm-3 (:label props)]
-                       [:div.col-sm-9 [:input.form-control (dissoc props :label)]]])
-        on-change (fn [key] (fn [e] (swap! signup-state assoc key (.-target.value e))))]
+  (let [fg (fn [라벨 & 입력부]
+             [:div.form-group
+              [:label.control-label.col-sm-3 라벨]
+              (into [:div.col-sm-9] 입력부)])
+        on-change (fn [key valid-fn]
+                    (fn [e]
+                      (let [val (.-target.value e)]
+                        (swap! signup-state assoc key val))
+                      ))]
     [:form.form-horizontal
-     (fg {:label "이메일" :type "email" :name "이메일" :value (:email @signup-state)
-                  :placeholder "username@yourmail.net" :autofocus true
-                  :on-change (on-change :email)})
-     (fg {:label "아이디" :type "text" :placeholder "userid" :name "아이디"
-          :value (:userid @signup-state) :on-change (on-change :userid)})
-     (fg {:label "비밀번호" :type "password" :placeholder "********"
-          :name "비밀번호" :value (:password @signup-state)
-          :on-change (on-change :password)})
+     (fg "이메일"
+         [input-control {:type "email" :name "이메일" :value (:email @signup-state)
+                         :ref "ref-email"
+                         :auto-focus true
+                         :placeholder "username@yourmail.net"
+                         :on-change (on-change :email identity)}]
+         )
+     (fg "아이디"
+         [input-control {:type "text" :placeholder "userid" :name "아이디"
+                         :value (:userid @signup-state)
+                         :on-change (on-change :userid identity)}])
+     (fg "비밀번호"
+         [input-control {:type "password" :placeholder "********"
+                         :name "비밀번호" :value (:password @signup-state)
+                         :on-change (on-change :password identity)}])
+     (fg "" [다음버튼 {}])
      [:div (:email @signup-state) ", " (:userid @signup-state) ", " (:password @signup-state)]]))
 
 (defn section [header-title & body]
@@ -36,12 +56,9 @@
 
 (defn markdown [props]
   (let [src (r/atom "<i class='fa fa-spin fa-spinner'></i>")]
-    (js/console.log "requesting " (:url props))
     (js/$.ajax #js {:url (:url props)
                     :cache false
-                    :success (fn [body]
-                               (js/console.log body)
-                               (reset! src (js/marked body #js {:sanitize true})))})
+                    :success #(reset! src (js/marked % #js {:sanitize true}))})
     (fn [props] [:div {:dangerouslySetInnerHTML #js {:__html @src}}])))
 
 (defn credits []

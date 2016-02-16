@@ -17,12 +17,12 @@
           [:meta {:name "viewport", :content "width=device-width, initial-scale=1"}]
           [:title (get 옵션 :title 서비스명)]
           (사상 include-css
-              (리스트* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
-                       "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
-                       "/css/color-brewer.css"
-                       "/css/octicons/octicons.css"
-                       "/css/ohucode.css"
-                       (:css 옵션)))]
+                (리스트* "//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+                         "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+                         "/css/color-brewer.css"
+                         "/css/octicons/octicons.css"
+                         "/css/ohucode.css"
+                         (:css 옵션)))]
          [:body
           [:div#app]
           (사상 include-js
