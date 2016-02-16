@@ -1,4 +1,5 @@
--resources
+-resources/public/cljs
+-resources/public/cljs.min
 -target
 -bower_components
 -target
