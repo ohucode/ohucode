@@ -28,7 +28,7 @@
               false "has-error"
               ""))]
     [:form.form-horizontal
-     (fg {:label "이메일이" :class (validity-class :email)}
+     (fg {:label "이메일" :class (validity-class :email)}
          [input-control {:type "email" :name "이메일" :value (:email @signup-state)
                          :auto-focus true
                          :placeholder "username@yourmail.net"
@@ -41,7 +41,7 @@
          [input-control {:type "password" :placeholder "********"
                          :name "비밀번호" :value (:password @signup-state)
                          :on-change (on-change :password)}])
-     (fg {} [다음버튼 {}])
+     (fg {} [다음버튼 {:disabled (not (:form @signup-valid-state))}])
      [:div (:email @signup-state) ", " (:userid @signup-state) ", " (:password @signup-state)]]))
 
 (defn section [header-title & body]
