@@ -7,29 +7,9 @@
         [hiccup.page]))
 
 ;; HTML5 validation과 vuejs와 bootstrap의 form validation css를 어떻게 잘 조립할지 고민중
-(함수 가입양식1 [요청]
-  (가정함 [(fg [속성 라벨 & 입력부]
-                   [:div.form-group 속성
-                    [:label.control-label.col-sm-3 라벨]
-                    [:div.col-sm-9 입력부]])]
-          [:form#signup-form.form-horizontal {:method "POST" :action "/signup" :novalidate true}
-           (fg {:v-bind:class "email | validation_class"}
-               "이메일"
-               [:input#signup-email.form-control
-                {:type "email" :v-model "email.value" :name "이메일"
-                 :placeholder "username@yourmail.net" :autofocus true
-                 :v-on:blur "email_change"}])
-           (fg {:v-bind:class "userid | validation_class"}
-               "아이디"
-               [:input#signup-userid.form-control
-                {:type "text" :placeholder "userid" :name "아이디" :v-model "userid.value"}])
-           (fg {:v-bind:class "userid | validation_class"}
-               "비밀번호"
-               [:input#signup-password.form-control
-                {:type "password" :placeholder "********" :name "비밀번호" :v-model "password.value"}])
-           (anti-forgery-field)
-           (fg {} ""
-               (다음버튼 {:disabled "{{!valid_form}}"}))]))
+
+(함수 다음버튼 [])
+(함수 가입양식1 [])
 
 (정의 ^:private signup-step-texts
   ["아이디/이메일 입력"

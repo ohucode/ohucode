@@ -4,7 +4,7 @@
             [cljsjs.marked]
             [cljsjs.highlight]
             [cljsjs.highlight.langs.clojure]
-            [ohucode.state :refer [app-state signup-state history]]))
+            [ohucode.state :refer [app-state signup-state signup-valid-state history]]))
 
 (def 서비스명 "오후코드")
 
@@ -16,32 +16,32 @@
   (into [:input.form-control 속성] 본문))
 
 (defn signup-form []
-  (let [fg (fn [라벨 & 입력부]
-             [:div.form-group
-              [:label.control-label.col-sm-3 라벨]
-              (into [:div.col-sm-9] 입력부)])
-        on-change (fn [key valid-fn]
-                    (fn [e]
-                      (let [val (.-target.value e)]
-                        (swap! signup-state assoc key val))
-                      ))]
+  (letfn [(fg [속성 & 입력부]
+            [:div.form-group (dissoc 속성 :label)
+             [:label.control-label.col-sm-3 (:label 속성)]
+             (into [:div.col-sm-9] 입력부)])
+          (on-change [key]
+            (fn [e] (swap! signup-state assoc key (.-target.value e))))
+          (validity-class [key]
+            (case (@signup-valid-state key)
+              true "has-success"
+              false "has-error"
+              ""))]
     [:form.form-horizontal
-     (fg "이메일"
+     (fg {:label "이메일이" :class (validity-class :email)}
          [input-control {:type "email" :name "이메일" :value (:email @signup-state)
-                         :ref "ref-email"
                          :auto-focus true
                          :placeholder "username@yourmail.net"
-                         :on-change (on-change :email identity)}]
-         )
-     (fg "아이디"
+                         :on-change (on-change :email)}])
+     (fg {:label "아이디" :class (validity-class :userid)}
          [input-control {:type "text" :placeholder "userid" :name "아이디"
                          :value (:userid @signup-state)
-                         :on-change (on-change :userid identity)}])
-     (fg "비밀번호"
+                         :on-change (on-change :userid)}])
+     (fg {:label "비밀번호" :class (validity-class :password)}
          [input-control {:type "password" :placeholder "********"
                          :name "비밀번호" :value (:password @signup-state)
-                         :on-change (on-change :password identity)}])
-     (fg "" [다음버튼 {}])
+                         :on-change (on-change :password)}])
+     (fg {} [다음버튼 {}])
      [:div (:email @signup-state) ", " (:userid @signup-state) ", " (:password @signup-state)]]))
 
 (defn section [header-title & body]
