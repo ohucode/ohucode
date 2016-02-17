@@ -31,6 +31,10 @@ $ git clone https://github.com/ohucode/ohucode
 $ cd ohucode
 $ mkdir checkouts
 $ git clone https://github.com/hatemogi/misaeng checkouts/misaeng
+$ cd checkouts/misaeng
+$ lein install
+$ cd ../..
+$ lein deps
 ```
 
 ### 7. DB 유저, 데이터베이스 생성. JDBC 연결설정파일 준비
