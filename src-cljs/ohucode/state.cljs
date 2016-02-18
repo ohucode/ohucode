@@ -32,7 +32,7 @@
 ;; FIXME: 크롬에서는 최초 NAVIGATE 이벤트 발생하지 않음.
 (defonce history
   (doto (Html5History.)
-    (.setPathPrefix  (str js/window.location.protocol "//" js/window.location.host))
+    (.setPathPrefix (str js/window.location.protocol "//" js/window.location.host))
     (.setUseFragment false)
     (.setEnabled true)
     (events/listen EventType/NAVIGATE

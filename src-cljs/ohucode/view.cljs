@@ -10,39 +10,53 @@
 
 (defn 다음버튼 [속성]
   [:button.btn.btn-primary
-   (assoc 속성 :type "submit") "다음 " [:i.fa.fa-angle-double-right]])
+   (assoc 속성 :type "submit") "다음 " (if (:waiting 속성) [:i.fa.fa-spin.fa-spinner] [:i.fa.fa-angle-double-right])])
 
 (defn input-control [속성 & 본문]
   (into [:input.form-control 속성] 본문))
 
-(defn signup-form []
-  (letfn [(fg [속성 & 입력부]
-            [:div.form-group (dissoc 속성 :label)
-             [:label.control-label.col-sm-3 (:label 속성)]
-             (into [:div.col-sm-9] 입력부)])
-          (on-change [key]
-            (fn [e] (swap! signup-state assoc key (.-target.value e))))
-          (validity-class [key]
-            (case (@signup-valid-state key)
-              true "has-success"
-              false "has-error"
-              ""))]
-    [:form.form-horizontal
-     (fg {:label "이메일" :class (validity-class :email)}
-         [input-control {:type "email" :name "이메일" :value (:email @signup-state)
-                         :auto-focus true
-                         :placeholder "username@yourmail.net"
-                         :on-change (on-change :email)}])
-     (fg {:label "아이디" :class (validity-class :userid)}
-         [input-control {:type "text" :placeholder "userid" :name "아이디"
-                         :value (:userid @signup-state)
-                         :on-change (on-change :userid)}])
-     (fg {:label "비밀번호" :class (validity-class :password)}
-         [input-control {:type "password" :placeholder "********"
-                         :name "비밀번호" :value (:password @signup-state)
-                         :on-change (on-change :password)}])
-     (fg {} [다음버튼 {:disabled (not (:form @signup-valid-state))}])
-     [:div (:email @signup-state) ", " (:userid @signup-state) ", " (:password @signup-state)]]))
+(let [form-state (r/atom {:waiting false})]
+  (defn signup-form []
+    (let [fg (fn [속성 & 입력부]
+               [:div.form-group (dissoc 속성 :label)
+                [:label.control-label.col-sm-3 (:label 속성)]
+                (into [:div.col-sm-9] 입력부)])
+          on-change (fn [key]
+                      (fn [e] (swap! signup-state assoc key (.-target.value e))))
+          validity-class (fn [key]
+                           (case (@signup-valid-state key)
+                             true "has-success"
+                             false "has-error"
+                             ""))
+          set-userid-by-email (fn [e]
+                                (js/console.log "블러 불림" (:userid @signup-state))
+                                (if (empty? (:userid @signup-state))
+                                  (swap! signup-state assoc :userid
+                                         (-> @signup-state :email (.split "@") first))))]
+      [:form.form-horizontal
+       [:fieldset {:disabled (:waiting @form-state)}
+        (fg {:label "이메일" :class (validity-class :email) :disabled true}
+            [input-control {:type "email" :name "이메일" :value (:email @signup-state)
+                            :auto-focus true
+                            :placeholder "이메일 주소"
+                            :on-change (on-change :email)
+                            :on-blur set-userid-by-email}])
+        (fg {:label "아이디" :class (validity-class :userid)}
+            [input-control {:type "text" :placeholder "사용할 아이디" :name "아이디"
+                            :value (:userid @signup-state)
+                            :on-change (on-change :userid)}])
+        (fg {:label "비밀번호" :class (validity-class :password)}
+            [input-control {:type "password" :placeholder "사용할 비밀번호"
+                            :name "비밀번호" :value (:password @signup-state)
+                            :on-change (on-change :password)}])
+        (fg {} [다음버튼 {:disabled (not (:form @signup-valid-state))
+                          :waiting (:waiting @form-state)
+                          :on-click (fn [e]
+                                      (.preventDefault e)
+                                      (swap! form-state assoc :waiting true)
+                                      (js/setTimeout #(swap! form-state dissoc :waiting) 2000)
+                                      (js/console.log "클릭" @form-state))}])
+        (fg {} [:div (str @form-state)])]])))
 
 (defn section [header-title & body]
   (into [:div [:div.page-header>h2 header-title]]
