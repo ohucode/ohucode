@@ -8,8 +8,8 @@
 
 ;; HTML5 validation과 vuejs와 bootstrap의 form validation css를 어떻게 잘 조립할지 고민중
 
-(함수 다음버튼 [])
-(함수 가입양식1 [])
+(함수 다음버튼 [& whatever])
+(함수 가입양식1 [& whatever])
 
 (정의 ^:private signup-step-texts
   ["아이디/이메일 입력"

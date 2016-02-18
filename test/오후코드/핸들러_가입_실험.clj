@@ -24,7 +24,7 @@
     (실험 "step1: 확인코드 신청"
       (transaction
        (가정 [응답 (요청 :post "/signup"
-                         {:이메일 "test001@test.com" :아이디 "test001"})]
+                         {:이메일 "test001@test.com" :아이디 "test001" :비밀번호 "testpass"})]
              (확인 (= (:status 응답) 200))
          (확인 (string? (db/signup-passcode "test001@test.com" "test001"))))
        (rollback)))))

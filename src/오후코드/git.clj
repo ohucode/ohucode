@@ -14,7 +14,6 @@
 (함수 ^Repository open [path]
   "build a local FileRepository from the path"
   (.build (doto (FileRepositoryBuilder.)
-            (.readEnvironment)
             (.findGitDir (.getAbsoluteFile (File. path))))))
 
 (함수 ^RevTree rev-tree [repo refname]

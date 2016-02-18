@@ -6,6 +6,7 @@
                  [org.clojure/tools.nrepl "0.2.12"]
                  [cider/cider-nrepl "0.11.0-SNAPSHOT"]
                  [org.clojure/data.json "0.2.6"]
+                 [org.javassist/javassist "3.20.0-GA"]
                  [misaeng "0.1.0"]
 
                  [compojure "1.4.0"]
