@@ -18,6 +18,8 @@
 (defn input-control [속성 & 본문]
   (into [:input.form-control 속성] 본문))
 
+(declare 가입-2단계)
+
 (let [form-state (r/atom {:waiting false})]
   (defn signup-form []
     (let [fg (fn [속성 & 입력부]
@@ -60,13 +62,61 @@
                           :on-click (fn [e]
                                       (.preventDefault e)
                                       (swap! form-state assoc :waiting true)
-                                      (js/setTimeout #(swap! form-state dissoc :waiting) 2000)
+                                      (js/setTimeout #(do (swap! form-state dissoc :waiting)
+                                                          (swap! app-state assoc :page 가입-2단계))
+                                                     2000)
                                       (POST "/signup"
                                             {:data (pr-str @signup-state)
                                              :success #()
                                              :failure #()})
                                       (js/console.log "클릭" @form-state))}])
         (fg {} [:div (pr-str @signup-state)])]])))
+
+(def ^:private signup-step-texts
+  ["아이디/이메일 입력"
+   "확인 코드 입력"
+   "기본 프로필"
+   "이용약관 동의"])
+
+(defn- signup-progress []
+  [:ul.nav.nav-pills.nav-stacked
+   (for [[step text] (map vector (iterate inc 1) signup-step-texts)]
+     [:li.disabled {:class (if (= step 1) "active")}
+      [:a {:href "#"} text]])])
+
+(defn- 가입-레이아웃 [form & body]
+  [:div.container.narrow-container
+   [:div.page-header
+    [:h2 [:i.fa.fa-user-plus] " 회원가입 "
+     [:small (signup-step-texts (:step @signup-state))]]]
+   [:div.row
+    [:div.col-sm-8
+     (into [:div.panel.panel-ohucode
+            [:div.panel-body form]]
+           body)]
+    [:div.col-sm-4 signup-progress]]])
+
+(defn 가입-2단계 []
+  "가입 2단계: 메일 확인코드 입력"
+  (let [fg (fn [속성 & 입력부]
+             [:div.form-group (dissoc 속성 :label)
+              [:label.control-label.col-sm-3 (:label 속성)]
+              (into [:div.col-sm-9] 입력부)])]
+    [:div
+     [:form.form-horizontal
+      (fg {:label "이메일"} [:div.form-control-static (:email @signup-state)])
+      (fg {:label "아이디"} [:div.form-control-static (:userid @signup-state)])
+      (fg {:label  "확인코드"} [:input.form-control
+                                {:name "code" :type "text"
+                                 :placeholder "메일로 보내드린 6자리 숫자"
+                                 :auto-focus true}])
+      (fg {} (다음버튼 {:disabled false})
+          " "
+          [:button.btn.btn-info {:title "확인 메일 재발송 요청하기"}
+           "재발송 " [:i.fa.fa-send]])
+      (:anti-forgery-field @signup-state)]
+     [:div.alert.alert-info.text-center
+      "보내드린 메일에 있는 " [:strong "확인코드 "] "6자리 숫자를 입력해주세요. "]]))
 
 (defn section [header-title & body]
   (into [:div [:div.page-header>h2 header-title]]
@@ -154,5 +204,5 @@
 (defn app-page []
   [:div
    [:nav [navigation]]
-   [:main [:div.container-fluid [(or (:page @app-state) empty-page)]]]
+   [:main [:div.container-fluid [(or (:page @app-state))]]]
    [:footer [꼬리말]]])

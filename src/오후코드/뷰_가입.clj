@@ -42,30 +42,7 @@
   "가입 1단계: 아이디와 이메일 접수"
   (가입-레이아웃 요청 1 (가입양식1 요청)))
 
-(함수 가입-2단계 [요청 이메일 아이디]
-  "가입 2단계: 메일 확인코드 입력"
-  (가정함 [(fg [라벨 & 입력부]
-            [:div.form-group
-             [:label.control-label.col-sm-3 라벨]
-             [:div.col-sm-9 입력부]])]
-    (가입-레이아웃 요청 2
-     [:form#signup-confirm-form.form-horizontal
-      {:method "POST" :action "/signup/2"}
-      (fg "이메일" [:div.form-control-static 이메일])
-      (fg "아이디" [:div.form-control-static 아이디])
-      (fg "확인코드" [:input#confirm-code.form-control
-                      {:v-model "code" :name "code" :type "text"
-                       :placeholder "######" :autofocus true}])
-      (fg "" (다음버튼 {:disabled "{{!valid_form}}"})
-          " "
-          [:button.btn.btn-info {:v-on:click "resend" :title "확인 메일 재발송 요청하기"
-                                 :data-toggle "tooltip" :data-placement "top"}
-           "재발송 " [:i.fa.fa-send]])
-      [:input {:type "hidden" :v-model "email" :name "email" :value 이메일}]
-      [:input {:type "hidden" :v-model "userid" :name "userid" :value 아이디}]
-      (anti-forgery-field)]
-     [:div.alert.alert-info.text-center
-      "보내드린 메일에 있는 " [:strong "확인코드 "] "6자리 숫자를 입력해주세요. "])))
+
 
 (함수 가입-3단계 [요청 이메일 아이디 코드]
   "기본 프로필 입력"
