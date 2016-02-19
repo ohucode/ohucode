@@ -19,13 +19,19 @@ $ brew install rlwrap
 
     http://postgresapp.com
 
-### 5. 오후코드 프로젝트 클론
+### 5. git 최신버전 설치
+
+    $ brew install git
+
+JGit 라이브러리가 Git 시스템 설정을 읽는 부분에서, 맥 기본 Git과 잘 맞지 않는 부분이 있어, 별도로 설치하도록 합니다.
+
+### 6. 오후코드 프로젝트 클론
 
 ``` sh
 $ git clone https://github.com/ohucode/ohucode
 ```
 
-### 6. 미생 (클로저 한글 확장) 클론
+### 7. 미생 (클로저 한글 확장) 클론
 
 ``` sh
 $ cd ohucode
@@ -37,7 +43,7 @@ $ cd ../..
 $ lein deps
 ```
 
-### 7. DB 유저, 데이터베이스 생성. JDBC 연결설정파일 준비
+### 8. DB 유저, 데이터베이스 생성. JDBC 연결설정파일 준비
 
 > 패스워드는 별도 공유합니다.
 
@@ -55,7 +61,7 @@ $ cat conf/db_dev.edn
 
 위 명령어로, JDBC 연결용 설정파일도 있는지 확인.
 
-### 8. 웹서버 실행 (10000번 포트에 웹서버, 7888포트에 REPL서버가 뜹니다)
+### 9. 웹서버 실행 (10000번 포트에 웹서버, 7888포트에 REPL서버가 뜹니다)
 
 ```
 $ lein run
@@ -67,18 +73,33 @@ $ lein run
 $ rlwrap lein repl
 ```
 
-### 9. 클로저스크립트 빌드툴 (figwheel 실행)
+### 10. 클로저스크립트 빌드툴 (figwheel 실행)
 
 ``` sh
 $ rlwrap lein figwheel
 > (start-autobuild)
 ```
 
-### 10. 웹브라우저로 접속
+### 11. 웹브라우저로 접속
     http://0.0.0.0:10000/
 
-### 11. 해피해킹!
+### 12. 해피해킹!
 
+
+
+## 컴파일 & 실행
+
+### 서버사이드 컴파일
+
+    $ lein compile
+
+### 웹서버 실행
+
+    $ lein run
+
+### 클로저스크립트 (수동) 컴파일
+
+    $ lein cljsbuild once
 
 
 ### Uploading Data
