@@ -1,7 +1,7 @@
 (defproject ohucode "0.0.1"
   :description "오후코드 실험버전"
   :url "https://github.com/ohucode/ohucode"
-  :min-lein-version "2.1.2"
+  :min-lein-version "2.5.3"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/tools.nrepl "0.2.12"]
                  [cider/cider-nrepl "0.11.0-SNAPSHOT"]
@@ -29,31 +29,37 @@
                  [org.clojure/clojurescript "1.7.228"]
                  [reagent "0.6.0-alpha"]
                  [secretary "1.2.3"]
+                 [cljsjs/bootstrap "3.3.6-0"]
                  [cljsjs/jquery "2.1.4-0"]
                  [cljsjs/marked "0.3.5-0"]
-                 [cljsjs/highlight "8.4-0"]]
+                 [cljsjs/highlight "8.4-0"]
+                 [cljsjs/d3 "3.5.7-1"]
+                 [cljsjs/google-analytics "2015.04.13-0"]]
 
-  :plugins [[lein-figwheel "0.5.0-6"]]
-  :ring {:handler 오후코드.핸들러/app-dev}
+  :source-paths ["src"]
+  :plugins [[lein-figwheel "0.5.0-6"]
+            [lein-cljsbuild "1.1.2" :exclusions [[org.clojure/clojure]]]]
   :main 오후코드.서버/시작
+  :hooks [leiningen.cljsbuild]
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]
                         [org.clojure/tools.namespace "0.2.11"]]}}
   :repl-options {:init-ns user
                  :init (set! *print-length* 50)}
-  :cljsbuild {:builds [{:id "dev"
-                        :source-paths ["src-cljs/"]
-                        :figwheel true
-                        :compiler {:main "ohucode.main"
-                                   :optimizations :none
-                                   :asset-path "cljs"
-                                   :output-to "resources/public/cljs/main.js"
-                                   :output-dir "resources/public/cljs"}}
-                       {:id "prod"
-                        :source-paths ["src-cljs/"]
-                        :compiler {:main "ohucode.main"
-                                   :optimizations :advanced
-                                   :asset-path "cljs"
-                                   :output-to "resources/public/cljs.min/main.js"
-                                   :output-dir "resources/public/cljs.min"}}]})
+  :cljsbuild
+  {:builds
+   [{:id "dev"
+     :source-paths ["src-cljs"]
+     :figwheel true
+     :compiler {:main ohucode.main
+                :optimizations :none
+                :asset-path "cljs"
+                :output-to "resources/public/cljs/main.js"
+                :output-dir "resources/public/cljs"}}
+    {:id "min"
+     :source-paths ["src-cljs"]
+     :compiler {:main ohucode.main
+                :optimizations :advanced
+                :pretty-print false
+                :output-to "resources/public/cljs/main.js"}}]})

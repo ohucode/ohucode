@@ -8,6 +8,9 @@
 
 (def 서비스명 "오후코드")
 
+(defn POST [url attrs]
+  )
+
 (defn 다음버튼 [속성]
   [:button.btn.btn-primary
    (assoc 속성 :type "submit") "다음 " (if (:waiting 속성) [:i.fa.fa-spin.fa-spinner] [:i.fa.fa-angle-double-right])])
@@ -38,16 +41,19 @@
         (fg {:label "이메일" :class (validity-class :email) :disabled true}
             [input-control {:type "email" :name "이메일" :value (:email @signup-state)
                             :auto-focus true
+                            :auto-complete "email"
                             :placeholder "이메일 주소"
                             :on-change (on-change :email)
                             :on-blur set-userid-by-email}])
         (fg {:label "아이디" :class (validity-class :userid)}
             [input-control {:type "text" :placeholder "사용할 아이디" :name "아이디"
                             :value (:userid @signup-state)
+                            :auto-complete "username"
                             :on-change (on-change :userid)}])
         (fg {:label "비밀번호" :class (validity-class :password)}
             [input-control {:type "password" :placeholder "사용할 비밀번호"
                             :name "비밀번호" :value (:password @signup-state)
+                            :auto-complete "current-password"
                             :on-change (on-change :password)}])
         (fg {} [다음버튼 {:disabled (not (:form @signup-valid-state))
                           :waiting (:waiting @form-state)
@@ -55,8 +61,12 @@
                                       (.preventDefault e)
                                       (swap! form-state assoc :waiting true)
                                       (js/setTimeout #(swap! form-state dissoc :waiting) 2000)
+                                      (POST "/signup"
+                                            {:data (pr-str @signup-state)
+                                             :success #()
+                                             :failure #()})
                                       (js/console.log "클릭" @form-state))}])
-        (fg {} [:div (str @form-state)])]])))
+        (fg {} [:div (pr-str @signup-state)])]])))
 
 (defn section [header-title & body]
   (into [:div [:div.page-header>h2 header-title]]
