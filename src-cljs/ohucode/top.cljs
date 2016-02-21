@@ -55,7 +55,7 @@
         (if (관리자?)
           [:li [:a {:href "/admin"} "관리자"]])
         [:li [:a {:href "#" :title "새 저장소"} [:span.octicon.octicon-plus]]]
-        [:li [:a {:href "/user/logout"} (:userid 사용자)]]]
+        [:li [:a {:href "/user/logout"} (:아이디 사용자)]]]
        [:ul.nav.navbar-nav.navbar-right
         [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
 
@@ -68,9 +68,12 @@
      [:li [링크 {:href "/terms-of-service"} "이용약관"]]
      [:li [링크 {:href "/credits"} "감사의 말"]]]]])
 
+(defn 빈페이지 []
+  [:div])
+
 (defn 앱페이지 []
   [:div
    [:nav [네비게이션]]
    [:main [:div.container-fluid
-           [@앱상태 :page]]]
+           [(or (@앱상태 :페이지) 빈페이지)]]]
    [:footer [꼬리말]]])

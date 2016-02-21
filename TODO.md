@@ -3,6 +3,7 @@
 ### 가입 신청
 
 * AJAX POST로 edn보내서 컴포저에서 읽기
+* *anti-forgery-token* 어떻게 받아올까?
 
 ### 문제해결
 

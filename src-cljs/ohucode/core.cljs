@@ -12,8 +12,8 @@
   )
 
 (defn 다음버튼 [속성]
-  [:button.btn.btn-primary (assoc 속성 :type "submit")
-   "다음 " (if (:waiting 속성)
+  [:button.btn.btn-primary (dissoc 속성 :기다림)
+   "다음 " (if (:기다림 속성)
              [:i.fa.fa-spin.fa-spinner]
              [:i.fa.fa-angle-double-right])])
 
@@ -37,7 +37,7 @@
 
 (defn 관리자?
   "로그인한 사용자에게 관리자 권한이 있나?"
-  [] (= "admin" (:userid (사용자))))
+  [] (= "admin" (:아이디 (사용자))))
 
 (defn 링크
   "a 태그와 동일하지만, 페이지를 바꾸지 않고 라우팅 처리한다."

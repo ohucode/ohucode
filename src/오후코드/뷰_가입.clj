@@ -47,26 +47,26 @@
 (함수 가입-3단계 [요청 이메일 아이디 코드]
   "기본 프로필 입력"
   (가정함 [(fg [라벨 & 입력부]
-            [:div.form-group
-             [:label.control-label.col-sm-3 라벨]
-             [:div.col-sm-9 입력부]])]
-    (가입-레이아웃 요청 3
-     [:form#signup-profile-form.form-horizontal {:method "POST" :action "/signup/3"}
-      (fg "이메일" [:div.form-control-static 이메일])
-      (fg "아이디" [:div.form-control-static 아이디])
-      (fg "이름" [:input.form-control
-                  {:type "text" :name "username" :placeholder "홍길동" :autofocus true}])
-      (fg "비밀번호"
-          [:input.form-control
-           {:type "password" :v-model "password" :name "password" :placeholder "********"}])
-      (fg "비번확인"
-          [:input.form-control
-           {:type "password" :v-model "password2" :placeholder "********"}])
-      (fg "" (다음버튼 {}))
-      [:input {:type "hidden" :name "code" :value 코드}]
-      [:input {:type "hidden" :name "email" :value 이메일}]
-      [:input {:type "hidden" :name "userid" :value 아이디}]
-      (anti-forgery-field)])))
+               [:div.form-group
+                [:label.control-label.col-sm-3 라벨]
+                [:div.col-sm-9 입력부]])]
+      (가입-레이아웃 요청 3
+                     [:form#signup-profile-form.form-horizontal {:method "POST" :action "/signup/3"}
+                      (fg "이메일" [:div.form-control-static 이메일])
+                      (fg "아이디" [:div.form-control-static 아이디])
+                      (fg "이름" [:input.form-control
+                                  {:type "text" :name "username" :placeholder "홍길동" :autofocus true}])
+                      (fg "비밀번호"
+                          [:input.form-control
+                           {:type "password" :v-model "password" :name "password" :placeholder "********"}])
+                      (fg "비번확인"
+                          [:input.form-control
+                           {:type "password" :v-model "password2" :placeholder "********"}])
+                      (fg "" (다음버튼 {}))
+                      [:input {:type "hidden" :name "code" :value 코드}]
+                      [:input {:type "hidden" :name "email" :value 이메일}]
+                      [:input {:type "hidden" :name "userid" :value 아이디}]
+                      (anti-forgery-field)])))
 
 (함수 가입-4단계 [요청 이메일 아이디]
   "이용약관 동의"
