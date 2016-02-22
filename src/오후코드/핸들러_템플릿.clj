@@ -21,8 +21,8 @@
                                     ["/templates/login" "로그인"]]]
                    [:li.list-group-item
                     [:a {:href path} text]])]]]]))
-   (GET "/templates/signup-1" 요청 가입뷰/가입-1단계)
-   (GET "/templates/signup-2" 요청 (가입뷰/가입-2단계 요청 "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/signup-3" 요청 (가입뷰/가입-3단계 요청 "hatemogi@gmail.com" "hatemogi" "123456"))
-   (GET "/templates/signup-4" 요청 (가입뷰/가입-4단계 요청 "hatemogi@gmail.com" "hatemogi"))
-   (GET "/templates/login" 요청 최상뷰/로그인-페이지)))
+   #_(GET "/templates/signup-1" 요청 가입뷰/가입-1단계)
+   #_(GET "/templates/signup-2" 요청 (가입뷰/가입-2단계 요청 "hatemogi@gmail.com" "hatemogi"))
+   #_(GET "/templates/signup-3" 요청 (가입뷰/가입-3단계 요청 "hatemogi@gmail.com" "hatemogi" "123456"))
+   #_(GET "/templates/signup-4" 요청 (가입뷰/가입-4단계 요청 "hatemogi@gmail.com" "hatemogi"))
+   #_(GET "/templates/login" 요청 최상뷰/로그인-페이지)))

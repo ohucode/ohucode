@@ -6,11 +6,11 @@
   (:require [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.lint :refer [wrap-lint]]
             [ring.middleware.session.memory :refer [memory-store]]
             [ring.logger.timbre :refer [wrap-with-logger]]
             [prone.middleware :refer [wrap-exceptions]]
             [taoensso.timbre :as timbre]
+            [clojure.edn]
             [오후코드.db :as db]
             [오후코드.뷰-최상 :as 최상뷰]
             [오후코드.핸들러-깃 :refer [smart-http-routes]]
@@ -20,7 +20,7 @@
 
 (함수 wrap-signed-user-only [핸들러]
   (fn [요청]
-    (만약-가정 [로그인? 요청]
+    (만약 (로그인? 요청)
       (핸들러 요청)
       (최상뷰/요청에러 "로그인이 필요합니다."))))
 
@@ -92,8 +92,25 @@
     (binding [*client-ip* (:remote-addr 요청)]
       (핸들러 요청))))
 
-(한번정의 ^:private
-  ^{:doc "리로드해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
+(함수- wrap-edn-params
+  "요청 컨텐트 타입이 text/edn이면 요청 본문을 EDN 형태로 읽어서 :params 맵에 추가합니다."
+  [핸들러]
+  (가정함 [(edn? [요청]
+                 (and
+                  (= "text/edn" (get-in 요청 [:headers "Content-Type"]))
+                  (:body 요청)))
+           (read-edn [^java.io.InputStream in]
+                     (clojure.edn/read {:eof nil}
+                                       (java.io.PushbackReader.
+                                        (java.io.InputStreamReader. in))))]
+      (fn [요청]
+        (핸들러 (만약 (edn? 요청)
+                  (assoc 요청 :params (read-edn (:body 요청)))
+                  요청)))))
+
+(한번정의
+ ^{:private true
+   :doc "리로드해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
   세션저장소 (memory-store))
 
 (정의 app
@@ -107,17 +124,20 @@
                 wrap-defaults api-defaults)
 
    (-> web-routes
+       wrap-with-logger     ; TODO: 로거 위치 고민 필요
        wrap-user-info
        wrap-bind-client-ip
        wrap-html-content-type
+       wrap-edn-params
        (wrap-defaults (-> site-defaults
                           ;; static 자원은 앞에서 미리 처리합니다
                           (dissoc :static)
+                          (dissoc :security)
                           (assoc-in [:session :store] 세션저장소))))
 
    (ANY "*" [] 최상뷰/not-found)))
 
 (정의 app-dev
   (-> (routes 템플릿-라우트 app)
-      (wrap-exceptions)
-      (wrap-reload)))
+      wrap-exceptions
+      wrap-reload))
