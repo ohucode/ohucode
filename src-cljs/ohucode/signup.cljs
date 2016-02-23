@@ -74,14 +74,12 @@
                               :on-click (fn [e]
                                           (.preventDefault e)
                                           (swap! 폼상태 assoc :기다림 true)
-                                          (js/setTimeout (fn []
-                                                           (swap! 앱상태 assoc :페이지 가입페이지)
-                                                           (swap! 가입상태 assoc :단계 2))
-                                                         500)
                                           (POST "/signup"
-                                              {:data (pr-str @가입상태)
-                                               :success #()
-                                               :failure #()}))}])]])))
+                                              {:data @가입상태
+                                               :success (fn []
+                                                          (swap! 가입상태 assoc :단계 2)
+                                                          (swap! 앱상태 assoc :페이지 가입페이지))
+                                               :failure #(js/console.log %)}))}])]])))
 
 (defn 신청2 []
   (let [폼상태 (r/atom {})]

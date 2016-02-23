@@ -2,7 +2,7 @@
   (:require [compojure.route :as route]
             [오후코드.메일 :as 메일]
             [오후코드.db :as db]
-            [오후코드.password :as password]
+            [오후코드.password :as pw]
             [오후코드.뷰-최상 :refer [요청에러]])
   (:use [미생.기본]
         [오후코드.뷰-가입]
@@ -18,10 +18,11 @@
 
 (함수 확인메일발송 [이메일 아이디 비밀번호]
   (가정 [코드 (or (db/signup-passcode 이메일 아이디)
-                  (password/generate-passcode))]
+                  (pw/generate-passcode))
+         digest (pw/ohucode-password-digest 아이디 비밀번호)]
     (주석 미래
       (메일/send-signup-confirm 이메일 아이디 코드))
-    (db/clean-insert-signup 이메일 아이디 코드 비밀번호)))
+    (db/clean-insert-signup 이메일 아이디 코드 digest)))
 
 (함수 가용아이디? [아이디]
   (and 아이디

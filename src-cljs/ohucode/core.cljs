@@ -8,8 +8,11 @@
 
 (def 서비스명 "오후코드")
 
-(defn POST [url attrs]
-  )
+(defn POST [url {data :data success :success :as 속성}]
+  (js/console.log #js [url (pr-str data)])
+  (js/$.ajax url  #js {:contentType "text/edn"
+                       :method "POST"
+                       :data (pr-str data) :success success}))
 
 (defn 다음버튼 [속성]
   [:button.btn.btn-primary (dissoc 속성 :기다림)

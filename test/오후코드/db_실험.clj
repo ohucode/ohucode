@@ -24,7 +24,7 @@
   (실험 "now 함수 확인"
     (가정 [n (now) n-1m (now -60)]
       (확인* [t] (instance? java.sql.Timestamp t) n n-1m)
-      (확인 (> 5
+      (확인 (> 10
                (Math/abs (- (.getTime n)
                             (.getTime n-1m)
                             60000))))))
