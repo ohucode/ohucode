@@ -132,7 +132,7 @@
        (wrap-defaults (-> site-defaults
                           ;; static 자원은 앞에서 미리 처리합니다
                           (dissoc :static)
-                          (dissoc :security)
+                          (dissoc :security) ;; TODO: AJAX CSRF 대응합시다.
                           (assoc-in [:session :store] 세션저장소))))
 
    (ANY "*" [] 최상뷰/not-found)))
