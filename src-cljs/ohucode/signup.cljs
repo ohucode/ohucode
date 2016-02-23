@@ -51,6 +51,7 @@
   (let [폼상태 (r/atom {})]
     (fn [속성]
       [:form.form-horizontal
+       [:div.alert.alert-warning "오류"]
        [:fieldset {:disabled (:기다림 @폼상태)}
         (폼그룹 {:label "이메일" :class (유효성-클래스 :이메일)}
                 [입력컨트롤 {:type "email" :name "이메일" :value (:이메일 @가입상태)
@@ -75,7 +76,8 @@
                                           (.preventDefault e)
                                           (swap! 폼상태 assoc :기다림 true)
                                           (POST "/signup"
-                                              {:data @가입상태
+                                              {:data (select-keys @가입상태
+                                                                  [:아이디 :이메일 :비밀번호])
                                                :success (fn []
                                                           (swap! 가입상태 assoc :단계 2)
                                                           (swap! 앱상태 assoc :페이지 가입페이지))
@@ -85,6 +87,7 @@
   (let [폼상태 (r/atom {})]
     (fn [속성]
       [:div
+       [:div.alert.alert-warning "에러"]
        [:form.form-horizontal
         [:fieldset {:disabled (:기다림 @폼상태)}
          (폼그룹 {:label "이메일"} [:div.form-control-static (:이메일 @가입상태)])

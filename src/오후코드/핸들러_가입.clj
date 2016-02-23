@@ -48,13 +48,11 @@
         (작용
           (확인메일발송 이메일 아이디 비밀번호)
           "TODO: EDN 응답 주기")
-        (작용
-          (-> (redirect "/signup")
-              (assoc-in [:session :_flash] "이메일 주소나 아이디를 사용할 수 없습니다.")))))
-    (POST "/2" [email userid code :as 요청]
-      (만약 (and (가용이메일? email)
-                 (가용아이디? userid)
-                 (= code (db/signup-passcode email userid)))
+        {:status 409 :body {:message "사용할 수 없는 아이디 또는 이메일 주소입니다."}}))
+    (POST "/2" [이메일 아이디 코드 :as 요청]
+      (만약 (and (가용이메일? 이메일)
+                 (가용아이디? 아이디)
+                 (= 코드 (db/signup-passcode 이메일 아이디)))
         "TODO: EDN 응답 주기"
         (요청에러 요청 "등록 코드 확인 실패")))
     (POST "/3" [email userid password code username :as 요청]

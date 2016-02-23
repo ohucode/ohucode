@@ -40,7 +40,7 @@
 (함수 clean-insert-signup [email userid code digest]
   (가정 [attrs {:email email :userid userid :code code :password_digest digest}]
     (transaction
-     (delete signups (where (dissoc attrs :code)))
+     (delete signups (where (select-keys attrs [:email :userid])))
      (insert signups (values attrs))
      (insert-audit "guest" "reqcode" attrs))))
 

@@ -1,9 +1,5 @@
 (ns ohucode.top
   (:require [reagent.core :as r]
-            [cljsjs.jquery]
-            [cljsjs.marked]
-            [cljsjs.highlight]
-            [cljsjs.highlight.langs.clojure]
             [ohucode.state :refer [앱상태]]
             [ohucode.signup :as 가입]
             [ohucode.core :refer [서비스명 문단 마크다운 링크 사용자 관리자?]]))

@@ -87,7 +87,7 @@
         응답
         (content-type 응답 "text/html; charset=utf-8")))))
 
-(함수 wrap-bind-client-ip [핸들러]
+(함수- wrap-bind-client-ip [핸들러]
   (fn [요청]
     (binding [*client-ip* (:remote-addr 요청)]
       (핸들러 요청))))
@@ -97,7 +97,7 @@
   [핸들러]
   (가정함 [(edn? [요청]
                  (and
-                  (= "text/edn" (get-in 요청 [:headers "Content-Type"]))
+                  (= "text/edn" (get-in 요청 [:headers "content-type"]))
                   (:body 요청)))
            (read-edn [^java.io.InputStream in]
                      (clojure.edn/read {:eof nil}
