@@ -2,7 +2,8 @@
 
 ### 가입 신청
 
-* AJAX POST로 edn보내서 컴포저에서 읽기
+* [DONE] AJAX POST로 edn보내서 컴포저에서 읽기
+* 응답 본문이 map이면 accept 헤더에 따라 EDN이나 JSON으로 본문 보내기
 * *anti-forgery-token* 어떻게 받아올까?
 
 ### 문제해결
