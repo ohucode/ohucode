@@ -63,8 +63,9 @@ $ rlwrap lein repl
 
 ``` sh
 $ rlwrap lein figwheel
-> (start-autobuild)
 ```
+
+클로저스크립트 REPL이 준비되고, 파일변경시 자동 컴파일됩니다.
 
 ### 9. 웹브라우저로 접속
 
@@ -86,7 +87,6 @@ http://0.0.0.0:10000/
 ### 클로저스크립트 자동 컴파일 & 반영
 
     $ rlwrap lein figwheel
-    > (start-autobuild)
 
 ### 클로저스크립트 (수동) 컴파일
 
