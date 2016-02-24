@@ -2,7 +2,8 @@
   (:require [reagent.core :as r]
             [ohucode.state :refer [앱상태]]
             [ohucode.signup :as 가입]
-            [ohucode.core :refer [서비스명 문단 마크다운 링크 사용자 관리자?]]))
+            [ohucode.core :refer [서비스명 문단 마크다운 링크 사용자 관리자?]]
+            [cljsjs.bootstrap :as b]))
 
 (defn 서비스이용약관 []
   [:div.container-fluid
@@ -32,6 +33,23 @@
        [:div.page-header [:h4 [:i.fa.fa-user-plus] " 가입 신청"]]
        [가입/신청1]]]]]])
 
+(def 계정정보메뉴
+  (with-meta
+    (fn [속성]
+      [:li.dropdown
+       [:a.dropdown-toggle
+        {:id "accountMenu1" :role "button" :data-toggle "dropdown"
+         :aria-haspopup true :aria-expanded true}
+        "아이디" " " [:span.caret]]
+       [:ul.dropdown-menu {:aria-labelledby "accountMenu1"}
+        [:li [링크 {:href "/user/profile"}   [:i.fa.fa-fw.fa-user]     " 프로필"]]
+        [:li [링크 {:href "/user/message"}   [:i.fa.fa-fw.fa-envelope] " 메시지"]]
+        [:li [링크 {:href "/user/bookmarks"} [:i.fa.fa-fw.fa-bookmark] " 책갈피"]]
+        [:li [링크 {:href "/user/settings"}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
+        [:li.divider {:role "separator"}]
+        [:li [링크 {:href "/user/logout"}    [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
+    {:component-did-mount #(js/console.log "계정정보 마운트됨")}))
+
 (defn 네비게이션 [속성]
   [:nav.navbar.navbar-inverse.navbar-static-top
    [:div.container-fluid
@@ -46,12 +64,13 @@
      [:ul.nav.navbar-nav
       [:li [링크 {:href "/"} "홈"]]
       [:li [링크 {:href "/help"} "도움말"]]]
-     (if-let [사용자 (사용자)]
+     (if-let [사용자 {:아이디 "hatemogi"}]
        [:ul.nav.navbar-nav.navbar-right
         (if (관리자?)
           [:li [:a {:href "/admin"} "관리자"]])
-        [:li [:a {:href "#" :title "새 저장소"} [:span.octicon.octicon-plus]]]
-        [:li [:a {:href "/user/logout"} (:아이디 사용자)]]]
+        [:li
+         [링크 {:href "/new" :title "새 저장소 만들기"} [:span.octicon.octicon-plus]]]
+        [계정정보메뉴]]
        [:ul.nav.navbar-nav.navbar-right
         [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])
 

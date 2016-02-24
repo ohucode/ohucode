@@ -15,10 +15,12 @@
                        :data (pr-str data) :success success}))
 
 (defn 다음버튼 [속성]
-  [:button.btn.btn-primary (dissoc 속성 :기다림)
-   "다음 " (if (:기다림 속성)
-             [:i.fa.fa-spin.fa-spinner]
-             [:i.fa.fa-angle-double-right])])
+  [:button.btn.btn-primary (dissoc 속성 :기다림 :텍스트)
+   (or (:텍스트 속성) "다음")
+   " "
+   (if (:기다림 속성)
+     [:i.fa.fa-spin.fa-spinner]
+     [:i.fa.fa-angle-double-right])])
 
 (defn 입력컨트롤 [속성 & 본문]
   (into [:input.form-control 속성] 본문))
@@ -50,3 +52,8 @@
                                       (.preventDefault e)
                                       (.setToken 히스토리 href)))]
           본문)))
+
+(defn 알림-div [타입 텍스트]
+  [:div.alert {:class (str "alert-" (name 타입)) :role "alert"}
+   [:button.close {:data-dismiss "alert" :aria-label "닫기"}
+    [:i.fa.fa-close {:aria-hidden true}]] 텍스트])

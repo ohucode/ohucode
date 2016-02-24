@@ -1,7 +1,7 @@
 (ns ohucode.signup
   (:require [reagent.core :as r]
             [cljsjs.jquery]
-            [ohucode.core :refer [POST 서비스명 다음버튼 링크 입력컨트롤]]
+            [ohucode.core :refer [POST 서비스명 다음버튼 링크 입력컨트롤 알림-div]]
             [ohucode.state :refer [앱상태]]))
 
 (defonce ^:private 가입상태
@@ -51,7 +51,7 @@
   (let [폼상태 (r/atom {})]
     (fn [속성]
       [:form.form-horizontal
-       [:div.alert.alert-warning "오류"]
+       [알림-div :warning "문제가 있어요"]
        [:fieldset {:disabled (:기다림 @폼상태)}
         (폼그룹 {:label "이메일" :class (유효성-클래스 :이메일)}
                 [입력컨트롤 {:type "email" :name "이메일" :value (:이메일 @가입상태)
@@ -70,7 +70,8 @@
                              :name "비밀번호" :value (:비밀번호 @가입상태)
                              :auto-complete "current-password"
                              :on-change (on-change :비밀번호)}])
-        (폼그룹 {} [다음버튼 {:disabled (not (:신청1 @검증상태))
+        (폼그룹 {} [다음버튼 {:텍스트 "무료 가입하기"
+                              :disabled (not (:신청1 @검증상태))
                               :기다림 (:기다림 @폼상태)
                               :on-click (fn [e]
                                           (.preventDefault e)
@@ -87,7 +88,7 @@
   (let [폼상태 (r/atom {})]
     (fn [속성]
       [:div
-       [:div.alert.alert-warning "에러"]
+       [알림-div :danger "문제가 커요"]
        [:form.form-horizontal
         [:fieldset {:disabled (:기다림 @폼상태)}
          (폼그룹 {:label "이메일"} [:div.form-control-static (:이메일 @가입상태)])
@@ -109,9 +110,7 @@
                   "재발송 " [:i.fa.fa-send]])
          (:anti-forgery-field @가입상태)]]
        [:div.alert.alert-info.text-center
-        "보내드린 메일에 있는 " [:strong "확인코드 "] "6자리 숫자를 입력해주세요. "
-        (str @가입상태)
-        (str @검증상태)]])))
+        "보내드린 메일에 있는 " [:strong "확인코드 "] "6자리 숫자를 입력해주세요. "]])))
 
 (defn 신청3 "기본 프로필 입력" []
   (let [폼상태 (r/atom {})]
