@@ -31,7 +31,7 @@
                  [secretary "1.2.3"]
                  [cljsjs/bootstrap "3.3.6-0"]
                  ;;[cljsjs/react-bootstrap "0.28.1-1"]
-                 ;;[cljsjs/react-motion "0.4.1-0"]
+                 [cljsjs/react-motion "0.4.1-1"]
                  [cljsjs/jquery "2.1.4-0"]
                  [cljsjs/marked "0.3.5-0"]
                  [cljsjs/highlight "8.4-0"]

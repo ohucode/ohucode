@@ -40,7 +40,7 @@
        [:a.dropdown-toggle
         {:id "accountMenu1" :role "button" :data-toggle "dropdown"
          :aria-haspopup true :aria-expanded true}
-        "아이디" " " [:span.caret]]
+        "hatemogi" " " [:span.caret]]
        [:ul.dropdown-menu {:aria-labelledby "accountMenu1"}
         [:li [링크 {:href "/user/profile"}   [:i.fa.fa-fw.fa-user]     " 프로필"]]
         [:li [링크 {:href "/user/message"}   [:i.fa.fa-fw.fa-envelope] " 메시지"]]

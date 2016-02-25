@@ -1,5 +1,6 @@
 (ns ohucode.core
   (:require [reagent.core :as r]
+            [cljs.tools.reader.edn :refer [read-string]]
             [cljsjs.jquery]
             [cljsjs.marked]
             [cljsjs.highlight]
@@ -8,11 +9,18 @@
 
 (def 서비스명 "오후코드")
 
-(defn POST [url {data :data success :success :as 속성}]
+(defn POST [url {:keys [data success error] :as 속성}]
   (js/console.log #js [url (pr-str data)])
-  (js/$.ajax url  #js {:contentType "text/edn"
+  (js/$.ajax url  #js {:dataType "edn"
+                       :accepts #js {:edn "application/edn"}
+                       :cache false
+                       :contentType "application/edn"
+                       :converters #js {"text edn" read-string}
+                       :timeout 3000
                        :method "POST"
-                       :data (pr-str data) :success success}))
+                       :data (pr-str data)
+                       :success success
+                       :error error}))
 
 (defn 다음버튼 [속성]
   [:button.btn.btn-primary (dissoc 속성 :기다림 :텍스트)
@@ -54,6 +62,6 @@
           본문)))
 
 (defn 알림-div [타입 텍스트]
-  [:div.alert {:class (str "alert-" (name 타입)) :role "alert"}
+  [:div.alert.alert-dismissible.fade.in {:class (str "alert-" (name 타입)) :role "alert"}
    [:button.close {:data-dismiss "alert" :aria-label "닫기"}
     [:i.fa.fa-close {:aria-hidden true}]] 텍스트])

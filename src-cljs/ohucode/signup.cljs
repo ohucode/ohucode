@@ -79,16 +79,26 @@
                                           (POST "/signup"
                                               {:data (select-keys @가입상태
                                                                   [:아이디 :이메일 :비밀번호])
-                                               :success (fn []
+                                               :success (fn [data status xhr]
+                                                          (js/console.log data)
                                                           (swap! 가입상태 assoc :단계 2)
                                                           (swap! 앱상태 assoc :페이지 가입페이지))
-                                               :failure #(js/console.log %)}))}])]])))
+                                               :error (fn [xhr status body]
+                                                        (js/console.log status body))}))}])]])))
 
 (defn 신청2 []
-  (let [폼상태 (r/atom {})]
+  (let [폼상태 (r/atom {})
+        코드전송 (fn [e]
+                   (POST "/signup/2"
+                       {:data (select-keys @가입상태 [:이메일 :아이디 :코드])
+                        :success (fn [r])
+                        :error (fn [xhr status err]
+                                 (js/console.log #js [xhr status err])
+                                 (js/console.log (.-responseText xhr)))}))]
     (fn [속성]
       [:div
-       [알림-div :danger "문제가 커요"]
+       (if-let [오류 (:오류 @폼상태)]
+         [알림-div :warning (:설명 오류)])
        [:form.form-horizontal
         [:fieldset {:disabled (:기다림 @폼상태)}
          (폼그룹 {:label "이메일"} [:div.form-control-static (:이메일 @가입상태)])
@@ -102,9 +112,11 @@
                                :on-click (fn [e]
                                            (.preventDefault e)
                                            (swap! 폼상태 assoc :기다림 true)
+                                           (코드전송 e)
                                            (js/setTimeout (fn []
-                                                            (swap! 가입상태 assoc :단계 3))
-                                                          1000))})
+                                                            (swap! 폼상태 assoc :오류 {:설명 "문제가 있어요!"})
+                                                            #_(swap! 가입상태 assoc :단계 3))
+                                                          500))})
                  " "
                  [:button.btn.btn-info {:title "확인 메일 재발송 요청하기"}
                   "재발송 " [:i.fa.fa-send]])

@@ -93,20 +93,32 @@
       (핸들러 요청))))
 
 (함수- wrap-edn-params
-  "요청 컨텐트 타입이 text/edn이면 요청 본문을 EDN 형태로 읽어서 :params 맵에 추가합니다."
+  "요청 컨텐트 타입이 application/edn이면 요청 본문을 EDN 형태로 읽어서 :params 맵에 추가합니다."
   [핸들러]
-  (가정함 [(edn? [요청]
-                 (and
-                  (= "text/edn" (get-in 요청 [:headers "content-type"]))
-                  (:body 요청)))
-           (read-edn [^java.io.InputStream in]
-                     (clojure.edn/read {:eof nil}
-                                       (java.io.PushbackReader.
-                                        (java.io.InputStreamReader. in))))]
-      (fn [요청]
-        (핸들러 (만약 (edn? 요청)
-                  (assoc 요청 :params (read-edn (:body 요청)))
-                  요청)))))
+  (가정 [edn? (fn [요청]
+                (and
+                 (= "application/edn" (get-in 요청 [:headers "content-type"]))
+                 (:body 요청)))
+
+         ;; [주의] clojure.core/read-string은 eval이 되므로 쓰지 않습니다.
+         ;; http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/read
+         ;; clojure.edn/read-string은 괜찮습니다.
+         read-edn (합성 clojure.edn/read-string slurp)]
+    (fn [요청]
+      (만약-가정 [본문 (edn? 요청)]
+        (핸들러 (assoc 요청 :params (병합 (:params 요청) (read-edn 본문))))
+        (핸들러 요청)))))
+
+(함수- wrap-edn-response
+  "응답 본문이 맵이면 EDN 표기로 바꿔 보냅니다."
+  [핸들러]
+  (fn [요청]
+    (만약-가정 [응답 (핸들러 요청)]
+      (만약 (map? (:body 응답))
+        (-> 응답
+            (assoc :body (pr-str (:body 응답)))
+            (content-type "application/edn"))
+        응답))))
 
 (한번정의
  ^{:private true
@@ -128,6 +140,7 @@
        wrap-user-info
        wrap-bind-client-ip
        wrap-html-content-type
+       wrap-edn-response
        wrap-edn-params
        (wrap-defaults (-> site-defaults
                           ;; static 자원은 앞에서 미리 처리합니다
