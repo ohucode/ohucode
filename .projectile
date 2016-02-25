@@ -1,7 +1,4 @@
--resources/public/cljs
--resources/public/cljs.min
--target
--bower_components
+-resources/public/js
 -target
 -checkouts
 -fixture

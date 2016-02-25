@@ -5,8 +5,6 @@
         [hiccup.core]
         [hiccup.page]))
 
-
-
 (함수 레이아웃 [요청 옵션 & 본문]
   "opts {:title "" :css [] :js []}"
   {:pre (seq? (:js 옵션))}
@@ -26,8 +24,7 @@
          [:body
           [:div#app]
           (사상 include-js
-                (리스트* "/cljs/main.js"
-                       (:js 요청)))]))
+                (리스트* "/js/main.js" (:js 요청)))]))
 
 (함수 anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"

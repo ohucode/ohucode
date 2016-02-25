@@ -57,12 +57,12 @@
      :figwheel true
      :compiler {:main ohucode.main
                 :optimizations :none
-                :asset-path "cljs"
-                :output-to "resources/public/cljs/main.js"
-                :output-dir "resources/public/cljs"}}
+                :asset-path "js"
+                :output-to "resources/public/js/main.js"
+                :output-dir "resources/public/js"}}
     {:id "min"
      :source-paths ["src-cljs"]
      :compiler {:main ohucode.main
                 :optimizations :advanced
                 :pretty-print false
-                :output-to "resources/public/cljs/main.js"}}]})
+                :output-to "resources/public/js/main.js"}}]})

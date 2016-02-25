@@ -10,6 +10,5 @@ pom.xml.asc
 /.nrepl-port
 .idea
 *.iml
-bower_components
 *.log
-resources/public/cljs*
+resources/public/js*
