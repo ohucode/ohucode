@@ -9,7 +9,7 @@
 
 (def 서비스명 "오후코드")
 
-(defn POST [url {:keys [data success error] :as 속성}]
+(defn POST [url {:keys [data success error complete] :as 속성}]
   (js/console.log #js [url (pr-str data)])
   (js/$.ajax url  #js {:dataType "edn"
                        :accepts #js {:edn "application/edn"}
@@ -20,7 +20,8 @@
                        :method "POST"
                        :data (pr-str data)
                        :success success
-                       :error error}))
+                       :error error
+                       :complete complete}))
 
 (defn 다음버튼 [속성]
   [:button.btn.btn-primary (dissoc 속성 :기다림 :텍스트)
@@ -65,3 +66,8 @@
   [:div.alert.alert-dismissible.fade.in {:class (str "alert-" (name 타입)) :role "alert"}
    [:button.close {:data-dismiss "alert" :aria-label "닫기"}
     [:i.fa.fa-close {:aria-hidden true}]] 텍스트])
+
+(defn prevent-default [핸들러]
+  (fn [e]
+    (.preventDefault e)
+    (핸들러 e)))

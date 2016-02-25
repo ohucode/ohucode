@@ -37,8 +37,9 @@
 
 (defentity signups)
 
-(함수 clean-insert-signup [email userid code digest]
-  (가정 [attrs {:email email :userid userid :code code :password_digest digest}]
+(함수 clean-insert-signup [이메일 아이디 코드 비밀번호]
+  (가정 [digest (pw/ohucode-password-digest 아이디 비밀번호)
+         attrs {:email 이메일 :userid 아이디 :code 코드 :password_digest digest}]
     (transaction
      (delete signups (where (select-keys attrs [:email :userid])))
      (insert signups (values attrs))
@@ -70,20 +71,22 @@
 
 (함수 insert-new-user [{email :email
                         userid :userid
-                        password :password
                         code :code
                         username :name
                         :as attrs}]
-  {:pre [(not-any? 공? [email userid code username password])]}
+  {:pre [(not-any? 공? [email userid code username])]}
 
   (transaction
-   (when (영? (delete signups (where {:email email :userid userid :code code})))
-     (throw (RuntimeException. "code does not match")))
-   (insert users (values {:userid userid :email email :name username
-                          :password_digest
-                          (pw/ohucode-password-digest userid password)}))
-   (insert emails (values {:email email :userid userid :verified_at (now)}))
-   (insert-audit userid "signup" {:email email})))
+   (가정 [조건 {:email email :userid userid :code code}]
+     (만약-가정 [digest (-> (select signups (where 조건))
+                            첫째 :password_digest)]
+       (작용
+         (delete signups (where 조건))
+         (insert users (values {:userid userid :email email :name username
+                                :password_digest digest}))
+         (insert emails (values {:email email :userid userid :verified_at (now)}))
+         (insert-audit userid "signup" {:email email}))
+       (throw (RuntimeException. "코드가 틀립니다"))))))
 
 (함수 valid-user-password? [아이디 비밀번호]
   (만약-가정 [raw (-> (select-user 아이디)

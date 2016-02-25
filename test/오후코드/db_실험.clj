@@ -8,15 +8,15 @@
         [korma.db]
         [korma.core]))
 
-(매크로 signup-transaction [bindings & body]
+(매크로 가입-트랜잭션 [bindings & body]
   `(가정 [코드# (오후코드.password/generate-passcode)
           아이디# (str "test_" 코드#)
           이메일# (str 아이디# "@test.com")
-          다이제스트# "some-password"]
+          비밀번호# (str "pass_" 아이디#)]
      (korma.db/transaction
       (try
-        (오후코드.db/clean-insert-signup 이메일# 아이디# 코드# 다이제스트#)
-        (가정 [[~@bindings] [이메일# 아이디# 코드# 다이제스트#]]
+        (오후코드.db/clean-insert-signup 이메일# 아이디# 코드# 비밀번호#)
+        (가정 [[~@bindings] [이메일# 아이디# 코드# 비밀번호#]]
           ~@body)
         (finally (korma.db/rollback))))))
 
@@ -34,33 +34,34 @@
 
   (실험 "가입 이메일 인증코드 유효시간 처리"
     (바인딩 [*passcode-expire-sec* -10]
-      (signup-transaction [email userid code digest]
-                          (확인 (nil? (signup-passcode email userid))))))
+            (가입-트랜잭션 [이메일 아이디 코드 비밀번호]
+                           (확인 (nil? (signup-passcode 이메일 아이디))))))
+
   (실험 "signups 레코드 추가"
     (가정 [count-signup
           (fn [] (-> (select signups (aggregate (count :*) :count))
                      first :count))
           cnt (count-signup)]
-      (signup-transaction [email userid code digest]
-                          (확인 (= (증가 cnt) (count-signup)) "새 레코드가 추가 됐어야 해요.")
-                          (확인 (= code) (signup-passcode email userid))
-                          (clean-insert-signup email userid (generate-passcode) digest)
-                          (확인 (= (증가 cnt) (count-signup)) "이전 레코드 삭제하고 추가 됐어야 합니다.")
-                          (확인 (not= code (signup-passcode email userid))))))
+      (가입-트랜잭션 [이메일 아이디 코드 비밀번호]
+                     (확인 (= (증가 cnt) (count-signup)) "새 레코드가 추가 됐어야 해요.")
+                     (확인 (= 코드) (signup-passcode 이메일 아이디))
+                     (clean-insert-signup 이메일 아이디 (generate-passcode) 코드)
+                     (확인 (= (증가 cnt) (count-signup)) "이전 레코드 삭제하고 추가 됐어야 합니다.")
+                     (확인 (not= 코드 (signup-passcode 이메일 아이디))))))
 
   (실험 "code 틀린 사용자 신규 가입"
     (확인 (thrown? Exception
-                   (signup-transaction
-                    [email userid code digest]
-                    (insert-new-user {:code "not-a-valid-code" :email email :userid userid
-                                      :name "코드틀린유저" :password "anything"})))))
+                   (가입-트랜잭션 [이메일 아이디 코드 비밀번호]
+                    (insert-new-user {:code "not-a-valid-code" :email 이메일 :userid 아이디
+                                      :name "코드틀린유저"})))))
 
   (실험 "사용자 신규 가입"
-    (signup-transaction
-     [email userid code digest]
-     (가정 [password (str "pass" code)]
-       (insert-new-user {:code code :email email :userid userid
-                         :name "테스트유저" :password password})
-       (확인 (nil? (signup-passcode email userid)) "가입 신청 정보는 삭제합니다")
-       (확인 (not= password (:password_digest (select-user userid))) "패스워드 해시 보관")
-       (확인 (valid-user-password? userid password)) "패스워드 확인"))))
+    (가입-트랜잭션
+     [이메일 아이디 코드 비밀번호]
+     (insert-new-user {:code 코드 :email 이메일 :userid 아이디
+                       :name "테스트유저"})
+     (확인 (nil? (signup-passcode 이메일 아이디)) "가입 신청 정보는 삭제합니다")
+     (확인 (= (ohucode-password-digest 아이디 비밀번호)
+              (:password_digest (select-user 아이디)))
+           "패스워드 해시 보관")
+     (확인 (valid-user-password? 아이디 비밀번호)) "패스워드 확인")))

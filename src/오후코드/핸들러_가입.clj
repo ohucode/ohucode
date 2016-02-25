@@ -50,17 +50,13 @@
           {:status 200 :body {:message "확인코드를 이메일로 발송했습니다."}})
         {:status 409 :body {:message "사용할 수 없는 아이디 또는 이메일 주소입니다."}}))
     (POST "/2" [이메일 아이디 코드 :as 요청]
-      (만약 (and (가용이메일? 이메일)
-                 (가용아이디? 아이디)
-                 (= 코드 (db/signup-passcode 이메일 아이디)))
+      (만약 (= 코드 (db/signup-passcode 이메일 아이디))
         {:status 200 :body {:message "코드 확인 성공"}}
-        {:status 409 :body {:message "등록 코드 확인 실패"}}))
-    (POST "/3" [email userid password code username :as 요청]
-      (만약 (and (가용이메일? email) (가용아이디? userid)
-                 (= code (db/signup-passcode email userid)))
+        {:status 412 :body {:message "등록 코드 확인 실패"}}))
+    (POST "/3" [이메일 아이디 코드 이름 :as 요청]
+      (만약 (= 코드 (db/signup-passcode 이메일 아이디))
         (작용
-          (db/insert-new-user {:userid userid :email email
-                               :password password :code code
-                               :name username})
-          "TODO: EDN 응답 주기")
-        (요청에러 "파라미터 오류")))))
+          (db/insert-new-user {:userid 아이디 :email 이메일 :code 코드
+                               :name 이름})
+          {:status 201 :body {:message "가입되었습니다"}})
+        {:status 412 :body {:message "가입 실패"}}))))
