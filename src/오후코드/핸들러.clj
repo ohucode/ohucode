@@ -16,8 +16,7 @@
             [오후코드.뷰-최상 :as 최상뷰]
             [오후코드.핸들러-깃 :refer [smart-http-routes]]
             [오후코드.핸들러-관리 :refer [관리-라우트]]
-            [오후코드.핸들러-가입 :refer [가입-라우트]]
-            [오후코드.핸들러-템플릿 :refer [템플릿-라우트]]))
+            [오후코드.핸들러-가입 :refer [가입-라우트]]))
 
 (함수 wrap-signed-user-only [핸들러]
   (fn [요청]
@@ -143,6 +142,6 @@
    (ANY "*" [] 최상뷰/not-found)))
 
 (정의 app-dev
-  (-> (routes 템플릿-라우트 app)
+  (-> app
       wrap-exceptions
       wrap-reload))
