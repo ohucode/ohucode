@@ -5,6 +5,7 @@
         [hiccup.core]
         [hiccup.page]))
 
+;; 제거 예정 (대부분의 뷰는 클로저스크립트로 넘어갑니다)
 (함수 레이아웃 [요청 옵션 & 본문]
   "opts {:title "" :css [] :js []}"
   {:pre (seq? (:js 옵션))}
@@ -25,6 +26,23 @@
           [:div#app]
           (사상 include-js
                 (리스트* "/js/main.js" (:js 요청)))]))
+
+(함수 기본 []
+  (html5 {:lang "ko"}
+         [:head
+          [:meta {:charset "utf-8"}]
+          [:meta {:http-equiv "X-UA-Compatible", :content "IE=edge"}]
+          [:meta {:name "viewport", :content "width=device-width, initial-scale=1"}]
+          [:title 서비스명]
+          (사상 include-css
+                ["//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+                 "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+                 "/css/color-brewer.css"
+                 "/css/octicons/octicons.css"
+                 "/css/ohucode.css"])]
+         [:body
+          [:div#app]
+          (사상 include-js ["/js/main.js"])]))
 
 (함수 anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"

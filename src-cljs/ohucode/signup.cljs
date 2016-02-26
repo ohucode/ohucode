@@ -60,7 +60,8 @@
                                (swap! 가입상태 assoc :단계 2)
                                (swap! 앱상태 assoc :페이지 가입페이지))
                     :error (fn [xhr status body]
-                             (js/console.log status body))
+                             (js/console.log status body)
+                             (swap! 폼상태 assoc :오류 {:설명 (.-responseText xhr)}))
                     :complete (fn [] (swap! 폼상태 dissoc :기다림))}) )]
     (fn [속성]
       [:form.form-horizontal

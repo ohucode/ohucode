@@ -12,6 +12,7 @@
             [taoensso.timbre :as timbre]
             [clojure.edn]
             [오후코드.db :as db]
+            [오후코드.뷰 :as 뷰]
             [오후코드.뷰-최상 :as 최상뷰]
             [오후코드.핸들러-깃 :refer [smart-http-routes]]
             [오후코드.핸들러-관리 :refer [관리-라우트]]
@@ -29,30 +30,25 @@
             (-> (db/select-user 아이디)
                 (dissoc :password_digest :created_at :updated_at))))
 
-(정의 user-routes
+(정의 이용자-라우트
   (routes
    (context "/user" []
-     (GET "/login" 요청 최상뷰/로그인-페이지)
-     (POST "/login" [userid password]
-       (만약 (db/valid-user-password? userid password)
-         (-> (redirect "/")
-             (assoc :flash "로그인 성공")
-             (로그인 userid))
-         (-> (redirect "/user/login")
-             (assoc :flash "인증 실패"))))
+     (POST "/login" [아이디 비밀번호]
+       (만약 (db/valid-user-password? 아이디 비밀번호)
+         {:status 200 :body {:message "로그인 성공"}} ;; TODO: 로그인 쿠키 or 세션 설정합시다.
+         {:status 401 :body {:message "인증 실패"}}))
      (GET "/logout" 요청
        (db/insert-audit (or (:userid (session-user 요청))
                             "guest")
                         "logout" {})
-       (-> (최상뷰/basic-content 요청 "로그아웃" "로그아웃처리")
-           response
-           (update :session dissoc :user))))
+       ;; TODO: 로그인 쿠기 or 세션 제거
+       {:status 200 :body {:message "로그아웃 처리"}}))
    (context "/:user" [user]
      (GET "/" [] 최상뷰/not-found)
      (GET "/settings" [] 최상뷰/미구현)
      (GET "/profile" [] 최상뷰/미구현))))
 
-(정의 project-routes
+(정의 프로젝트-라우트
   (context "/:user/:project" [user project]
     (GET "/" [] 최상뷰/not-found)
     (GET "/commits" [] 최상뷰/미구현)
@@ -65,20 +61,17 @@
     (GET "/branches" [] 최상뷰/미구현)
     (GET "/issues" [] 최상뷰/미구현)))
 
-(정의 web-routes
+(정의 웹-라우트
   (routes
-   (GET "/" 요청
-     (만약 (로그인? 요청)
-       최상뷰/대시보드
-       최상뷰/intro-guest))
+   (GET "/" [] 뷰/기본)
    (GET "/throw" [] (예외발생 (RuntimeException. "스택트레이스 실험")))
-   (GET "/terms-of-service" [] 최상뷰/terms-of-service)
-   (GET "/privacy-policy" [] 최상뷰/privacy-policy)
-   (GET "/credits" [] 최상뷰/credits)
+   (GET "/tos" [] 뷰/기본)
+   (GET "/policy" [] 뷰/기본)
+   (GET "/credits" [] 뷰/기본)
    가입-라우트
    관리-라우트
-   user-routes
-   project-routes))
+   이용자-라우트
+   프로젝트-라우트))
 
 (함수- wrap-html-content-type [핸들러]
   (fn [요청]
@@ -134,7 +127,7 @@
    (wrap-routes smart-http-routes
                 wrap-defaults api-defaults)
 
-   (-> web-routes
+   (-> 웹-라우트
        wrap-with-logger     ; TODO: 로거 위치 고민 필요
        wrap-user-info
        wrap-bind-client-ip

@@ -3,9 +3,9 @@
             [오후코드.메일 :as 메일]
             [오후코드.db :as db]
             [오후코드.password :as pw]
+            [오후코드.뷰 :as 뷰]
             [오후코드.뷰-최상 :refer [요청에러]])
   (:use [미생.기본]
-        [오후코드.뷰-가입]
         [compojure.core]
         [ring.util.response]))
 
@@ -13,8 +13,8 @@
   #{"admin" "js" "css" "static" "fonts" "signup" "login" "logout"
     "settings" "help" "support" "notifications" "notification"
     "status" "components" "news" "account" "templates"
-    "terms-of-service" "privacy-policy" "test" "ohucode" "root" "system"
-    "credits"})
+    "tos" "policy" "test" "ohucode" "root" "system"
+    "credits" "user" "md"})
 
 (함수 확인메일발송 [이메일 아이디 비밀번호]
   (가정 [코드 (or (db/signup-passcode 이메일 아이디)
@@ -38,7 +38,7 @@
 
 (정의 가입-라우트
   (context "/signup" []
-    (GET "/" [] 가입-1단계)
+    (GET "/" [] 뷰/기본)
     (GET "/userid/:userid" [userid]
       {:status (만약 (가용아이디? userid) 200 409)})
     (GET "/email/:email" [email]

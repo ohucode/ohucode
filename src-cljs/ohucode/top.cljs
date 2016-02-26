@@ -79,8 +79,8 @@
    [:div.row
     [:ul.list-inline
      [:li "Copyright " [:i.fa.fa-copyright] " 2016 " 서비스명]
-     [:li [링크 {:href "/privacy-policy"} "개인정보보호정책"]]
-     [:li [링크 {:href "/terms-of-service"} "이용약관"]]
+     [:li [링크 {:href "/policy"} "개인정보보호정책"]]
+     [:li [링크 {:href "/tos"} "이용약관"]]
      [:li [링크 {:href "/credits"} "감사의 말"]]]]])
 
 (defn 빈페이지 []
