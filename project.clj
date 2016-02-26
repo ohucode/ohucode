@@ -29,6 +29,7 @@
                  [org.clojure/clojurescript "1.7.228"]
                  [reagent "0.6.0-alpha"]
                  [secretary "1.2.3"]
+                 [cljs-ajax "0.5.3"]
                  [cljsjs/bootstrap "3.3.6-0"]
                  ;;[cljsjs/react-bootstrap "0.28.1-1"]
                  [cljsjs/react-motion "0.4.1-1"]
