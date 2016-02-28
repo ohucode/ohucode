@@ -5,29 +5,28 @@
             [cljsjs.marked]
             [cljsjs.highlight]
             [cljsjs.highlight.langs.clojure]
+            [ajax.core :as ajax]
+            [ajax.edn :refer [edn-request-format edn-response-format]]
             [ohucode.state :refer [앱상태 히스토리]]))
 
 (def 서비스명 "오후코드")
 
-(defn POST [url {:keys [data success error complete] :as 속성}]
-  (js/console.log #js [url (pr-str data)])
-  (js/$.ajax url  #js {:dataType "edn"
-                       :accepts #js {:edn "application/edn"}
-                       :cache false
-                       :contentType "application/edn"
-                       :converters #js {"text edn" read-string}
-                       :timeout 3000
-                       :method "POST"
-                       :data (pr-str data)
-                       :success success
-                       :error error
-                       :complete complete}))
+(defn POST [url {:keys [내용 성공 실패 완료] :as 속성}]
+  (js/console.log #js ["POST" url (pr-str 내용) 속성])
+  (ajax/POST url
+      {:format (edn-request-format)
+       :response-format (edn-response-format)
+       :params 내용
+       :timeout 3000
+       :handler 성공
+       :error-handler (fn [{:keys [status response]}] (실패 status response))
+       :finally 완료}))
 
 (defn 다음버튼 [속성]
-  [:button.btn.btn-primary (dissoc 속성 :기다림 :텍스트)
-   (or (:텍스트 속성) "다음")
+  [:button.btn.btn-primary (dissoc 속성 :대기 :라벨)
+   (or (:라벨 속성) "다음")
    " "
-   (if (:기다림 속성)
+   (if (:대기 속성)
      [:i.fa.fa-spin.fa-spinner]
      [:i.fa.fa-angle-double-right])])
 

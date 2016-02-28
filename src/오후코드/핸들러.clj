@@ -89,7 +89,7 @@
   [핸들러]
   (가정 [edn? (fn [요청]
                 (and
-                 (= "application/edn" (get-in 요청 [:headers "content-type"]))
+                 (re-find #"^application/edn" (get-in 요청 [:headers "content-type"] ""))
                  (:body 요청)))
 
          ;; [주의] clojure.core/read-string은 eval이 되므로 쓰지 않습니다.
@@ -109,7 +109,7 @@
       (만약 (map? (:body 응답))
         (-> 응답
             (assoc :body (pr-str (:body 응답)))
-            (content-type "application/edn"))
+            (content-type "application/edn; charset=utf-8"))
         응답))))
 
 (한번정의

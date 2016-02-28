@@ -28,6 +28,7 @@
 
                  [org.clojure/clojurescript "1.7.228"]
                  [reagent "0.6.0-alpha"]
+                 [re-frame "0.7.0-alpha-3"]
                  [secretary "1.2.3"]
                  [cljs-ajax "0.5.3"]
                  [cljsjs/bootstrap "3.3.6-0"]

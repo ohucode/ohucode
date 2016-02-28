@@ -1,0 +1,5 @@
+# 사용하는 라이브러리나 용어 설명
+
+* [reagent](https://github.com/reagent-project/reagent): 클로저스크립트용 Facebook React wrapper.
+* [reagent-forms](https://github.com/reagent-project/reagent-forms): Reagent에서 r/atom 기반으로 폼 컨트롤 쓸 때 value/on-click 연결 작업을 편하게 돕는 라이브러리.
+* [re-frame](https://github.com/Day8/re-frame) : reagent 기반으로 SPA를 개발하는데 도움이 되는 라이브러리.

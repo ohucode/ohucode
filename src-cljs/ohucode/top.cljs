@@ -33,7 +33,7 @@
       [:div.panel.panel-signup
        [:div.panel-body
         [:div.page-header [:h4 [:i.fa.fa-user-plus] " 가입 신청"]]
-        [가입/신청1]]]]]]
+        [가입/신청폼]]]]]]
    [:div.container>div.row
     [:div.page-header [:h1 "Git 저장소 서비스"]]
     [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
