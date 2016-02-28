@@ -1,7 +1,5 @@
 (ns ohucode.core
   (:require [reagent.core :as r]
-            [cljs.tools.reader.edn :refer [read-string]]
-            [cljsjs.jquery]
             [cljsjs.marked]
             [cljsjs.highlight]
             [cljsjs.highlight.langs.clojure]
@@ -11,8 +9,14 @@
 
 (def 서비스명 "오후코드")
 
-(defn POST [url {:keys [내용 성공 실패 완료] :as 속성}]
-  (js/console.log #js ["POST" url (pr-str 내용) 속성])
+(defn POST
+  "AJAX POST 요청을 보냄. EDN 포맷으로 주고 받습니다.
+
+  :내용 {}                    ; EDN 포맷으로 보낼 요청 본문
+  :성공 (fn [응답내용])       ; 200류의 성공시 호출됨
+  :실패 (fn [코드 응답내용])  ; 실패 또는 타임아웃시 호출됨
+  :완료 (fn [])               ; 성패와 무관하게 마무리 작업에 사용"
+  [url {:keys [내용 성공 실패 완료] :as 속성}]
   (ajax/POST url
       {:format (edn-request-format)
        :response-format (edn-response-format)
@@ -62,9 +66,8 @@
           본문)))
 
 (defn 알림-div [타입 텍스트]
-  [:div.alert.alert-dismissible.fade.in {:class (str "alert-" (name 타입)) :role "alert"}
-   [:button.close {:data-dismiss "alert" :aria-label "닫기"}
-    [:i.fa.fa-close {:aria-hidden true}]] 텍스트])
+  [:div.alert {:class (str "alert-" (name 타입)) :role "alert"}
+   텍스트])
 
 (defn prevent-default [핸들러]
   (fn [e]

@@ -39,24 +39,15 @@
 (정의 가입-라우트
   (context "/signup" []
     (GET "/" [] 뷰/기본)
-    (GET "/userid/:userid" [userid]
-      {:status (만약 (가용아이디? userid) 200 409)})
-    (GET "/email/:email" [email]
-      {:status (만약 (가용이메일? email) 200 409)})
     (POST "/" [이메일 아이디 비밀번호 :as 요청]
       (만약 (and (가용이메일? 이메일) (가용아이디? 아이디))
         (작용
           (확인메일발송 이메일 아이디 비밀번호)
-          {:status 200 :body {:message "확인코드를 이메일로 발송했습니다."}})
-        {:status 409 :body {:message "사용할 수 없는 아이디 또는 이메일 주소입니다."}}))
-    (POST "/2" [이메일 아이디 코드 :as 요청]
-      (만약 (= 코드 (db/signup-passcode 이메일 아이디))
-        {:status 200 :body {:message "코드 확인 성공"}}
-        {:status 412 :body {:message "등록 코드 확인 실패"}}))
-    (POST "/3" [이메일 아이디 코드 이름 :as 요청]
+          {:status 200 :body {:성공 "확인코드를 이메일로 발송했습니다."}})
+        {:status 409 :body {:실패 "아이디나 이메일을 사용할 수 없습니다"}}))
+    (POST "/complete" [이메일 아이디 코드 이름 :as 요청]
       (만약 (= 코드 (db/signup-passcode 이메일 아이디))
         (작용
-          (db/insert-new-user {:userid 아이디 :email 이메일 :code 코드
-                               :name 이름})
-          {:status 201 :body {:message "가입되었습니다"}})
-        {:status 412 :body {:message "가입 실패"}}))))
+          (db/insert-new-user {:userid 아이디 :email 이메일 :code 코드 :name 이름})
+          {:status 200 :body {:성공 "가입 완료"}})
+        {:status 412 :body {:실패 "등록 코드 확인 실패"}}))))

@@ -36,8 +36,8 @@
 (declare 신청3)
 
 (defn- 폼그룹 [속성 & 입력부]
-  [:div.form-group (dissoc 속성 :label)
-   [:label.control-label.col-sm-4 (:label 속성)]
+  [:div.form-group (dissoc 속성 :라벨)
+   [:label.control-label.col-sm-4 (:라벨 속성)]
    (into [:div.col-sm-8] 입력부)])
 
 (defn- 유효성-클래스 [키]
@@ -51,9 +51,9 @@
 
 (def ^:private 가입단계명
   ["가입신청"
-   "확인 코드 입력"
-   "기본 프로필"
-   "이용약관 동의"])
+   "이메일 확인 및 가입완료"
+   "기본 프로필 입력"
+   ])
 
 (defn- 진행단계 []
   (let [현단계 (:단계 @가입상태)]
@@ -74,26 +74,25 @@
     [:div.col-sm-4 [진행단계]]]])
 
 (defn 신청폼 []
-  (let [폼상태 (r/atom {})
+  (let [알림 (r/atom {})
         대기 (r/atom false)
         신청 (fn [e]
                (reset! 대기 true)
                (POST "/signup"
                    {:내용 (select-keys @가입상태
                                        [:아이디 :이메일 :비밀번호])
-                    :성공 (fn [data]
+                    :성공 (fn [내용]
                             (swap! 가입상태 assoc :단계 2)
                             (swap! 앱상태 assoc :페이지 신청2))
-                    :실패 (fn [body]
-                            (js/console.log body)
-                            (swap! 폼상태 assoc :오류 {:설명 body}))
+                    :실패 (fn [코드 내용]
+                            (reset! 알림 내용))
                     :완료 #(reset! 대기 false)}))]
     (fn [속성]
       [:form.form-horizontal
-       (if-let [오류 (:오류 @폼상태)]
-         [알림-div :warning (:설명 오류)])
+       (if (@알림 :실패)
+         [알림-div :warning (:실패 @알림)])
        [:fieldset {:disabled @대기}
-        (폼그룹 {:label "이메일" :class (유효성-클래스 :이메일)}
+        (폼그룹 {:라벨 "이메일" :class (유효성-클래스 :이메일)}
                 [입력컨트롤 {:type "email" :name "이메일" :value (:이메일 @가입상태)
                              :auto-focus true :auto-complete "email"
                              :placeholder "이메일 주소" :on-change (변경 :이메일)
@@ -101,11 +100,11 @@
                                         (if (empty? (:아이디 @가입상태))
                                           (swap! 가입상태 assoc :아이디
                                                  (-> @가입상태 :이메일 (.split "@") first))))}])
-        (폼그룹 {:label "아이디" :class (유효성-클래스 :아이디)}
+        (폼그룹 {:라벨 "아이디" :class (유효성-클래스 :아이디)}
                 [입력컨트롤 {:type "text" :placeholder "사용할 아이디" :name "아이디"
                              :value (:아이디 @가입상태) :auto-complete "username"
                              :on-change (변경 :아이디)}])
-        (폼그룹 {:label "비밀번호" :class (유효성-클래스 :비밀번호)}
+        (폼그룹 {:라벨 "비밀번호" :class (유효성-클래스 :비밀번호)}
                 [입력컨트롤 {:type "password" :placeholder "사용할 비밀번호"
                              :name "비밀번호" :value (:비밀번호 @가입상태)
                              :auto-complete "current-password"
@@ -119,33 +118,44 @@
   (레이아웃 [신청폼]))
 
 (defn 신청2 []
-  (let [폼상태 (r/atom {})
+  (let [결과 (r/atom {})
         대기 (r/atom false)
         코드확인 (fn [e]
                    (reset! 대기 true)
-                   (POST "/signup/2"
+                   (POST "/signup/complete"
                        {:내용 (select-keys @가입상태 [:이메일 :아이디 :코드])
                         :성공 (fn [내용]
                                 (js/console.log 내용)
                                 (swap! 앱상태 assoc :페이지 신청3))
                         :실패 (fn [코드 내용]
                                 (js/console.log #js [코드 내용])
-                                (swap! 폼상태 assoc :오류 {:설명 (:message 내용)}))
+                                (swap! 결과 assoc :실패 (:실패 내용)))
                         :완료 #(reset! 대기 false)}))]
     (fn [속성]
       (레이아웃 [:div
-                 (if-let [오류 (:오류 @폼상태)]
-                   [알림-div :warning (:설명 오류)])
+                 (if-let [실패 (:실패 @결과)]
+                   [알림-div :warning 실패])
                  [:form.form-horizontal
                   [:fieldset {:disabled @대기}
-                   (폼그룹 {:label "이메일"} [:div.form-control-static (:이메일 @가입상태)])
-                   (폼그룹 {:label "아이디"} [:div.form-control-static (:아이디 @가입상태)])
-                   (폼그룹 {:label "확인코드" :class (유효성-클래스 :코드)}
+                   (폼그룹 {:라벨 "이메일"} [:div.form-control-static (:이메일 @가입상태)])
+                   (폼그룹 {:라벨 "아이디"} [:div.form-control-static (:아이디 @가입상태)])
+                   (폼그룹 {:라벨 "확인코드" :class (유효성-클래스 :코드)}
                            [입력컨트롤 {:name "code" :type "text" :value (:코드 @가입상태)
                                         :on-change (변경 :코드) :placeholder "메일에 적힌 6자리 숫자"
                                         :auto-focus true}])
+                   (폼그룹 {:라벨 "이름"} [:input.form-control
+                                           {:type "text" :placeholder "홍길동"
+                                            :auto-focus true :auto-complete "name"
+                                            :value (:이름 @가입상태)
+                                            :on-change (변경 :이름)}])
+                   (폼그룹 {:라벨 "이용약관"}
+                           [:textarea.form-control {:rows 10 :cols 80 :read-only true} "사이트 이용약관 \n블라블라"]
+                           [:div.checkbox [:label
+                                           [:input {:type "checkbox" :name "agree" :value "true"}]
+                                           "서비스 이용약관에 동의합니다"]])
                    (폼그룹 {} (다음버튼 {:disabled (not (:코드 @검증상태))
                                          :대기 @대기
+                                         :라벨 "약관동의 & 가입완료"
                                          :on-click (prevent-default 코드확인)})
                            " "
                            [:button.btn.btn-info {:title "확인 메일 재발송 요청하기"}
@@ -172,12 +182,33 @@
       [레이아웃
        [:form.form-horizontal
         [:fieldset {:disabled @대기}
-         (폼그룹 {:label "이메일"} [:div.form-control-static (:이메일 @가입상태)])
-         (폼그룹 {:label "아이디"} [:div.form-control-static (:아이디 @가입상태)])
-         (폼그룹 {:label "이름"} [:input.form-control
-                                  {:type "text" :placeholder "홍길동"
-                                   :auto-focus true :auto-complete "name"
-                                   :value (:이름 @가입상태)
-                                   :on-change (변경 :이름)}])
-         (폼그룹 {} (다음버튼 {:disabled @대기
+         (폼그룹 {:라벨 "이메일"} [:div.form-control-static (:이메일 @가입상태)])
+         (폼그룹 {:라벨 "아이디"} [:div.form-control-static (:아이디 @가입상태)])
+         (폼그룹 {:라벨 "이름"} [:input.form-control
+                                 {:type "text" :placeholder "홍길동"
+                                  :auto-focus true :auto-complete "name"
+                                  :value (:이름 @가입상태)
+                                  :on-change (변경 :이름)}])
+         (폼그룹 {:라벨 "거주"} [:input.form-control
+                                   {:type "text" :placeholder "경기도"
+                                    :auto-focus true :auto-complete "name"
+                                    :value (:거주지 @가입상태)
+                                    :on-change (변경 :거주지)}])
+         (폼그룹 {:라벨 "소속"} [:input.form-control
+                                {:type "url" :placeholder "회사/단체"
+                                 :auto-focus true :auto-complete "company"
+                                 :value (:소속 @가입상태)
+                                 :on-change (변경 :URL)}])
+         (폼그룹 {:라벨 "URL"} [:input.form-control
+                                {:type "url" :placeholder "홈페이지/블로그 주소"
+                                 :auto-focus true :auto-complete "url"
+                                 :value (:URL @가입상태)
+                                 :on-change (변경 :URL)}])
+         (폼그룹 {:라벨 "이용약관"}
+                 [:textarea.form-control {:rows 10 :cols 80 :read-only true} "사이트 이용약관 \n블라블라"]
+                 [:div.checkbox [:label
+                                 [:input {:type "checkbox" :name "agree" :value "true"}]
+                                 "이용약관에 동의합니다"]])
+
+         (폼그룹 {} (다음버튼 {:라벨 "약관동의 & 가입완료" :disabled @대기
                                :on-click (prevent-default 입력)}))]]])))
