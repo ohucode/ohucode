@@ -64,4 +64,11 @@
      (확인 (= (ohucode-password-digest 아이디 비밀번호)
               (:password_digest (select-user 아이디)))
            "패스워드 해시 보관")
-     (확인 (valid-user-password? 아이디 비밀번호)) "패스워드 확인")))
+     (확인 (valid-user-password? 아이디 비밀번호)) "패스워드 확인"))
+
+  (실험 "대소문자 아이디 구분"
+    (transaction
+     (insert users (values {:userid "Aaa" :email "test@abc.com"}))
+     (확인 (thrown? Exception
+                    (insert users (values {:userid "aaa" :email "another@abc.com"}))))
+     (rollback))))

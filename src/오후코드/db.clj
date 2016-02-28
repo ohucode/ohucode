@@ -60,10 +60,12 @@
   (has-many emails {:fk :user_id}))
 
 (함수 가용아이디? [아이디]
-  (empty? (select users (where {:userid 아이디}))))
+  (empty?
+   (select users (where (= (sqlfn lower :userid)
+                           (sqlfn lower 아이디))))))
 
 (함수 select-user [아이디]
-  (-> (select users (where {:userid 아이디}))
+  (-> (select users (where (= (sqlfn lower :userid) (sqlfn lower 아이디))))
       첫째))
 
 (함수 select-users []

@@ -14,6 +14,9 @@ CREATE TABLE users (
   updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+-- 영문아이디는 대소문자 구분하지 않고 같게 취급하지만, 보여주는 것은 구분합니다.
+CREATE UNIQUE INDEX users_lower_userid_idx ON users (lower(userid));
+
 INSERT INTO users (userid, email, name) VALUES
   ('admin',  'admin@ohucode.com',  '관리자'),
   ('system', 'system@ohucode.com', '시스템'),
