@@ -66,7 +66,7 @@
           본문)))
 
 (defn 알림-div [타입 텍스트]
-  [:div.alert {:class (str "alert-" (name 타입)) :role "alert"}
+  [:div.alert.text-center {:class (str "alert-" (name 타입)) :role "alert"}
    텍스트])
 
 (defn prevent-default [핸들러]

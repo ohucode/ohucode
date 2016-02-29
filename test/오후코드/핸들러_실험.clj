@@ -31,5 +31,5 @@
            응답본문 {:edn true :status 200}
            핸들러 (constantly {:status 200 :body 응답본문})
            응답 ((#'오후코드.핸들러/wrap-edn-response 핸들러) 요청)]
-      (확인 (= "application/edn" (get-in 응답 [:headers "Content-Type"])))
+      (확인 (re-find #"^application/edn" (get-in 응답 [:headers "Content-Type"])))
       (확인 (= (pr-str 응답본문) (:body 응답))))))

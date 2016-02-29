@@ -14,10 +14,6 @@
 (함수 서비스명+ [& strs]
   (적용 str (concat 서비스명 " " strs)))
 
-(정의 ^:dynamic
-  ^{:doc "가입 인증코드 발급후 유효시간 (단위: 초)"}
-  *passcode-expire-sec* (* 30 60))
-
 (함수 session-user [요청]
   (get-in 요청 [:session :user]))
 

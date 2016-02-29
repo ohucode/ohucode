@@ -30,10 +30,11 @@
        서비스명 "는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git 리모트 리포지토리)를 "
        "편리하게 제공합니다."]]
      [:div.col-xs-6.col-md-4
-      [:div.panel.panel-signup
-       [:div.panel-body
-        [:div.page-header [:h4 [:i.fa.fa-user-plus] " 가입 신청"]]
-        [가입/신청폼]]]]]]
+      [가입/신청폼]
+      [:div.panel.panel-login
+       [:div.panel-body.text-center
+        [:div "계정이 있으신가요? "
+         [링크 {:href "/login"} "로그인"]]]]]]]
    [:div.container>div.row
     [:div.page-header [:h1 "Git 저장소 서비스"]]
     [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]

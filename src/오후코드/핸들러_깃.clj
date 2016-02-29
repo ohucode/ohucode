@@ -49,7 +49,7 @@
 
 (UserAgent/set "OhuGit/0.0.1")
 
-(def repo (git/open "fixture/fixture-repo/.git"))
+(def repo #_(git/open "fixture/fixture-repo/.git"))
 ;;(def repo (git/open "p"))
 
 (defn- no-cache [response]

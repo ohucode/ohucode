@@ -15,9 +15,6 @@
 (defdb dev-db
   (read-edn "conf/db_dev.edn"))
 
-(comment defdb test-db
-  (read-edn "conf/db_test.edn"))
-
 (함수 now
   "현재 시각 in java.sql.Timestamp.
   현재 시각에서 [dsec]초 이후 시간."
@@ -35,29 +32,16 @@
 (함수 select-audits []
   (select audits (order :created_at :DESC) (limit 100)))
 
-(defentity signups)
-
-(함수 clean-insert-signup [이메일 아이디 코드 비밀번호]
-  (가정 [digest (pw/ohucode-password-digest 아이디 비밀번호)
-         attrs {:email 이메일 :userid 아이디 :code 코드 :password_digest digest}]
-    (transaction
-     (delete signups (where (select-keys attrs [:email :userid])))
-     (insert signups (values attrs))
-     (insert-audit "guest" "reqcode" attrs))))
-
-(함수 signup-passcode [이메일 아이디]
-  (-> (select signups (where
-                       {:email 이메일 :userid 아이디
-                        :created_at [> (now (- *passcode-expire-sec*))]}))
-      첫째 :code))
-
 (defentity emails)
 
 (함수 가용이메일? [이메일]
   (empty? (select emails (where {:email 이메일}))))
 
+(함수 이메일-등록 [주소]
+  )
+
 (defentity users
-  (has-many emails {:fk :user_id}))
+  (has-many emails {:fk :userid}))
 
 (함수 가용아이디? [아이디]
   (empty?
@@ -71,24 +55,16 @@
 (함수 select-users []
   (select users (order :created_at :DESC)))
 
-(함수 insert-new-user [{email :email
-                        userid :userid
-                        code :code
-                        username :name
-                        :as attrs}]
-  {:pre [(not-any? 공? [email userid code username])]}
+(함수 신규가입
+  "새로운 사용자 가입. 환영 & 확인 메일도 보냅니다."
+  [{:keys [이메일 아이디 성명 비밀번호] :as 레코드}]
+  {:pre [(not-any? 공? [이메일 아이디 성명 비밀번호])]}
 
-  (transaction
-   (가정 [조건 {:email email :userid userid :code code}]
-     (만약-가정 [digest (-> (select signups (where 조건))
-                            첫째 :password_digest)]
-       (작용
-         (delete signups (where 조건))
-         (insert users (values {:userid userid :email email :name username
-                                :password_digest digest}))
-         (insert emails (values {:email email :userid userid :verified_at (now)}))
-         (insert-audit userid "signup" {:email email}))
-       (throw (RuntimeException. "코드가 틀립니다"))))))
+  (가정 [조건 {:email 이메일 :userid 아이디 :name 성명
+               :password_digest (pw/ohucode-password-digest 아이디 비밀번호)}]
+    (transaction
+     (insert users (values 조건))
+     (insert-audit 아이디 "가입" {:email 이메일}))))
 
 (함수 valid-user-password? [아이디 비밀번호]
   (만약-가정 [raw (-> (select-user 아이디)
