@@ -9,3 +9,7 @@
   (r/render-component [앱페이지] (.getElementById js/document "app")))
 
 (aset js/window "onload" main)
+
+(defn ^:export fig-reload []
+  (js/console.log "리로드")
+  (main))

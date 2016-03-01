@@ -29,9 +29,9 @@
                       (every? true?
                               [(검증! :이메일 (partial re-matches #".+@.+\..+"))
                                (검증! :아이디 (partial re-matches
-                                                       #"[가-힣a-z0-9][가-힣a-z0-9_\\-]{3,15}"))
+                                                       #"[가-힣a-z0-9][가-힣a-z0-9_\-]{3,15}"))
                                (검증! :성명 (partial re-matches #"[가-힝\w]{2,5}"))
-                               (검증! :비밀번호 #(< 6 (count %)))])))))
+                               (검증! :비밀번호 #(<= 7 (count %)))])))))
 
 (defn- 폼그룹 [속성 & 입력부]
   (into [:div.form-group (dissoc 속성 :라벨)] 입력부))

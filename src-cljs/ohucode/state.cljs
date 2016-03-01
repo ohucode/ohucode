@@ -2,7 +2,13 @@
   (:require [reagent.core :as r]
             [secretary.core :as secretary]
             [goog.events :as events]
-            [goog.history.EventType :as EventType])
+            [goog.history.EventType :as EventType]
+            [re-frame.core :refer [register-handler
+                                   path
+                                   register-sub
+                                   dispatch
+                                   dispatch-sync
+                                   subscribe]])
   (:import goog.history.Html5History))
 
 (defonce 앱상태 (r/atom {}))
@@ -19,3 +25,8 @@
                        (secretary/dispatch! (if (empty? path)
                                               js/window.location.pathname
                                               path)))))))
+
+(register-handler :가입
+                  (fn [db [_ 값]]
+                    (js/console.log ["이벤트 받았어요." 값])
+                    db))
