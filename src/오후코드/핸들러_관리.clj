@@ -5,8 +5,7 @@
         [ring.util.response]
         [hiccup.core])
   (:require [오후코드.db :as db]
-            [오후코드.뷰 :as 뷰]
-            [오후코드.뷰-최상 :as 최상뷰]))
+            [오후코드.뷰 :as 뷰]))
 
 (함수 admin-nav [req]
   [:ul.nav.nav-tabs
@@ -73,14 +72,14 @@
   (fn [req]
     (만약 (관리자? req)
       (handler req)
-      (최상뷰/요청에러 req "관리자 권한 필요"))))
+      (뷰/요청에러 req "관리자 권한 필요"))))
 
 (정의 관리-라우트
   (wrap-routes
    (context "/admin" [admin]
      (GET "/" req users)
      (GET "/users" req users)
-     (GET "/users/:userid" [userid :as req] 최상뷰/미구현)
+     (GET "/users/:userid" [userid :as req] 뷰/미구현)
      (GET "/audits" req recent-audits)
-     (GET "/audits/:action" [action :as req] 최상뷰/미구현))
+     (GET "/audits/:action" [action :as req] 뷰/미구현))
    wrap-admin-only))

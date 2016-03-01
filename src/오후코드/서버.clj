@@ -13,7 +13,7 @@
         repl-port 7888
         handler-for-reload #(app-dev %)]
     (do
-      (Locale/setDefault Locale/US)
+      (comment (Locale/setDefault Locale/US) "aleph Date 헤더문제는 해결됐습니다.")
       (timbre/info (str "Starting http-server on " http-port))
       (timbre/info (str "Starting nREPL on " repl-port))
       (let [http-server (http/start-server handler-for-reload {:port http-port})

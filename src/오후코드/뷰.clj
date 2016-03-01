@@ -50,6 +50,25 @@
   [:input {:type "hidden" :name "__anti-forgery-token"
            :value *anti-forgery-token*}])
 
+(함수 basic-content [요청 제목 & 본문]
+  (레이아웃 요청 {:title (서비스명+ "> " 제목)}
+            [:div.container [:div.row [:h1 제목] 본문]]))
+
+(함수 not-found [요청]
+  {:status 404
+   :body (basic-content 요청 "찾을 수 없습니다"
+                        [:p "요청하신 페이지를 찾을 수 없습니다."])})
+
+(함수 미구현 [요청]
+  {:status 404
+   :body (basic-content 요청 "아직 구현하지 못한 기능입니다."
+                        [:p "요청하신 페이지를 찾을 수 없습니다."])})
+
+(함수 요청에러 [요청 메시지]
+  {:status 403
+   :body (basic-content 요청 "입력 값 오류"
+                        [:p 메시지])})
+
 (프로토콜 TimeRenderer
   (^String to-human-time [t] "읽기 좋은 시간 표현. ex. 5분전")
   (^String to-exact-time [t] "정확한 일시 표현. ex. 2015-01-01 14:35:03"))

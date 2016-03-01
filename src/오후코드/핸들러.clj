@@ -13,7 +13,6 @@
             [clojure.edn]
             [오후코드.db :as db]
             [오후코드.뷰 :as 뷰]
-            [오후코드.뷰-최상 :as 최상뷰]
             [오후코드.핸들러-깃 :refer [smart-http-routes]]
             [오후코드.핸들러-관리 :refer [관리-라우트]]
             [오후코드.핸들러-가입 :refer [가입-라우트]]))
@@ -22,7 +21,7 @@
   (fn [요청]
     (만약 (로그인? 요청)
       (핸들러 요청)
-      (최상뷰/요청에러 "로그인이 필요합니다."))))
+      (뷰/요청에러 "로그인이 필요합니다."))))
 
 (함수- 로그인 [응답 아이디]
   (assoc-in 응답 [:session :user]
@@ -38,27 +37,27 @@
          {:status 401 :body {:message "인증 실패"}}))
      (GET "/logout" 요청
        (db/insert-audit (or (:userid (session-user 요청))
-                            "guest")
-                        "logout" {})
+                            "손님")
+                        "로그아웃" {})
        ;; TODO: 로그인 쿠기 or 세션 제거
        {:status 200 :body {:message "로그아웃 처리"}}))
    (context "/:user" [user]
-     (GET "/" [] 최상뷰/not-found)
-     (GET "/settings" [] 최상뷰/미구현)
-     (GET "/profile" [] 최상뷰/미구현))))
+     (GET "/" [] 뷰/not-found)
+     (GET "/settings" [] 뷰/미구현)
+     (GET "/profile" [] 뷰/미구현))))
 
 (정의 프로젝트-라우트
   (context "/:user/:project" [user project]
-    (GET "/" [] 최상뷰/not-found)
-    (GET "/commits" [] 최상뷰/미구현)
-    (GET "/commits/:ref" [ref] 최상뷰/미구현)
-    (GET "/commit/:commit-id" [commit-id] 최상뷰/미구현)
-    (GET "/settings" [] 최상뷰/미구현)
-    (GET "/tree/:ref/:path" [ref path] 최상뷰/미구현)
-    (GET "/blob/:ref/:path" [ref path] 최상뷰/미구현)
-    (GET "/tags" [] 최상뷰/미구현)
-    (GET "/branches" [] 최상뷰/미구현)
-    (GET "/issues" [] 최상뷰/미구현)))
+    (GET "/" [] 뷰/not-found)
+    (GET "/commits" [] 뷰/미구현)
+    (GET "/commits/:ref" [ref] 뷰/미구현)
+    (GET "/commit/:commit-id" [commit-id] 뷰/미구현)
+    (GET "/settings" [] 뷰/미구현)
+    (GET "/tree/:ref/:path" [ref path] 뷰/미구현)
+    (GET "/blob/:ref/:path" [ref path] 뷰/미구현)
+    (GET "/tags" [] 뷰/미구현)
+    (GET "/branches" [] 뷰/미구현)
+    (GET "/issues" [] 뷰/미구현)))
 
 (정의 웹-라우트
   (routes
@@ -139,7 +138,7 @@
                           (dissoc :security) ;; TODO: AJAX CSRF 대응합시다.
                           (assoc-in [:session :store] 세션저장소))))
 
-   (ANY "*" [] 최상뷰/not-found)))
+   (ANY "*" [] 뷰/not-found)))
 
 (정의 app-dev
   (-> app
