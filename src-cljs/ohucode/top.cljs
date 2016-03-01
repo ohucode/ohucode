@@ -100,16 +100,13 @@
 (defn- 보기 [페이지 제목]
   [:a {:href "#"} 제목])
 
-;; TODO: reagent의 함수 렌더링 다시 학습하자.
-
 (defn main-view []
-  (fn []
-    [(case (:페이지 @앱상태)
-        :첫페이지 첫페이지
-        :이용약관 이용약관
-        :감사의말 감사의말
-        :개인정보취급방침 개인정보취급방침
-        (:페이지 @앱상태))]))
+  [(case (:페이지 @앱상태)
+     :첫페이지 첫페이지
+     :이용약관 이용약관
+     :감사의말 감사의말
+     :개인정보취급방침 개인정보취급방침
+     빈페이지)])
 
 (defn 미리보기
   "미리보기 페이지"
@@ -126,11 +123,13 @@
       [:ul.list-group
        (for [[텍스트 페이지] 미리보기목록]
          ^{:key 텍스트} [:li.list-group-item [보기 페이지 텍스트]])]]
-     [:div.col-md-10 [@앱상태 :페이지]]]))
+     [:div.col-md-10 [main-view]]]))
 
 (defn 앱페이지 []
-  (fn []
-    [:div
-     [:nav [네비게이션]]
-     [:main [:div.container-fluid [main-view]]]
-     [:footer [꼬리말]]]))
+  [:div
+   [:nav [네비게이션]]
+   [:main
+    [:div.container-fluid (if (:미리보기 @앱상태)
+                            [미리보기]
+                            [main-view])]]
+   [:footer [꼬리말]]])
