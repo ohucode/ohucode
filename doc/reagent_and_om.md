@@ -5,3 +5,33 @@
 * Rum : 간단한데 약간의 스펙이 있어서, React 라이프사이클에 유용.
 
 Om은 클로저 프로토콜을 사용하고, 기본은 Hiccup 스타일이 아니라서, 별도 라이브러리를 추가해서 사용함. Reagent와 Rum은 둘 다 hiccup 스타일을 쓴다.
+
+
+## Reagent
+
+### 컴포넌트
+
+* 일반 클로저 함수를 써서 react의 컴포넌트를 표현한다.
+
+```clojure
+(defn 컴포넌트 [속성]
+  [:div.panel
+    [:div.panel-header "제목"]
+    [:div.panel-body [:div "패널 내용"]]])
+```
+
+* 함수를 돌려주는 함수(Form-2)를 쓰면, 컴포넌트 로컬 상태를 관리할 수 있다.
+
+```clojure
+(defn 로컬상태-있는-컴포넌트 [속성]
+  (let [로컬상태 (r/atom {})]
+    (fn [속성] ; 바깥의 함수와 동일한 파라미터를 받는다.
+      [:div "아주 멋진 hiccup-style 벡터 표현])))
+```
+
+* 이렇게 하면, React의 ```:component-did-mount```등의 라이프사이클 관리가 대폭 편리해진다. (대부분 로컬상태 처리만으로 원하는 일을 할 수 있다)
+
+### ratom
+* reagent 특화 처리한 ```reagent.core/atom``` (이하 r/atom)을 쓴다.
+* ```clojure.core/atom```과 동일하게 쓸 수 있는데, reagent의 뷰에서 참조하고 있으면, 변경시 자동으로 뷰가 업데이트된다.
+* ```reagent.ratom/reaction``` 매크로를 쓰면, 원본 atom의 변화에 따라서 영향받는 ```r/atom```을 쉽게 만들 수 있다. ```add-watch```를 써서 또 다른 ```r/atom```을 관리하는 것과 같은 효과이지만 편리하다.
