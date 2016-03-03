@@ -1,4 +1,5 @@
 (ns ohucode.core
+  (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as r]
             [cljsjs.marked]
             [cljsjs.highlight]
@@ -85,6 +86,21 @@
     :비밀번호 #(<= 7 (count %))
     :이메일   (partial re-matches #".+@.+\..+")
     :성명     (partial re-matches #"[가-힝\w]{2,5}")} 키))
+
+(defn 유효? [키 값]
+  (let [검사 (comp boolean (검증함수 키))]
+    (cond
+      (nil? 값) nil
+      (ifn? 값) (유효? 키 (값 키))
+      :else     (검사 값))))
+
+(defn 검증반응 [폼상태 키목록]
+  (reaction
+   (let [결과 (zipmap 키목록 (map #(유효? % @폼상태) 키목록))
+         유효 (every? boolean (vals 결과))]
+     (-> 결과
+         (assoc :유효 유효)
+         (assoc :무효 (not 유효))))))
 
 (defn 유효-클래스
   "트위터 부트스트랩용 폼 유효성 클래스.
