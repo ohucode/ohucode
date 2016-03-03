@@ -85,3 +85,14 @@
     :비밀번호 #(<= 7 (count %))
     :이메일   (partial re-matches #".+@.+\..+")
     :성명     (partial re-matches #"[가-힝\w]{2,5}")} 키))
+
+(defn 유효-클래스
+  "트위터 부트스트랩용 폼 유효성 클래스.
+  true -> 'has-success'
+  false -> 'has-error'
+  nil -> ''"
+  [검증상태]
+  {:class (case 검증상태
+            true "has-success"
+            false "has-error"
+            "")})

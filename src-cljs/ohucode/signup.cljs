@@ -8,7 +8,7 @@
                                    dispatch-sync
                                    subscribe]]
             [ohucode.core :refer [POST 다음버튼 링크 입력컨트롤 알림-div
-                                  prevent-default 패널 검증함수]]
+                                  prevent-default 패널 검증함수 유효-클래스]]
             [ohucode.state :refer [앱상태]]))
 
 (defonce 가입상태 (r/atom {}))
@@ -24,10 +24,7 @@
   (let [알림 (r/atom {})
         대기 (r/atom false)
         입력그룹 (fn [상태키 속성]
-                   [:div.form-group {:class (case (@검증상태 상태키)
-                                              true "has-success"
-                                              false "has-error"
-                                              "")}
+                   [:div.form-group (유효-클래스 (@검증상태 상태키))
                     [입력컨트롤 (merge {:type "text" :placeholder (name 상태키)
                                         :value (상태키 @가입상태)
                                         :on-change #(swap! 가입상태 assoc 상태키 (.-target.value %))}

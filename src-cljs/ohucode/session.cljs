@@ -2,7 +2,8 @@
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as r]
             [re-frame.core :refer [dispatch]]
-            [ohucode.core :refer [POST 다음버튼 링크 입력컨트롤 prevent-default 패널 검증함수]]
+            [ohucode.core :refer [POST 다음버튼 링크 입력컨트롤 prevent-default
+                                  패널 검증함수 유효-클래스]]
             [ohucode.state :refer [앱상태]]))
 
 (defonce 폼상태 (r/atom {}))
@@ -16,10 +17,7 @@
                      :비밀번호 비밀번호
                      :전체 (and 아이디 비밀번호)}))
         입력그룹 (fn [키 입력속성]
-                   [:div.form-group {:class (case (@검증상태 키)
-                                              true "has-success"
-                                              false "has-error"
-                                              "")}
+                   [:div.form-group (유효-클래스 (@검증상태 키))
                     [입력컨트롤 (merge {:type "text" :placeholder (name 키)
                                         :value (@폼상태 키)
                                         :on-change #(swap! 폼상태 assoc 키 (.-target.value %))}
