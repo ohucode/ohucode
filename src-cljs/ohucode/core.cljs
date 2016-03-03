@@ -11,8 +11,7 @@
 (def 서비스명 "오후코드")
 
 (defn POST
-  "AJAX POST 요청을 보냄. EDN 포맷으로 주고 받습니다.
-
+  "AJAX POST 요청을 보냄. EDN 포맷으로 주고 받습니다.\n
   :내용 {}                    ; EDN 포맷으로 보낼 요청 본문
   :성공 (fn [응답내용])       ; 200류의 성공시 호출됨
   :실패 (fn [코드 응답내용])  ; 실패 또는 타임아웃시 호출됨
@@ -75,38 +74,53 @@
          [:div.page-header (into [:h4] 제목)]]
         내용))
 
-(defn prevent-default [핸들러]
+(defn prevent-default
+  "기본 이벤트 처리를 무시하고 별도 처리하는 핸들러.
+  단순히 .preventDefault를 호출하고 진행함."
+  [핸들러]
   (fn [e]
     (.preventDefault e)
-    (핸들러 e)))
+    (핸들러 e)
+    false))
 
 (defn 검증함수
+  "오후코드 애플리케이션 전체에서 입력값 검증을 위해 사용하는 공통함수.
+  옳은 형태의 아이디인지 확인하려면 (검증함수 :아이디)를 써서 확인하자.\n
+  ((검증함수 :아이디) \"hatemogi\") ; => true"
   [키] {:post [(fn? %)]}
-  ({:아이디   (partial re-matches #"[가-힣\w][가-힣\w_\-]{3,15}")
-    :비밀번호 #(<= 7 (count %))
-    :이메일   (partial re-matches #".+@.+\..+")
-    :성명     (partial re-matches #"[가-힝\w]{2,5}")} 키))
+  (let [re검증 #(comp boolean (partial re-matches %))]
+    ({:아이디   (re검증 #"[가-힣\w][가-힣\w_\-]{3,15}")
+      :비밀번호 #(<= 7 (count %))
+      :이메일   (re검증 #".+@.+\..+")
+      :성명     (re검증 #"[가-힝\w]{2,5}")} 키)))
 
-(defn 유효? [키 값]
-  (let [검사 (comp boolean (검증함수 키))]
-    (cond
-      (nil? 값) nil
-      (ifn? 값) (유효? 키 (값 키))
-      :else     (검사 값))))
+(defn 유효?
+  "검증함수를 기준으로 값을 확인한다.
+  값이 nil일 경우 별도로 처리해서 nil이고,
+  그렇지 않은 경우 검증함수에 따라 true/false가 된다."
+  [키 값]
+  (cond
+    (nil? 값) nil
+    (ifn? 값) (유효? 키 (값 키))
+    :else     ((검증함수 키) 값)))
 
-(defn 검증반응 [폼상태 키목록]
+(defn 검증반응
+  "폼상태 atom으로 부터 유효성을 검증한 결과 반응(reagent.ratom/reaction)
+  @폼상태의 요소중 키목록에 있는 값들에 대해 [유효?]함수를 써서 검증.
+  모든 값이 참이면 {:유효 true, :무효 false}도 merge됨.\n
+  키목록에 있는 키워드는 검증함수에서 처리가능하도록 미리 등록돼 있어야한다.\n
+  (검증반응 폼상태 [:아이디 :비밀번호]) ; => (reagent.core/atom)"
+  [폼상태 키목록]
   (reaction
    (let [결과 (zipmap 키목록 (map #(유효? % @폼상태) 키목록))
          유효 (every? boolean (vals 결과))]
-     (-> 결과
-         (assoc :유효 유효)
-         (assoc :무효 (not 유효))))))
+     (merge {:유효 유효 :무효 (not 유효)} 결과))))
 
 (defn 유효-클래스
-  "트위터 부트스트랩용 폼 유효성 클래스.
-  true -> 'has-success'
-  false -> 'has-error'
-  nil -> ''"
+  "부트스트랩용 폼 유효성 css 클래스를 표현하는 맵.\n
+  true -> {:class \"has-success\"}
+  false -> {:class \"has-error\"}
+  nil -> {:class \"\"}"
   [검증상태]
   {:class (case 검증상태
             true "has-success"
