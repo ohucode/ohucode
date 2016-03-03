@@ -30,9 +30,7 @@
   [:button.btn.btn-primary (dissoc 속성 :대기 :라벨)
    (or (:라벨 속성) "다음")
    " "
-   (if (:대기 속성)
-     [:i.fa.fa-spin.fa-spinner]
-     [:i.fa.fa-angle-double-right])])
+   (if (:대기 속성) [:i.fa.fa-spin.fa-spinner])])
 
 (defn 입력컨트롤 [속성 & 본문]
   (into [:input.form-control 속성] 본문))
@@ -80,3 +78,10 @@
   (fn [e]
     (.preventDefault e)
     (핸들러 e)))
+
+(defn 검증함수
+  [키] {:post [(fn? %)]}
+  ({:아이디   (partial re-matches #"[가-힣\w][가-힣\w_\-]{3,15}")
+    :비밀번호 #(<= 7 (count %))
+    :이메일   (partial re-matches #".+@.+\..+")
+    :성명     (partial re-matches #"[가-힝\w]{2,5}")} 키))

@@ -7,56 +7,37 @@
                                    dispatch
                                    dispatch-sync
                                    subscribe]]
-            [ohucode.core :refer [POST 서비스명 다음버튼 링크 입력컨트롤 알림-div
-                                  prevent-default 패널]]
+            [ohucode.core :refer [POST 다음버튼 링크 입력컨트롤 알림-div
+                                  prevent-default 패널 검증함수]]
             [ohucode.state :refer [앱상태]]))
 
 (defonce 가입상태 (r/atom {}))
-(defonce 검증상태 (r/atom {}))
-
-(add-watch 가입상태
-           :검증
-           (fn [key ref 이전 새값]
-             (letfn [(유효? [키 vfn]
-                       (if-let [값 (새값 키)]
-                         (boolean (vfn 값))))
-                     (검증! [키 vfn]
-                       (let [유효? (유효? 키 vfn)]
-                         (swap! 검증상태 assoc 키 유효?)
-                         유효?))]
-               (swap! 검증상태
-                      assoc :전체
-                      (every? true?
-                              [(검증! :이메일 (partial re-matches #".+@.+\..+"))
-                               (검증! :아이디 (partial re-matches
-                                                       #"[가-힣a-z0-9][가-힣a-z0-9_\-]{3,15}"))
-                               (검증! :성명 (partial re-matches #"[가-힝\w]{2,5}"))
-                               (검증! :비밀번호 #(<= 7 (count %)))])))))
+(defonce 검증상태 (reaction (let [검증 (fn [키] (if-let [값 (@가입상태 키)]
+                                                 (boolean ((검증함수 키) 값))))
+                                  결과 {:이메일   (검증 :이메일)
+                                        :아이디   (검증 :아이디)
+                                        :성명     (검증 :성명)
+                                        :비밀번호 (검증 :비밀번호)}]
+                              (assoc 결과 :전체 (every? true? (vals 결과))))))
 
 (defn 신청폼 [& 선택]
   (let [알림 (r/atom {})
         대기 (r/atom false)
-        입력 (fn [상태키 속성]
-               [입력컨트롤 (merge {:type "text" :placeholder (name 상태키)
-                                   :value (상태키 @가입상태)
-                                   :on-change #(swap! 가입상태 assoc 상태키
-                                                      (.-target.value %))}
-                                  속성)])
-        입력그룹 (fn [상태키 입력속성]
+        입력그룹 (fn [상태키 속성]
                    [:div.form-group {:class (case (@검증상태 상태키)
                                               true "has-success"
                                               false "has-error"
                                               "")}
-                    [입력 상태키 입력속성]])
+                    [입력컨트롤 (merge {:type "text" :placeholder (name 상태키)
+                                        :value (상태키 @가입상태)
+                                        :on-change #(swap! 가입상태 assoc 상태키 (.-target.value %))}
+                                       속성)]])
         신청 (fn [e]
                (reset! 대기 true)
                (POST "/signup"
-                   {:내용 (select-keys @가입상태
-                                       [:아이디 :이메일 :비밀번호 :성명])
-                    :성공 (fn [내용]
-                            (dispatch [:가입 (:아이디 @가입상태)]))
-                    :실패 (fn [코드 내용]
-                            (reset! 알림 내용))
+                   {:내용 (select-keys @가입상태 [:아이디 :이메일 :비밀번호 :성명])
+                    :성공 (fn [내용] (dispatch [:가입성공 (:아이디 @가입상태)]))
+                    :실패 (fn [코드 내용] (reset! 알림 내용))
                     :완료 #(reset! 대기 false)}))]
     (fn [속성]
       [패널 [[:i.fa.fa-user-plus] " 가입 신청"]

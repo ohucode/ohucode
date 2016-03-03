@@ -11,7 +11,11 @@
                                    subscribe]])
   (:import goog.history.Html5History))
 
-(defonce 앱상태 (r/atom {}))
+(defonce 앱상태
+  (r/atom {:알림 {}     ;; 요청 결과 성패 표시용도
+           :이용자 {}   ;; 로그인 여부, 로그인한 이용자 기본 정보
+           :페이지 nil  ;; 표시할 페이지 정보
+           }))
 
 ;; FIXME: 크롬에서는 최초 NAVIGATE 이벤트 발생하지 않음.
 (defonce 히스토리
@@ -26,7 +30,7 @@
                                               js/window.location.pathname
                                               path)))))))
 
-(register-handler :가입
+(register-handler :가입성공
                   (fn [db [_ 값]]
                     (js/console.log ["이벤트 받았어요." 값])
                     db))
