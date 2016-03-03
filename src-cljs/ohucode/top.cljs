@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [ohucode.state :refer [앱상태]]
             [ohucode.signup :as 가입]
+            [ohucode.session :as 세션]
             [ohucode.core :refer [서비스명 문단 마크다운 링크 사용자 관리자? prevent-default]]
             [cljsjs.bootstrap :as b]))
 
@@ -39,22 +40,19 @@
     [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
     [:div.page-header [:h1 "위키 페이지 작성"]]]])
 
-(def 계정정보메뉴
-  (with-meta
-    (fn [속성]
-      [:li.dropdown
-       [:a.dropdown-toggle
-        {:id "accountMenu1" :role "button" :data-toggle "dropdown"
-         :aria-haspopup true :aria-expanded true}
-        "hatemogi" " " [:span.caret]]
-       [:ul.dropdown-menu {:aria-labelledby "accountMenu1"}
-        [:li [링크 {:href "/user/profile"}   [:i.fa.fa-fw.fa-user]     " 프로필"]]
-        [:li [링크 {:href "/user/message"}   [:i.fa.fa-fw.fa-envelope] " 메시지"]]
-        [:li [링크 {:href "/user/bookmarks"} [:i.fa.fa-fw.fa-bookmark] " 책갈피"]]
-        [:li.divider {:role "separator"}]
-        [:li [링크 {:href "/user/settings"}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
-        [:li [링크 {:href "/user/logout"}    [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
-    {:component-did-mount #(js/console.log "계정정보 마운트됨")}))
+(defn 계정정보메뉴 []
+  [:li.dropdown
+   [:a.dropdown-toggle
+    {:id "accountMenu1" :role "button" :data-toggle "dropdown"
+     :aria-haspopup true :aria-expanded true}
+    "hatemogi" " " [:span.caret]]
+   [:ul.dropdown-menu {:aria-labelledby "accountMenu1"}
+    [:li [링크 {:href "/user/profile"}   [:i.fa.fa-fw.fa-user]     " 프로필"]]
+    [:li [링크 {:href "/user/message"}   [:i.fa.fa-fw.fa-envelope] " 메시지"]]
+    [:li [링크 {:href "/user/bookmarks"} [:i.fa.fa-fw.fa-bookmark] " 책갈피"]]
+    [:li.divider {:role "separator"}]
+    [:li [링크 {:href "/user/settings"}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
+    [:li [링크 {:href "/user/logout"}    [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
 
 (defn 네비게이션 [속성]
   (let [toggle-preview-mode
@@ -101,28 +99,41 @@
   [:a {:href "#"} 제목])
 
 (defn main-view []
-  [(case (:페이지 @앱상태)
-     :첫페이지 첫페이지
-     :이용약관 이용약관
-     :감사의말 감사의말
-     :개인정보취급방침 개인정보취급방침
-     빈페이지)])
+  [(let [페이지 (:페이지 @앱상태)]
+     (cond
+       (keyword? 페이지) (case 페이지
+                           :첫페이지 첫페이지
+                           :이용약관 이용약관
+                           :감사의말 감사의말
+                           :개인정보취급방침 개인정보취급방침
+                           :가입신청 가입/신청폼
+                           :가입환영 가입/환영페이지
+                           빈페이지)
+       (var? 페이지) (deref 페이지)
+       (fn? 페이지) 페이지
+       :기타 빈페이지))])
 
 (defn 미리보기
   "미리보기 페이지"
   []
-  (let [미리보기목록 [["가입신청" 가입/신청폼]]
-        보기 (fn [페이지 텍스트]
+  (let [목록 [:가입신청
+              :가입환영
+              #'ohucode.session/로그인폼]
+        이름 (fn [대상]
+               (cond
+                 (keyword? 대상) (name 대상)
+                 (var? 대상) (-> 대상 meta :name str)
+                 :기타 "음?!"))
+        보기 (fn [페이지]
                [:a {:href "#"
-                    :on-click (fn [e]
-                                (.preventDefault e)
-                                (swap! 앱상태 assoc :페이지 페이지))}
-                텍스트])]
+                    :on-click (prevent-default
+                               #(swap! 앱상태 assoc :페이지 페이지))}
+                (이름 페이지)])]
     [:div.row
      [:div.col-md-2
       [:ul.list-group
-       (for [[텍스트 페이지] 미리보기목록]
-         ^{:key 텍스트} [:li.list-group-item [보기 페이지 텍스트]])]]
+       (for [페이지 목록]
+         ^{:key (이름 페이지)} [:li.list-group-item [보기 페이지]])]]
      [:div.col-md-10 [main-view]]]))
 
 (defn 앱페이지 []

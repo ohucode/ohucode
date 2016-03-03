@@ -69,6 +69,13 @@
   [:div.alert.text-center {:class (str "alert-" (name 타입)) :role "alert"}
    텍스트])
 
+(defn 패널
+  "부트스트랩 panel. 제목은 .page-header로 감싸고, 내용은 뒷부분에 합친다."
+  [제목 & 내용]
+  (into [:div.panel.panel-ohucode>div.panel-body
+         [:div.page-header (into [:h4] 제목)]]
+        내용))
+
 (defn prevent-default [핸들러]
   (fn [e]
     (.preventDefault e)

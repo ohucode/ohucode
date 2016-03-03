@@ -7,11 +7,11 @@
                                    dispatch
                                    dispatch-sync
                                    subscribe]]
-            [ohucode.core :refer [POST 서비스명 다음버튼 링크 입력컨트롤 알림-div prevent-default]]
+            [ohucode.core :refer [POST 서비스명 다음버튼 링크 입력컨트롤 알림-div
+                                  prevent-default 패널]]
             [ohucode.state :refer [앱상태]]))
 
 (defonce 가입상태 (r/atom {}))
-
 (defonce 검증상태 (r/atom {}))
 
 (add-watch 가입상태
@@ -33,21 +33,21 @@
                                (검증! :성명 (partial re-matches #"[가-힝\w]{2,5}"))
                                (검증! :비밀번호 #(<= 7 (count %)))])))))
 
-(defn- 폼그룹 [속성 & 입력부]
-  (into [:div.form-group (dissoc 속성 :라벨)] 입력부))
-
-(defn- 유효성-클래스 [키]
-  (case (@검증상태 키)
-    true "has-success"
-    false "has-error"
-    ""))
-
-(defn- 변경 [키]
-  (fn [e] (swap! 가입상태 assoc 키 (.-target.value e))))
-
 (defn 신청폼 [& 선택]
   (let [알림 (r/atom {})
         대기 (r/atom false)
+        입력 (fn [상태키 속성]
+               [입력컨트롤 (merge {:type "text" :placeholder (name 상태키)
+                                   :value (상태키 @가입상태)
+                                   :on-change #(swap! 가입상태 assoc 상태키
+                                                      (.-target.value %))}
+                                  속성)])
+        입력그룹 (fn [상태키 입력속성]
+                   [:div.form-group {:class (case (@검증상태 상태키)
+                                              true "has-success"
+                                              false "has-error"
+                                              "")}
+                    [입력 상태키 입력속성]])
         신청 (fn [e]
                (reset! 대기 true)
                (POST "/signup"
@@ -59,35 +59,24 @@
                             (reset! 알림 내용))
                     :완료 #(reset! 대기 false)}))]
     (fn [속성]
-      [:div.panel.panel-signup>div.panel-body
-       [:div.page-header [:h4 [:i.fa.fa-user-plus] " 가입 신청"]]
+      [패널 [[:i.fa.fa-user-plus] " 가입 신청"]
        [:form
         (if (@알림 :실패)
           [알림-div :warning (:실패 @알림)])
         [:fieldset {:disabled @대기}
-         (폼그룹 {:라벨 "이메일" :class (유효성-클래스 :이메일)}
-                 [입력컨트롤 {:type "email" :name "이메일" :value (:이메일 @가입상태)
-                              :auto-focus true :auto-complete "email"
-                              :placeholder "이메일" :on-change (변경 :이메일)}])
-         (폼그룹 {:라벨 "아이디" :class (유효성-클래스 :아이디)}
-                 [입력컨트롤 {:type "text" :placeholder "아이디" :name "아이디"
-                              :value (:아이디 @가입상태) :auto-complete "username"
-                              :on-change (변경 :아이디)}])
-         (폼그룹 {:라벨 "성명" :class (유효성-클래스 :성명)}
-                 [입력컨트롤 {:type "text" :placeholder "성명"
-                              :auto-complete "name"
-                              :value (:성명 @가입상태)
-                              :on-change (변경 :성명)}])
-         (폼그룹 {:라벨 "비밀번호" :class (유효성-클래스 :비밀번호)}
-                 [입력컨트롤 {:type "password" :placeholder "비밀번호"
-                              :name "비밀번호" :value (:비밀번호 @가입상태)
-                              :auto-complete "current-password"
-                              :on-change (변경 :비밀번호)}])
-         (폼그룹 {} [다음버튼 {:라벨 "가입"
-                               :disabled (not (:전체 @검증상태))
-                               :class "btn-block btn-lg"
-                               :대기 @대기
-                               :on-click (prevent-default 신청)}])
-         (폼그룹 {} [:div.text-center "가입하면 오후코드의 "
-                     [링크 {:href "/tos"} "약관"] " 및 "
-                     [링크 {:href "/policy"} "개인정보 취급방침"] "에 동의하시게 됩니다."])]]])))
+         [입력그룹 :이메일   {:type "email" :auto-focus true :auto-complete "email"}]
+         [입력그룹 :아이디   {:auto-complete "username"}]
+         [입력그룹 :비밀번호 {:type "password" :auto-complete "current-password"}]
+         [입력그룹 :성명     {:auto-complete "name"}]
+         [:div.form-group [다음버튼 {:라벨 "가입" :대기 @대기
+                                     :disabled (not (:전체 @검증상태))
+                                     :class "btn-block btn-lg"
+                                     :on-click (prevent-default 신청)}]]
+         [:div.form-group [:div.text-center "가입하면 오후코드의 "
+                           [링크 {:href "/tos"} "약관"] " 및 "
+                           [링크 {:href "/policy"} "개인정보 취급방침"] "에 동의하시게 됩니다."]]]]])))
+
+(defn 환영페이지 []
+  [:div
+   [:div.page-header [:h3 "환영합니다"]]
+   [:div "이제 무얼 할 수 있나요?"]])
