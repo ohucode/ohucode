@@ -21,6 +21,7 @@ Om은 클로저 프로토콜을 사용하고, 기본은 Hiccup 스타일이 아�
 ```
 
 * 함수를 돌려주는 함수(Form-2)를 쓰면, 컴포넌트 로컬 상태를 관리할 수 있다.
+* 참고: https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components
 
 ```clojure
 (defn 로컬상태-있는-컴포넌트 [속성]
@@ -35,3 +36,8 @@ Om은 클로저 프로토콜을 사용하고, 기본은 Hiccup 스타일이 아�
 * reagent 특화 처리한 ```reagent.core/atom``` (이하 r/atom)을 쓴다.
 * ```clojure.core/atom```과 동일하게 쓸 수 있는데, reagent의 뷰에서 참조하고 있으면, 변경시 자동으로 뷰가 업데이트된다.
 * ```reagent.ratom/reaction``` 매크로를 쓰면, 원본 atom의 변화에 따라서 영향받는 ```r/atom```을 쉽게 만들 수 있다. ```add-watch```를 써서 또 다른 ```r/atom```을 관리하는 것과 같은 효과이지만 편리하다.
+
+
+## re-frame (Reagent로 SPA 만들 때 유용)
+
+* https://github.com/Day8/re-frame

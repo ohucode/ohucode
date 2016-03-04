@@ -6,7 +6,8 @@
         [korma.core])
   (:require [오후코드.password :as pw]
             [taoensso.timbre :as timbre]
-            [clojure.data.json :as json])
+            [clojure.data.json :as json]
+            [clojure.set :refer [rename-keys]])
   (:import [java.sql SQLException]))
 
 (정의 ^:private read-edn
@@ -50,7 +51,12 @@
 
 (함수 select-user [아이디]
   (-> (select users (where (= (sqlfn lower :userid) (sqlfn lower 아이디))))
-      첫째))
+      첫째
+      (rename-keys {:userid   :아이디
+                    :name     :성명
+                    :cohort   :집단
+                    :company  :소속
+                    :location :거주})))
 
 (함수 select-users []
   (select users (order :created_at :DESC)))

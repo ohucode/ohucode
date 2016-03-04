@@ -33,7 +33,9 @@
    (context "/user" []
      (POST "/login" [아이디 비밀번호]
        (만약 (db/valid-user-password? 아이디 비밀번호)
-         {:status 200 :body {:message "로그인 성공"}} ;; TODO: 로그인 쿠키 or 세션 설정합시다.
+         (가정 [이용자 (-> (db/select-user 아이디)
+                           (dissoc :password_digest))]
+           {:status 200 :body {:이용자 이용자} :session {:이용자 이용자}})
          {:status 401 :body {:message "인증 실패"}}))
      (GET "/logout" 요청
        (db/insert-audit (or (:userid (session-user 요청))
