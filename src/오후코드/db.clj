@@ -70,6 +70,8 @@
                :password_digest (pw/ohucode-password-digest 아이디 비밀번호)}]
     (transaction
      (insert users (values 조건))
+     (insert emails (values (select-keys 조건 [:email :userid])))
+     ;; 이메일 발송은 어디서?
      (insert-audit 아이디 "가입" {:email 이메일}))))
 
 (함수 valid-user-password? [아이디 비밀번호]

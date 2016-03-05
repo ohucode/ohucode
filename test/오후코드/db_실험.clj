@@ -34,7 +34,8 @@
      (확인 (= (ohucode-password-digest 아이디 비밀번호)
               (:password_digest (select-user 아이디)))
            "패스워드 해시 보관")
-     (확인 (valid-user-password? 아이디 비밀번호)) "패스워드 확인"))
+     (확인 (valid-user-password? 아이디 비밀번호) "패스워드 확인")
+     (확인 (not (가용이메일? 이메일)) "가입한 이메일은 사용할 수 없어야한다")))
 
   (실험 "대소문자 아이디 구분"
     (transaction
