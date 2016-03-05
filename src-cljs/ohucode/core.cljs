@@ -6,7 +6,7 @@
             [cljsjs.highlight.langs.clojure]
             [ajax.core :as ajax]
             [ajax.edn :refer [edn-request-format edn-response-format]]
-            [ohucode.state :refer [앱상태 히스토리]]))
+            [ohucode.state :refer [히스토리]]))
 
 (def 서비스명 "오후코드")
 
@@ -46,13 +46,9 @@
                     :success #(reset! src (js/marked % #js {:sanitize true}))})
     (fn [속성] [:div {:dangerouslySetInnerHTML #js {:__html @src}}])))
 
-(defn 사용자
-  "로그인한 사용자정보"
-  [] (get-in @앱상태 [:세션 :사용자]))
-
 (defn 관리자?
   "로그인한 사용자에게 관리자 권한이 있나?"
-  [] (= "admin" (:아이디 (사용자))))
+  [아이디] (= "admin" 아이디))
 
 (defn 링크
   "a 태그와 동일하지만, 페이지를 바꾸지 않고 라우팅 처리한다."

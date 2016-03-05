@@ -1,5 +1,6 @@
 (ns ohucode.main
   (:require [reagent.core :as r]
+            [ohucode.handler]
             [ohucode.top :refer [앱페이지]]
             [ohucode.route :as route]))
 

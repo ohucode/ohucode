@@ -3,8 +3,7 @@
   (:require [reagent.core :as r]
             [re-frame.core :refer [dispatch]]
             [ohucode.core :refer [POST 다음버튼 링크 입력컨트롤 prevent-default
-                                  패널 검증반응 유효-클래스]]
-            [ohucode.state :refer [앱상태]]))
+                                  패널 검증반응 유효-클래스]]))
 
 (defonce 폼상태 (r/atom {}))
 
@@ -20,7 +19,7 @@
                  (swap! 폼상태 assoc :대기 true)
                  (POST "/user/login"
                      {:내용 (select-keys @폼상태 키목록)
-                      :성공 (fn [내용] (dispatch [:로그인 (:아이디 @폼상태)]))
+                      :성공 (fn [내용] (dispatch [:로그인 (:이용자 내용)]))
                       :실패 (fn [코드 내용] (js/console.log 코드 내용))
                       :완료 #(swap! 폼상태 dissoc :대기)}))]
     (fn [속성]

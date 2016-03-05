@@ -1,9 +1,9 @@
 (ns ohucode.top
   (:require [reagent.core :as r]
-            [ohucode.state :refer [앱상태]]
+            [re-frame.core :refer [dispatch subscribe]]
             [ohucode.signup :as 가입]
             [ohucode.session :as 세션]
-            [ohucode.core :refer [서비스명 문단 마크다운 링크 사용자 관리자? prevent-default]]
+            [ohucode.core :refer [서비스명 문단 마크다운 링크 관리자? prevent-default]]
             [cljsjs.bootstrap :as b]))
 
 (defn 이용약관 []
@@ -40,12 +40,12 @@
     [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
     [:div.page-header [:h1 "위키 페이지 작성"]]]])
 
-(defn 계정정보메뉴 []
+(defn 계정정보메뉴 [아이디]
   [:li.dropdown
    [:a.dropdown-toggle
     {:id "accountMenu1" :role "button" :data-toggle "dropdown"
      :aria-haspopup true :aria-expanded true}
-    "hatemogi" " " [:span.caret]]
+    아이디 " " [:span.caret]]
    [:ul.dropdown-menu {:aria-labelledby "accountMenu1"}
     [:li [링크 {:href "/user/profile"}   [:i.fa.fa-fw.fa-user]     " 프로필"]]
     [:li [링크 {:href "/user/message"}   [:i.fa.fa-fw.fa-envelope] " 메시지"]]
@@ -54,34 +54,34 @@
     [:li [링크 {:href "/user/settings"}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
     [:li [링크 {:href "/user/logout"}    [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
 
-(defn 네비게이션 [속성]
-  (let [toggle-preview-mode
-        (fn [e]
-          (swap! 앱상태 assoc :미리보기 (not (:미리보기 @앱상태))))]
-    [:nav.navbar.navbar-inverse.navbar-static-top
-     [:div.container-fluid
-      [:div.navbar-header
-       [:button.navbar-toggle.collapsed {:type "button" :data-toggle "collapse"
-                                         :data-target "#navbar" :aria-expanded false
-                                         :aria-controls "navbar"}
-        [:span.sr-only "내비게이션 여닫기"]
-        [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
-       [링크 {:class "navbar-brand" :href "/"} [:i.fa.fa-git-square] " " 서비스명]]
-      [:div#navbar.collapse.navbar-collapse
-       [:ul.nav.navbar-nav
-        ;; TODO: 개발자만(또는 개발환경에서만) 미리보기모드를 제공합니다.
-        [:li {:class (if (:미리보기 @앱상태) "active" "")}
-         [:a {:href "#" :on-click (prevent-default toggle-preview-mode)} "미리보기"]]
-        [:li [링크 {:href "/help"} "도움말"]]]
-       (if-let [사용자 {:아이디 "hatemogi"}]
-         [:ul.nav.navbar-nav.navbar-right
-          (if (관리자?)
-            [:li [:a {:href "/admin"} "관리자"]])
-          [:li
-           [링크 {:href "/new" :title "새 저장소 만들기"} [:span.octicon.octicon-plus]]]
-          [계정정보메뉴]]
-         [:ul.nav.navbar-nav.navbar-right
-          [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]]))
+(defn 네비게이션 [미리보기]
+  (let [이용자 (subscribe [:이용자])
+        미리보기전환 #(dispatch [:미리보기 (not 미리보기)])]
+    (fn [미리보기]
+      [:nav.navbar.navbar-inverse.navbar-static-top
+       [:div.container-fluid
+        [:div.navbar-header
+         [:button.navbar-toggle.collapsed {:type "button" :data-toggle "collapse"
+                                           :data-target "#navbar" :aria-expanded false
+                                           :aria-controls "navbar"}
+          [:span.sr-only "내비게이션 여닫기"]
+          [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
+         [링크 {:class "navbar-brand" :href "/"} [:i.fa.fa-git-square] " " 서비스명]]
+        [:div#navbar.collapse.navbar-collapse
+         [:ul.nav.navbar-nav
+          ;; TODO: 개발자만(또는 개발환경에서만) 미리보기모드를 제공합니다.
+          [:li {:class (if 미리보기 "active" "")}
+           [:a {:href "#" :on-click (prevent-default 미리보기전환)} "미리보기"]]
+          [:li [링크 {:href "/help"} "도움말"]]]
+         (if-let [아이디 (:아이디 @이용자)]
+           [:ul.nav.navbar-nav.navbar-right
+            (if (관리자? 아이디)
+              [:li [:a {:href "/admin"} "관리자"]])
+            [:li
+             [링크 {:href "/new" :title "새 저장소 만들기"} [:span.octicon.octicon-plus]]]
+            [계정정보메뉴 아이디]]
+           [:ul.nav.navbar-nav.navbar-right
+            [:li [:a {:href "/user/login"} [:i.fa.fa-sign-in] " 로그인"]]])]]])))
 
 (defn 꼬리말 []
   [:div.container
@@ -93,29 +93,31 @@
      [:li [링크 {:href "/credits"} "감사의 말"]]]]])
 
 (defn 빈페이지 []
-  [:div (str (:페이지 @앱상태))])
+  [:div "빈페이지"])
 
 (defn- 보기 [페이지 제목]
   [:a {:href "#"} 제목])
 
 (defn main-view []
-  [(let [페이지 (:페이지 @앱상태)]
-     (cond
-       (keyword? 페이지) (case 페이지
-                           :첫페이지 첫페이지
-                           :이용약관 이용약관
-                           :감사의말 감사의말
-                           :개인정보취급방침 개인정보취급방침
-                           :가입신청 가입/신청폼
-                           :가입환영 가입/환영페이지
-                           빈페이지)
-       (var? 페이지) (deref 페이지)
-       (fn? 페이지) 페이지
-       :기타 빈페이지))])
+  (let [페이지 (subscribe [:페이지])]
+    (fn []
+      [(let [페이지 (:페이지 @페이지)]
+         (cond
+           (keyword? 페이지) (case 페이지
+                               :첫페이지 첫페이지
+                               :이용약관 이용약관
+                               :감사의말 감사의말
+                               :개인정보취급방침 개인정보취급방침
+                               :가입신청 가입/신청폼
+                               :가입환영 가입/환영페이지
+                               빈페이지)
+           (var? 페이지) (deref 페이지)
+           (fn? 페이지) 페이지
+           :기타 빈페이지))])))
 
 (defn 미리보기
   "미리보기 페이지"
-  []
+  [본문]
   (let [목록 [:첫페이지
               :이용약관
               :감사의말
@@ -130,21 +132,23 @@
                  :기타 "음?!"))
         보기 (fn [페이지]
                [:a {:href "#"
-                    :on-click (prevent-default
-                               #(swap! 앱상태 assoc :페이지 페이지))}
+                    :on-click (prevent-default #(dispatch [:페이지 페이지]))}
                 (이름 페이지)])]
     [:div.row
      [:div.col-md-2
       [:ul.list-group
        (for [페이지 목록]
          ^{:key (이름 페이지)} [:li.list-group-item [보기 페이지]])]]
-     [:div.col-md-10 [main-view]]]))
+     [:div.col-md-10 [본문]]]))
 
 (defn 앱페이지 []
-  [:div
-   [:nav [네비게이션]]
-   [:main
-    [:div.container-fluid (if (:미리보기 @앱상태)
-                            [미리보기]
-                            [main-view])]]
-   [:footer [꼬리말]]])
+  (let [페이지 (subscribe [:페이지])]
+    (fn []
+      [:div
+       [:nav [네비게이션 (:미리보기 @페이지)]]
+       [:main
+        [:div.container-fluid
+         (if (:미리보기 @페이지)
+           [미리보기 main-view]
+           [main-view])]]
+       [:footer [꼬리말]]])))
