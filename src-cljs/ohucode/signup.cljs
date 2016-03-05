@@ -1,12 +1,7 @@
 (ns ohucode.signup
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as r]
-            [re-frame.core :refer [register-handler
-                                   path
-                                   register-sub
-                                   dispatch
-                                   dispatch-sync
-                                   subscribe]]
+            [re-frame.core :refer [dispatch subscribe]]
             [ohucode.core :refer [POST 다음버튼 링크 입력컨트롤 알림-div
                                   prevent-default 패널 유효-클래스 검증반응]]))
 
