@@ -72,13 +72,14 @@
      (insert users (values 조건))
      (insert emails (values (select-keys 조건 [:email :userid])))
      ;; 이메일 발송은 어디서?
-     (insert-audit 아이디 "가입" {:email 이메일}))))
+     (insert-audit 아이디 "가입" (select-keys 레코드 [:이메일 :성명])))))
 
 (함수 valid-user-password? [아이디 비밀번호]
   (만약-가정 [raw (-> (select-user 아이디)
                       :password_digest)]
     (가정 [valid? (pw/ohucode-valid-password? 아이디 비밀번호 raw)]
-      (insert-audit 아이디 "login" {:success valid?})
+      (insert-audit 아이디 "login" {:성공 valid?})
       valid?)
-    (작용 (insert-audit "guest" "login" {:success 거짓 :userid 아이디})
-          거짓)))
+    (작용
+      (insert-audit "guest" "login" {:성공 거짓 :아이디 아이디})
+      거짓)))
