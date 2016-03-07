@@ -7,7 +7,7 @@
             [ajax.core :as ajax]
             [ajax.edn :refer [edn-request-format edn-response-format]]
             [ohucode.state :refer [히스토리]]
-            [re-frame.core :refer [dispatch]]))
+            [re-frame.core :refer [dispatch subscribe]]))
 
 (def 서비스명 "오후코드")
 
@@ -53,9 +53,10 @@
 
 (defn 마크다운 [속성]
   (let [src (r/atom "<i class='fa fa-spin fa-spinner'></i>")]
-    (js/$.ajax #js {:url (:url 속성)
-                    :cache false
-                    :success #(reset! src (js/marked % #js {:sanitize true}))})
+    (ajax/GET (:url 속성)
+        {:timeout 3000
+         :handler #(reset! src (js/marked % #js {:sanitize true}))
+         :error-handler #(reset! src "실패: " %1)})
     (fn [속성] [:div {:dangerouslySetInnerHTML #js {:__html @src}}])))
 
 (defn 관리자?
