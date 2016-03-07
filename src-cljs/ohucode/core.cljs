@@ -6,7 +6,8 @@
             [cljsjs.highlight.langs.clojure]
             [ajax.core :as ajax]
             [ajax.edn :refer [edn-request-format edn-response-format]]
-            [ohucode.state :refer [히스토리]]))
+            [ohucode.state :refer [히스토리]]
+            [re-frame.core :refer [dispatch]]))
 
 (def 서비스명 "오후코드")
 
@@ -26,11 +27,13 @@
        :error-handler (fn [{:keys [status response]}] (실패 status response))
        :finally 완료}))
 
-(defn 다음버튼 [속성]
-  [:button.btn.btn-primary (dissoc 속성 :대기 :라벨)
-   (or (:라벨 속성) "다음")
-   " "
-   (if (:대기 속성) [:i.fa.fa-spin.fa-spinner])])
+(defn 다음버튼 [{:keys [클릭 라벨 로딩?] :as 속성}]
+  (let [온클릭 (if (ifn? 클릭) {:on-click (prevent-default 클릭)})]
+    [:button.btn.btn-primary
+     (merge 온클릭 (dissoc 속성 :로딩? :라벨 :클릭))
+     (or 라벨 "다음")
+     " "
+     (if 로딩? [:i.fa.fa-spin.fa-spinner])]))
 
 (defn 입력컨트롤 [속성 & 본문]
   (into [:input.form-control 속성] 본문))
@@ -78,6 +81,16 @@
     (.preventDefault e)
     (핸들러 e)
     false))
+
+(defn 화면이동
+  "화면에 보여줄 메인 페이지를 전환하는 a 태그."
+  [속성 & 본문]
+  (let [페이지 (:페이지 속성)]
+    (into [:a (merge 속성
+                     {:href "#"
+                      :on-click (prevent-default #(dispatch [:페이지 페이지]))})]
+          본문)))
+
 
 (defn 검증함수
   "오후코드 애플리케이션 전체에서 입력값 검증을 위해 사용하는 공통함수.

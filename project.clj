@@ -54,7 +54,8 @@
   :repl-options {:init-ns user
                  :init (set! *print-length* 50)
                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-  :figwheel {:css-dirs ["resources/public/css"]}
+  :figwheel {:css-dirs ["resources/public/css"]
+             :open-file-command "emacsclient"}
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src-cljs"]

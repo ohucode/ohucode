@@ -4,7 +4,7 @@
 
 (defroute "/" []
   (js/console.log "route / called")
-  (dispatch [:페이지 :첫페이지]))
+  (dispatch [:페이지 :첫페이지>가입]))
 
 (defroute "/tos" []
   (dispatch [:페이지 :이용약관]))

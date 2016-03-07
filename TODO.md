@@ -3,8 +3,12 @@
 ### 가입 신청
 
 * [DONE] AJAX POST로 edn보내서 컴포저에서 읽기
-* 응답 본문이 map이면 accept 헤더에 따라 EDN이나 JSON으로 본문 보내기
+* [DONE] 응답 본문이 map이면 accept 헤더에 따라 EDN이나 JSON으로 본문 보내기
 * *anti-forgery-token* 어떻게 받아올까?
+
+### 로그인
+
+* 쿠키에 남아있는 로그인 정보를 바탕으로 자동 로그인 처리
 
 ### 개발편의를 위한 미리보기 모드
 

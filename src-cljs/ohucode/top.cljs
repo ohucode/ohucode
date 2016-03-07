@@ -3,7 +3,8 @@
             [re-frame.core :refer [dispatch subscribe]]
             [ohucode.signup :as 가입]
             [ohucode.session :as 세션]
-            [ohucode.core :refer [서비스명 문단 마크다운 링크 관리자? prevent-default]]
+            [ohucode.user :as 이용자]
+            [ohucode.core :refer [서비스명 문단 마크다운 링크 관리자? prevent-default 화면이동]]
             [cljsjs.bootstrap :as b]))
 
 (defn 이용약관 []
@@ -20,7 +21,7 @@
   (문단 "고마움을 전합니다"
         [마크다운 {:url "/md/CREDITS.md"}]))
 
-(defn 첫페이지 []
+(defn 첫페이지 [가입or로그인]
   [:div
    [:div.jumbotron
     [:div.row
@@ -29,12 +30,20 @@
       [:p "즐겁고 효율적인 프로그래밍의 동반자, " 서비스명 "에 오신 것을 환영합니다. "
        서비스명 "는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git 리모트 리포지토리)를 "
        "편리하게 제공합니다."]]
-     [:div.col-xs-6.col-md-4
-      [가입/신청폼]
-      [:div.panel.panel-login
-       [:div.panel-body.text-center
-        [:div "계정이 있으신가요? "
-         [링크 {:href "/login"} "로그인"]]]]]]]
+     (case 가입or로그인
+       :가입 [:div.col-xs-6.col-md-4
+              [가입/신청폼]
+              [:div.panel.panel-login
+               [:div.panel-body.text-center
+                [:div "계정이 있으신가요? "
+                 [화면이동 {:페이지 :첫페이지>로그인} "로그인"]]]]]
+       :로그인 [:div.col-xs-6.col-md-4
+                [세션/로그인폼]
+                [:div.panel.panel-login
+                 [:div.panel-body.text-center
+                  [:div "계정이 없으신가요? "
+                   [화면이동 {:페이지 :첫페이지>가입} "가입하기"]]]]]
+       [:div "페이지 상태 에러"])]]
    [:div.container>div.row
     [:div.page-header [:h1 "Git 저장소 서비스"]]
     [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
@@ -101,19 +110,22 @@
 (defn main-view []
   (let [페이지 (subscribe [:페이지])]
     (fn []
-      [(let [페이지 (:페이지 @페이지)]
-         (cond
-           (keyword? 페이지) (case 페이지
-                               :첫페이지 첫페이지
-                               :이용약관 이용약관
-                               :감사의말 감사의말
-                               :개인정보취급방침 개인정보취급방침
-                               :가입신청 가입/신청폼
-                               :가입환영 가입/환영페이지
-                               빈페이지)
-           (var? 페이지) (deref 페이지)
-           (fn? 페이지) 페이지
-           :기타 빈페이지))])))
+      (loop [페이지 (:페이지 @페이지)]
+        (cond
+          (keyword? 페이지) (case 페이지
+                              :첫페이지>가입 [첫페이지 :가입]
+                              :첫페이지>로그인 [첫페이지 :로그인]
+                              :이용약관 [이용약관]
+                              :감사의말 [감사의말]
+                              :개인정보취급방침 [개인정보취급방침]
+                              :가입신청 [가입/신청폼]
+                              :가입환영 [가입/환영페이지]
+                              :이용자홈 [이용자/이용자홈]
+                              [빈페이지])
+          (var? 페이지) [(deref 페이지)]
+          (fn? 페이지) [페이지]
+          (vector? 페이지) (recur (first 페이지))
+          :기타 [빈페이지])))))
 
 (defn 미리보기
   "미리보기 페이지"
@@ -124,7 +136,8 @@
               :개인정보취급방침
               :가입신청
               :가입환영
-              #'ohucode.session/로그인폼]
+              #'ohucode.session/로그인폼
+              :이용자홈]
         이름 (fn [대상]
                (cond
                  (keyword? 대상) (name 대상)

@@ -21,17 +21,15 @@
        (if-let [실패 (@신청상태 :실패)]
          [알림-div :warning 실패])
        [:form
-        [:fieldset {:disabled (@신청상태 :요청중?)}
+        [:fieldset {:disabled (@신청상태 :로딩?)}
          [입력 :이메일   {:type "email" :auto-focus true :auto-complete "email"}]
          [입력 :아이디   {:auto-complete "username"}]
          [입력 :비밀번호 {:type "password" :auto-complete "current-password"}]
          [입력 :성명     {:auto-complete "name"}]
-         [fg [다음버튼 {:라벨 "가입" :대기 (@신청상태 :요청중?)
+         [fg [다음버튼 {:라벨 "가입" :로딩? (@신청상태 :로딩?)
                         :disabled (@검증상태 :무효)
                         :class "btn-block btn-lg"
-                        :on-click (prevent-default
-                                   #(dispatch [:가입신청
-                                               (select-keys @폼상태 키목록)]))}]]
+                        :클릭 #(dispatch [:가입신청 (select-keys @폼상태 키목록)])}]]
          [fg [:div.text-center "가입하면 오후코드의 "
               [링크 {:href "/tos"} "약관"] " 및 "
               [링크 {:href "/policy"} "개인정보 취급방침"] "에 동의하시게 됩니다."]]]]])))
