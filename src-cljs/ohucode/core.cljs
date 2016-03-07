@@ -27,6 +27,15 @@
        :error-handler (fn [{:keys [status response]}] (실패 status response))
        :finally 완료}))
 
+(defn prevent-default
+  "기본 이벤트 처리를 무시하고 별도 처리하는 핸들러.
+  단순히 .preventDefault를 호출하고 진행함."
+  [핸들러]
+  (fn [e]
+    (.preventDefault e)
+    (핸들러 e)
+    false))
+
 (defn 다음버튼 [{:keys [클릭 라벨 로딩?] :as 속성}]
   (let [온클릭 (if (ifn? 클릭) {:on-click (prevent-default 클릭)})]
     [:button.btn.btn-primary
@@ -73,24 +82,17 @@
          [:div.page-header (into [:h4] 제목)]]
         내용))
 
-(defn prevent-default
-  "기본 이벤트 처리를 무시하고 별도 처리하는 핸들러.
-  단순히 .preventDefault를 호출하고 진행함."
-  [핸들러]
-  (fn [e]
-    (.preventDefault e)
-    (핸들러 e)
-    false))
+(defn 이벤트
+  "링크를 클릭하면 이벤트 발생(dispatch)하는 함수.
+  이벤트는 dispatch 함수와 같이 벡터 형태로 전달한다."
+  [이벤트 & 본문]
+  (into [:a {:href "#" :on-click (prevent-default #(dispatch 이벤트))}] 본문))
 
 (defn 화면이동
   "화면에 보여줄 메인 페이지를 전환하는 a 태그."
   [속성 & 본문]
   (let [페이지 (:페이지 속성)]
-    (into [:a (merge 속성
-                     {:href "#"
-                      :on-click (prevent-default #(dispatch [:페이지 페이지]))})]
-          본문)))
-
+    (이벤트 [:페이지 페이지] 본문)))
 
 (defn 검증함수
   "오후코드 애플리케이션 전체에서 입력값 검증을 위해 사용하는 공통함수.
