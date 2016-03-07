@@ -7,7 +7,7 @@
                                    dispatch
                                    dispatch-sync
                                    subscribe]]
-            [ohucode.core :refer [POST 검증반응]]))
+            [ohucode.core :refer [POST PUT 검증반응]]))
 
 (def ^{:doc "애플리케이션 상태 초기화"}
   초기상태 {:가입신청 {}             ; 가입신청시 신청 정보 임시 보관
@@ -56,6 +56,24 @@
                     (dispatch [:페이지 :이용자홈])
                     (cond-> (assoc-in db [:로그인 :로딩?] false)
                       (= :성공 성패) (assoc :이용자 (:이용자 내용)))))
+
+(register-handler :로그아웃
+                  (fn [db _]
+                    (PUT "/user/logout"
+                        {:내용 {}
+                         :성공 #(dispatch [:로그아웃결과 :성공])
+                         :실패 #(dispatch [:로그아웃결과 :실패])})
+                    db))
+
+(register-handler :로그아웃결과
+                  (fn [db [_ 성패]]
+                    (js/console.log "로그아웃결과" (name 성패))
+                    (dispatch [:페이지 :이용자홈])
+                    (if (= :성공 성패)
+                      (do
+                        (dispatch [:페이지 :첫페이지>가입])
+                        (dissoc db :이용자))
+                      (assoc db :알림 "실패"))))
 
 (register-handler :페이지
                   (fn [db [_ 페이지]]

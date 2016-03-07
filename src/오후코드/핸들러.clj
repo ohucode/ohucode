@@ -35,14 +35,16 @@
        (만약 (db/valid-user-password? 아이디 비밀번호)
          (가정 [이용자 (-> (db/select-user 아이디)
                            (dissoc :password_digest))]
+           ;; TODO: 로그인 쿠키 발급
            {:status 200 :body {:이용자 이용자} :session {:이용자 이용자}})
-         {:status 401 :body {:message "인증 실패"}}))
-     (GET "/logout" 요청
-       (db/insert-audit (or (:userid (session-user 요청))
+         {:status 401 :body {:실패 "인증 실패"}}))
+     (PUT "/logout" 요청
+       (db/insert-audit (or (:아이디 (session-user 요청))
                             "손님")
                         "로그아웃" {})
-       ;; TODO: 로그인 쿠기 or 세션 제거
-       {:status 200 :body {:message "로그아웃 처리"}}))
+       ;; TODO: 로그인 쿠기 제거
+       {:status 200 :session {:이용자 nil}
+        :body {:성공 "로그아웃 처리"}}))
    (context "/:user" [user]
      (GET "/" [] 뷰/not-found)
      (GET "/settings" [] 뷰/미구현)

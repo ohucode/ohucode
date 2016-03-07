@@ -59,7 +59,7 @@
     [:li [링크 {:href "/user/bookmarks"} [:i.fa.fa-fw.fa-bookmark] " 책갈피"]]
     [:li.divider {:role "separator"}]
     [:li [링크 {:href "/user/settings"}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
-    [:li [링크 {:href "/user/logout"}    [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
+    [:li [이벤트 [:로그아웃]             [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
 
 (defn 네비게이션 [미리보기]
   (let [이용자 (subscribe [:이용자])]

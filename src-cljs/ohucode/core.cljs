@@ -11,6 +11,15 @@
 
 (def 서비스명 "오후코드")
 
+(defn- wrap-edn-ajax [{:keys [내용 성공 실패 완료] :as 속성}]
+  {:format (edn-request-format)
+   :response-format (edn-response-format)
+   :params 내용
+   :timeout 3000
+   :handler 성공
+   :error-handler (fn [{:keys [status response]}] (실패 status response))
+   :finally 완료})
+
 (defn POST
   "AJAX POST 요청을 보냄. EDN 포맷으로 주고 받습니다.\n
   :내용 {}                    ; EDN 포맷으로 보낼 요청 본문
@@ -18,14 +27,25 @@
   :실패 (fn [코드 응답내용])  ; 실패 또는 타임아웃시 호출됨
   :완료 (fn [])               ; 성패와 무관하게 마무리 작업에 사용"
   [url {:keys [내용 성공 실패 완료] :as 속성}]
-  (ajax/POST url
-      {:format (edn-request-format)
-       :response-format (edn-response-format)
-       :params 내용
-       :timeout 3000
-       :handler 성공
-       :error-handler (fn [{:keys [status response]}] (실패 status response))
-       :finally 완료}))
+  (ajax/POST url (wrap-edn-ajax 속성)))
+
+(defn PUT
+  "AJAX PUT 요청을 보냄. EDN 포맷으로 주고 받습니다.\n
+  :내용 {}                    ; EDN 포맷으로 보낼 요청 본문
+  :성공 (fn [응답내용])       ; 200류의 성공시 호출됨
+  :실패 (fn [코드 응답내용])  ; 실패 또는 타임아웃시 호출됨
+  :완료 (fn [])               ; 성패와 무관하게 마무리 작업에 사용"
+  [url {:keys [내용 성공 실패 완료] :as 속성}]
+  (ajax/PUT url (wrap-edn-ajax 속성)))
+
+(defn DELETE
+  "AJAX DELETE 요청을 보냄. EDN 포맷으로 주고 받습니다.\n
+  :내용 {}                    ; EDN 포맷으로 보낼 요청 본문
+  :성공 (fn [응답내용])       ; 200류의 성공시 호출됨
+  :실패 (fn [코드 응답내용])  ; 실패 또는 타임아웃시 호출됨
+  :완료 (fn [])               ; 성패와 무관하게 마무리 작업에 사용"
+  [url {:keys [내용 성공 실패 완료] :as 속성}]
+  (ajax/DELETE url (wrap-edn-ajax 속성)))
 
 (defn prevent-default
   "기본 이벤트 처리를 무시하고 별도 처리하는 핸들러.
