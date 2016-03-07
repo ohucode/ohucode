@@ -2,7 +2,7 @@
   (:require [reagent.core :as r]
             [re-frame.core :refer [dispatch subscribe]]
             [ohucode.user :as 이용자]
-            [ohucode.core :refer [서비스명 문단 마크다운 링크 관리자? 화면이동 이벤트]]
+            [ohucode.core :refer [서비스명 문단 마크다운 관리자? 링크]]
             [cljsjs.bootstrap :as b]))
 
 (defn 이용약관 []
@@ -33,14 +33,14 @@
               [이용자/가입폼]
               [:div.panel.panel-login
                [:div.panel-body.text-center
-                [:div "계정이 있으신가요? "
-                 [화면이동 {:페이지 :첫페이지>로그인} "로그인"]]]]]
+                [:div "이미 가입하셨나요? "
+                 [링크 {:페이지 :첫페이지>로그인} "로그인"]]]]]
        :로그인 [:div.col-xs-6.col-md-4
                 [이용자/로그인폼]
                 [:div.panel.panel-login
                  [:div.panel-body.text-center
-                  [:div "계정이 없으신가요? "
-                   [화면이동 {:페이지 :첫페이지>가입} "가입하기"]]]]]
+                  [:div "아이디가 없으신가요? "
+                   [링크 {:페이지 :첫페이지>가입} "가입하기"]]]]]
        [:div "페이지 상태 에러"])]]
    [:div.container>div.row
     [:div.page-header [:h1 "Git 저장소 서비스"]]
@@ -59,7 +59,7 @@
     [:li [링크 {:href "/user/bookmarks"} [:i.fa.fa-fw.fa-bookmark] " 책갈피"]]
     [:li.divider {:role "separator"}]
     [:li [링크 {:href "/user/settings"}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
-    [:li [이벤트 [:로그아웃]             [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
+    [:li [링크 {:이벤트 [:로그아웃]}     [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
 
 (defn 네비게이션 [미리보기]
   (let [이용자 (subscribe [:이용자])]
@@ -77,7 +77,7 @@
          [:ul.nav.navbar-nav
           ;; TODO: 개발자만(또는 개발환경에서만) 미리보기모드를 제공합니다.
           [:li {:class (if 미리보기 "active" "")}
-           [이벤트 [:미리보기 (not 미리보기)] "미리보기"]]
+           [링크 {:이벤트 [:미리보기 (not 미리보기)]} "미리보기"]]
           [:li [링크 {:href "/help"} "도움말"]]]
          (if-let [아이디 (:아이디 @이용자)]
            [:ul.nav.navbar-nav.navbar-right
@@ -127,7 +127,8 @@
 (defn 미리보기
   "미리보기 페이지"
   [본문]
-  (let [목록 [:첫페이지
+  (let [목록 [:첫페이지>가입
+              :첫페이지>로그인
               :이용약관
               :감사의말
               :개인정보취급방침
@@ -141,7 +142,7 @@
                  (var? 대상) (-> 대상 meta :name str)
                  :기타 "음?!"))
         보기 (fn [페이지]
-               [화면이동 {:페이지 페이지} (이름 페이지)])]
+               [링크 {:페이지 페이지} (이름 페이지)])]
     [:div.row
      [:div.col-md-2
       [:ul.list-group

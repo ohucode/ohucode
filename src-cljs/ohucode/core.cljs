@@ -1,13 +1,14 @@
 (ns ohucode.core
   (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [reagent.core :as r]
+  (:require [clojure.set :as s]
+            [reagent.core :as r]
             [cljsjs.marked]
             [cljsjs.highlight]
             [cljsjs.highlight.langs.clojure]
             [ajax.core :as ajax]
             [ajax.edn :refer [edn-request-format edn-response-format]]
-            [ohucode.state :refer [히스토리]]
-            [re-frame.core :refer [dispatch subscribe]]))
+            [re-frame.core :refer [dispatch subscribe]]
+            [ohucode.state :refer [히스토리]]))
 
 (def 서비스명 "오후코드")
 
@@ -83,15 +84,6 @@
   "로그인한 사용자에게 관리자 권한이 있나?"
   [아이디] (= "admin" 아이디))
 
-(defn 링크
-  "a 태그와 동일하지만, 페이지를 바꾸지 않고 라우팅 처리한다."
-  [속성 & 본문]
-  (let [href (:href 속성)]
-    (into [:a (assoc 속성 :on-click (fn [e]
-                                      (.preventDefault e)
-                                      (.setToken 히스토리 href)))]
-          본문)))
-
 (defn 알림-div [타입 텍스트]
   [:div.alert.text-center {:class (str "alert-" (name 타입)) :role "alert"}
    텍스트])
@@ -102,18 +94,6 @@
   (into [:div.panel.panel-ohucode>div.panel-body
          [:div.page-header (into [:h4] 제목)]]
         내용))
-
-(defn 이벤트
-  "링크를 클릭하면 이벤트 발생(dispatch)하는 함수.
-  이벤트는 dispatch 함수와 같이 벡터 형태로 전달한다."
-  [이벤트 & 본문]
-  (into [:a {:href "#" :on-click (prevent-default #(dispatch 이벤트))}] 본문))
-
-(defn 화면이동
-  "화면에 보여줄 메인 페이지를 전환하는 a 태그."
-  [속성 & 본문]
-  (let [페이지 (:페이지 속성)]
-    (이벤트 [:페이지 페이지] 본문)))
 
 (defn 검증함수
   "오후코드 애플리케이션 전체에서 입력값 검증을 위해 사용하는 공통함수.
@@ -158,3 +138,20 @@
             true "has-success"
             false "has-error"
             "")})
+
+(defn 링크
+  "HTML a태그.
+  :href 속성만 있으면 라우팅 처리.
+  :페이지 속성이 있으면 화면 이동 처리.
+  :이벤트 속성이 있으면 dispatch처리.\n
+  :페이지와 :이벤트 속성을 둘다 주지는 않도록 한다."
+  [{:keys [href 페이지 이벤트] :as 속성} & 본문]
+  {:pre [(not (and 페이지 이벤트))]}
+  (let [속성' (dissoc 속성 :페이지 :이벤트)
+        a-클릭 (fn [on-click]
+                 [:a (merge {:href "#" :on-click (prevent-default on-click)} 속성')])]
+    (into (cond
+            페이지 (a-클릭 #(dispatch [:페이지 페이지]))
+            이벤트 (a-클릭 #(dispatch 이벤트))
+            href   (a-클릭 #(.setToken 히스토리 href)))
+          본문)))
