@@ -53,6 +53,7 @@
   (-> (select users (where (= (sqlfn lower :userid) (sqlfn lower 아이디))))
       첫째
       (rename-keys {:userid   :아이디
+                    :email    :이메일
                     :name     :성명
                     :cohort   :집단
                     :company  :소속

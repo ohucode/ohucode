@@ -45,13 +45,14 @@
        ;; TODO: 로그인 쿠기 제거
        {:status 200 :session {:이용자 nil}
         :body {:성공 "로그아웃 처리"}}))
-   (context "/:user" [user]
-     (GET "/" [] 뷰/not-found)
+   (context "/:아이디" [아이디]
+     (GET "/" [] (if-let [이용자 (db/select-user 아이디)]
+                   (str 이용자)))
      (GET "/settings" [] 뷰/미구현)
      (GET "/profile" [] 뷰/미구현))))
 
 (정의 프로젝트-라우트
-  (context "/:user/:project" [user project]
+  (context "/:아이디/:프로젝트" [아이디 프로젝트]
     (GET "/" [] 뷰/not-found)
     (GET "/commits" [] 뷰/미구현)
     (GET "/commits/:ref" [ref] 뷰/미구현)
