@@ -68,9 +68,8 @@
 (defn 입력컨트롤 [속성 & 본문]
   (into [:input.form-control 속성] 본문))
 
-(defn 문단 [제목 & 본문]
-  (into [:div [:div.page-header>h2 제목]]
-        본문))
+(defn 페이지 [제목 & 본문]
+  (into [:div [:div.page-header 제목]] 본문))
 
 (defn 마크다운 [속성]
   (let [src (r/atom "<i class='fa fa-spin fa-spinner'></i>")]

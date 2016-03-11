@@ -2,22 +2,22 @@
   (:require [reagent.core :as r]
             [re-frame.core :refer [dispatch subscribe]]
             [ohucode.user :as 이용자]
-            [ohucode.core :refer [서비스명 문단 마크다운 관리자? 링크]]
+            [ohucode.core :refer [서비스명 페이지 마크다운 관리자? 링크]]
             [cljsjs.bootstrap :as b]))
 
 (defn 이용약관 []
   [:div.container-fluid
-   [문단 "서비스이용약관"
+   [페이지 [:h2 "서비스이용약관"]
     [:div "오후코드 서비스를 이용하시면, 아래와..."]]])
 
 (defn 개인정보취급방침 []
   [:div.container-fluid
-   [문단 "개인정보취급방침"
+   [페이지 [:h2 "개인정보취급방침"]
     [:div "개인정보를 중요하게 생각합니다."]]])
 
 (defn 감사의말 []
-  (문단 "고마움을 전합니다"
-        [마크다운 {:url "/md/CREDITS.md"}]))
+  (페이지 [:h2 "고마움을 전합니다"]
+          [마크다운 {:url "/md/CREDITS.md"}]))
 
 (defn 첫페이지 [가입or로그인]
   [:div
@@ -118,6 +118,7 @@
                               :가입신청 [이용자/가입폼]
                               :가입환영 [이용자/가입환영]
                               :이용자홈 [이용자/이용자홈]
+                              :새프로젝트 [이용자/새프로젝트]
                               [빈페이지])
           (var? 페이지) [(deref 페이지)]
           (fn? 페이지) [페이지]
@@ -135,7 +136,8 @@
               :가입신청
               :가입환영
               #'ohucode.user/로그인폼
-              :이용자홈]
+              :이용자홈
+              :새프로젝트]
         이름 (fn [대상]
                (cond
                  (keyword? 대상) (name 대상)

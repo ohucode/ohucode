@@ -3,7 +3,7 @@
   (:require [reagent.core :as r]
             [re-frame.core :refer [dispatch subscribe]]
             [ohucode.core :refer [다음버튼 링크 입력컨트롤
-                                  패널 검증반응 유효-클래스 알림-div]]))
+                                  패널 검증반응 유효-클래스 알림-div 페이지]]))
 
 (defn 가입폼 [& 선택]
   (let [fg :div.form-group
@@ -35,8 +35,7 @@
               [링크 {:href "/policy"} "개인정보 취급방침"] "에 동의하시게 됩니다."]]]]])))
 
 (defn 가입환영 []
-  [:div
-   [:div.page-header [:h3 "환영합니다"]]
+  [페이지 "환영합니다"
    [:div "이제 무얼 할 수 있나요?"]])
 
 (defn 로그인폼 []
@@ -64,3 +63,50 @@
 
 (defn 이용자홈 []
   [:div "로그인한 이용자 홈 화면"])
+
+
+(defn 새프로젝트 [아이디]
+  (let [fg :div.form-group
+        폼상태 (r/atom {:공개? true :초기화? false})
+        검증상태 (검증반응 폼상태 [:프로젝트명])
+        입력 (fn [키 속성]
+               [fg {:class "aaa"}
+                [입력컨트롤 (merge {:type "text" :placeholder (name 키) :value (@폼상태 키)
+                                    :on-change #(swap! 폼상태 assoc 키 (.-target.value %))}
+                                   속성)]])
+        라디오 (fn [키 속성]
+                 [:input (merge {:type "radio" :checked (= (속성 :값) (@폼상태 키))
+                                 :on-change #(swap! 폼상태 assoc 키 (속성 :값))}
+                                속성)])
+        체크박스 (fn [키]
+                   [:input {:type "checkbox" :checked (@폼상태 키)
+                            :on-change #(swap! 폼상태 update 키 not)}])]
+    (fn [아이디]
+      [패널 ["새 프로젝트"]
+       [:form.form-inline
+        [:fieldset {:disabled false}
+         [fg
+          [:select.form-control [:option {:value "hatemogi"} "hatemogi"]]
+          " / "
+          [입력 :프로젝트명 {:auto-focus true}]]]]
+       [:br]
+       [:form
+        [fg
+         [입력 :설명 {:placeholder "설명"}]]
+        [:hr]
+        [fg [:div.radio [:label [라디오 :공개? {:값 true}]
+                         [:span.octicon.octicon-repo]
+                         [:span
+                          [:dl
+                           [:dt "공개 저장소"]
+                           [:dd "누구나 프로젝트 내용을 볼 수 있고, 커밋할 수 있는 사람들을 따로 지정할 수 있습니다."]]]]]]
+        [fg [:div.radio [:label [라디오 :공개? {:값 false}]
+                         [:span.octicon.octicon-lock]
+                         [:dl
+                          [:dt "비공개 저장소"]
+                          [:dd "누가 이 프로젝트를 보고 쓸 수 있는지 따로 지정합니다."]]]]]
+        [:hr]]
+       [fg
+        [:div.checkbox [:label [체크박스 :초기화?] "README 파일과 함께 프로젝트 초기화"]]]
+       [fg [:div (str @폼상태)]]
+       [fg [다음버튼 {:라벨 "만들기"}]]])))
