@@ -84,7 +84,7 @@
             (if (관리자? 아이디)
               [:li [링크 {:href "/admin"} "관리자"]])
             [:li
-             [링크 {:페이지 :새저장소만들기 :title "새 저장소 만들기"} [:span.octicon.octicon-plus]]]
+             [링크 {:페이지 :새프로젝트 :title "새 프로젝트 만들기"} [:span.octicon.octicon-plus]]]
             [계정정보메뉴 아이디]]
            [:ul.nav.navbar-nav.navbar-right
             [:li [링크 {:페이지 :첫페이지>로그인} [:i.fa.fa-sign-in] " 로그인"]]])]]])))

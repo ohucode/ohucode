@@ -69,11 +69,11 @@
   (let [fg :div.form-group
         폼상태 (r/atom {:공개? true :초기화? false})
         검증상태 (검증반응 폼상태 [:프로젝트명])
+        새프로젝트상태 (subscribe [:새프로젝트])
         입력 (fn [키 속성]
-               [fg {:class "aaa"}
-                [입력컨트롤 (merge {:type "text" :placeholder (name 키) :value (@폼상태 키)
-                                    :on-change #(swap! 폼상태 assoc 키 (.-target.value %))}
-                                   속성)]])
+               [입력컨트롤 (merge {:type "text" :placeholder (name 키) :value (@폼상태 키)
+                                   :on-change #(swap! 폼상태 assoc 키 (.-target.value %))}
+                                  속성)])
         라디오 (fn [키 속성]
                  [:input (merge {:type "radio" :checked (= (속성 :값) (@폼상태 키))
                                  :on-change #(swap! 폼상태 assoc 키 (속성 :값))}
@@ -83,30 +83,34 @@
                             :on-change #(swap! 폼상태 update 키 not)}])]
     (fn [아이디]
       [패널 ["새 프로젝트"]
-       [:form.form-inline
-        [:fieldset {:disabled false}
-         [fg
-          [:select.form-control [:option {:value "hatemogi"} "hatemogi"]]
-          " / "
-          [입력 :프로젝트명 {:auto-focus true}]]]]
-       [:br]
-       [:form
-        [fg
-         [입력 :설명 {:placeholder "설명"}]]
-        [:hr]
-        [fg [:div.radio [:label [라디오 :공개? {:값 true}]
-                         [:span.octicon.octicon-repo]
-                         [:span
-                          [:dl
-                           [:dt "공개 저장소"]
-                           [:dd "누구나 프로젝트 내용을 볼 수 있고, 커밋할 수 있는 사람들을 따로 지정할 수 있습니다."]]]]]]
-        [fg [:div.radio [:label [라디오 :공개? {:값 false}]
-                         [:span.octicon.octicon-lock]
-                         [:dl
-                          [:dt "비공개 저장소"]
-                          [:dd "누가 이 프로젝트를 보고 쓸 수 있는지 따로 지정합니다."]]]]]
-        [:hr]]
-       [fg
-        [:div.checkbox [:label [체크박스 :초기화?] "README 파일과 함께 프로젝트 초기화"]]]
-       [fg [:div (str @폼상태)]]
-       [fg [다음버튼 {:라벨 "만들기"}]]])))
+       [:div.새프로젝트
+        [:form.form-inline
+         [:fieldset {:disabled (@새프로젝트상태 :로딩?)}
+          [fg
+           [:select.form-control [:option {:value "hatemogi"} "hatemogi"]]
+           " / "
+           [입력 :프로젝트명 {:auto-focus true}]]]]
+        [:br]
+        [:form
+         [:fieldset {:disabled (@새프로젝트상태 :로딩?)}
+          [fg
+           [입력 :설명 {:placeholder "설명"}]]
+          [:hr]
+          [:div.radio [:label [라디오 :공개? {:값 true}]
+                       [:span {:class "octicon mega-octicon octicon-repo 공개아이콘"}]
+                       [:dl
+                        [:dt "공개 저장소"]
+                        [:dd "누구나 프로젝트 내용을 볼 수 있고, 커밋할 수 있는 사람들을 따로 지정할 수 있습니다."]]]]
+          [:div.radio [:label [라디오 :공개? {:값 false}]
+                       [:span {:class "octicon mega-octicon octicon-lock 공개아이콘"}]
+                       [:dl
+                        [:dt "비공개 저장소"]
+                        [:dd "누가 이 프로젝트를 보고 쓸 수 있는지 따로 지정합니다."]]]]
+          [:hr]
+          [:div.checkbox [:label [체크박스 :초기화?] "README 파일과 함께 프로젝트 초기화"]]
+          [fg [:div (str @폼상태)]]
+          [fg [다음버튼 {:라벨 "만들기" :로딩? (@새프로젝트상태 :로딩?)
+                         :disabled (@검증상태 :무효)
+                         :클릭 #(dispatch [:새프로젝트
+                                           (select-keys @폼상태
+                                                        [:프로젝트명 :설명 :공개? :초기화?])])}]]]]]])))

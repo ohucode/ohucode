@@ -48,6 +48,7 @@
    (context "/:아이디" [아이디]
      (GET "/" [] (if-let [이용자 (db/select-user 아이디)]
                    (str 이용자)))
+     (POST "/" [] "TODO: 프로젝트생성")
      (GET "/settings" [] 뷰/미구현)
      (GET "/profile" [] 뷰/미구현))))
 
