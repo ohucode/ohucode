@@ -17,11 +17,26 @@
 
 인증에 필수인 정보를 기록한다. 자주 사용하지 않는 정보는 쿠키에 담지 말고, 필요할 때 서버에 요청하자. 단, 구글어날리틱스(GA)에 보낼 정보는 기본으로 포함하는 것이 좋겠다.
 
+## RSA 키 생성
+
+```sh
+$ openssl genrsa -out auth.rsa 2048
+$ openssl pkcs8 -in auth.rsa -inform pem -topk8 -out auth.pk8 -outform der -nocrypt
+$ openssl rsa -in auth.rsa -pubout -out auth.pub.der -outform der
+```
+
+Java 표준 라이브러리로 읽기 위해 DER포맷의 PKCS8 파일을 준비해둡니다.
+
 ### 인증처리를 위한 필수 정보
 
 * 아이디
 * 만료일시
 * 인증서버 서명
+
+``` clojure
+{:인증 {:아이디 "애월조단" :만료일시 1234567890}
+ :서명 "0abcboeoaeu12344123"}
+```
 
 ### 인증처리후 넘겨줄 세션 프로필 정보
 

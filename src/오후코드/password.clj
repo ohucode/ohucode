@@ -3,11 +3,16 @@
   (:import [javax.crypto SecretKeyFactory]
            [javax.crypto.spec PBEKeySpec]
            [java.util Base64]
-           [java.security SecureRandom]))
+           [java.security SecureRandom KeyFactory Signature]
+           [java.security.spec PKCS8EncodedKeySpec X509EncodedKeySpec]))
 
 (함수 encode-base64 [bytes]
   "일반 Base64 인코딩"
   (.encodeToString (Base64/getEncoder) bytes))
+
+(함수 decode-base64 [bytes]
+  "일반 Base64 디코딩"
+  (.decode (Base64/getDecoder) bytes))
 
 (함수 encode-urlsafe-base64 [bytes]
   "URL-safe Base64 인코딩: RFC4648"
@@ -58,3 +63,41 @@
 
   (함수 ohucode-valid-password? [userid password raw]
     (valid-password-digest? password (saltfn userid) raw)))
+
+(함수 개인키 [파일명]
+  (가정 [스펙 (-> (slurp 파일명 :encoding "ISO-8859-1")
+                  (.getBytes "ISO-8859-1")
+                  (PKCS8EncodedKeySpec.))]
+    (-> (KeyFactory/getInstance "RSA")
+        (.generatePrivate 스펙))))
+
+(함수 공개키 [파일명]
+  (가정 [스펙 (-> (slurp 파일명 :encoding "ISO-8859-1")
+                  (.getBytes "ISO-8859-1")
+                  (X509EncodedKeySpec.))]
+    (-> (KeyFactory/getInstance "RSA")
+        (.generatePublic 스펙))))
+
+(함수 바이트-서명 [개인키 내용]
+  ;; https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#Signature
+  (-> (doto (Signature/getInstance "SHA256withRSA")
+         (.initSign 개인키)
+         (.update 내용))
+      (.sign)))
+
+(함수 바이트-서명확인 [공개키 내용 서명]
+  (-> (doto (Signature/getInstance "SHA256withRSA")
+        (.initVerify 공개키)
+        (.update 내용))
+      (.verify 서명)))
+
+(함수 서명 [^String 내용]
+  (-> (개인키 "conf/auth.pk8")
+      (바이트-서명  (.getBytes 내용))
+      encode-base64))
+
+(함수 서명확인 [^String 내용 ^String 서명]
+  (가정 [키 (공개키 "conf/auth.pub.der")
+         내용 (.getBytes 내용)
+         서명 (decode-base64 서명)]
+    (바이트-서명확인 키 내용 서명)))
