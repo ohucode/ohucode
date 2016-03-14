@@ -1,1 +1,1 @@
-DROP TABLE audits;
+DROP TABLE 기록;

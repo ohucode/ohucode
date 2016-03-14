@@ -1,2 +1,2 @@
 -- 이메일 테이블 삭제
-DROP TABLE email_verifications, emails;
+DROP TABLE 이용자메일확인, 이용자메일;

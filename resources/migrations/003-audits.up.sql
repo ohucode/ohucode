@@ -1,15 +1,15 @@
--- 사용자 액션 기록 테이블
-CREATE TABLE audits (
-  id         SERIAL PRIMARY KEY,
-  userid     VARCHAR(32) NOT NULL REFERENCES users ON DELETE CASCADE,
-  action     VARCHAR(32) NOT NULL,
-  data       JSON,
-  ip         INET NOT NULL DEFAULT '0.0.0.0',
-  created_at TIMESTAMP NOT NULL DEFAULT now()
+-- 이용자 액션 기록 테이블
+CREATE TABLE 기록 (
+  id       SERIAL PRIMARY KEY,
+  아이디   VARCHAR(32) NOT NULL REFERENCES 이용자 ON DELETE CASCADE,
+  행위     VARCHAR(32) NOT NULL,
+  데이터   JSON,
+  ip       INET NOT NULL DEFAULT '0.0.0.0',
+  생성일시 TIMESTAMP NOT NULL DEFAULT now()
 );
 
-CREATE INDEX audits_idx_by_userid ON audits (userid, created_at DESC);
+CREATE INDEX 기록_아이디_인덱스 ON 기록 (아이디, 생성일시 DESC);
 
-CREATE INDEX audits_idx_by_action ON audits (action, created_at DESC);
+CREATE INDEX 기록_행위_인덱스 ON 기록 (행위, 생성일시 DESC);
 
-CREATE INDEX audits_idx_by_ip ON audits (ip, userid);
+CREATE INDEX 기록_ip_인덱스 ON 기록 (ip, 아이디);

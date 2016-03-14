@@ -32,14 +32,14 @@
      [이메일 아이디 비밀번호]
      (신규가입 {:이메일 이메일 :아이디 아이디 :비밀번호 비밀번호 :성명 "테스트"})
      (확인 (= (ohucode-password-digest 아이디 비밀번호)
-              (:password_digest (select-user 아이디)))
+              (:비번해쉬 (select-user 아이디)))
            "패스워드 해시 보관")
      (확인 (valid-user-password? 아이디 비밀번호) "패스워드 확인")
      (확인 (not (가용이메일? 이메일)) "가입한 이메일은 사용할 수 없어야한다")))
 
   (실험 "대소문자 아이디 구분"
     (transaction
-     (insert users (values {:userid "Aaa" :email "test@abc.com"}))
+     (insert 이용자 (values {:아이디 "Aaa" :이메일 "test@abc.com"}))
      (확인 (예외발생? Exception
-                      (insert users (values {:userid "aaa" :email "another@abc.com"}))))
+                      (insert 이용자 (values {:아이디 "aaa" :이메일 "another@abc.com"}))))
      (rollback))))
