@@ -96,13 +96,20 @@
         (.update 내용))
       (.verify 서명)))
 
+(정의 ^{:dynamic true
+        :doc "오후코드 사이트 공통으로 쓸 개인키"}
+  *개인키* (개인키 "conf/auth.pk8"))
+
+(정의 ^{:dynamic true
+        :doc "오후코드 사이트 공통으로 쓸 공개키"}
+  *공개키* (공개키 "conf/auth.pub"))
+
 (함수 서명 [^String 내용]
-  (-> (개인키 "conf/auth.pk8")
+  (-> *개인키*
       (바이트-서명  (.getBytes 내용))
       encode-base64))
 
 (함수 서명확인 [^String 내용 ^String 서명]
-  (가정 [키 (공개키 "conf/auth.pub")
-         내용 (.getBytes 내용)
+  (가정 [내용 (.getBytes 내용)
          서명 (decode-base64 서명)]
-    (바이트-서명확인 키 내용 서명)))
+    (바이트-서명확인 *공개키* 내용 서명)))
