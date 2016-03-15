@@ -15,8 +15,12 @@
   (.decode (Base64/getDecoder) bytes))
 
 (함수 encode-urlsafe-base64 [bytes]
-  "URL-safe Base64 인코딩: RFC4648"
+  "URL-safe Base64 인코딩: RFC4648, https://www.ietf.org/rfc/rfc4648.txt"
   (.encodeToString (.withoutPadding (Base64/getUrlEncoder)) bytes))
+
+(함수 decode-urlsafe-base64 [bytes]
+  "URL-safe Base64 디코딩: RFC4648, https://www.ietf.org/rfc/rfc4648.txt"
+  (.decode (Base64/getUrlDecoder) bytes))
 
 (함수 random-bytes [size]
   "안전한 랜덤 바이트 생성. size 길이의 랜덤 바이트를 만들어 base64로 인코딩."
@@ -107,9 +111,27 @@
 (함수 서명 [^String 내용]
   (-> *개인키*
       (바이트-서명  (.getBytes 내용))
-      encode-base64))
+      encode-urlsafe-base64))
 
 (함수 서명확인 [^String 내용 ^String 서명]
   (가정 [내용 (.getBytes 내용)
-         서명 (decode-base64 서명)]
+         서명 (decode-urlsafe-base64 서명)]
     (바이트-서명확인 *공개키* 내용 서명)))
+
+(함수 인증토큰생성
+  "인증쿠키에 보관할 [인증문자열:서명] 값을 생성한다."
+  [인증정보]
+  (가정 [인증문자열 (-> 인증정보 pr-str .getBytes encode-urlsafe-base64)
+         서명 (서명 인증문자열)]
+    (str 인증문자열 ":" 서명)))
+
+(함수 인증토큰확인
+  "인증쿠키에 있는 인증문자열과 서명을 확인해서,
+   서명이 유효하다면 인증문자열을 read-string으로 읽어서 돌려주고,
+   무효라면 nil을 반환한다. 디코딩에 실패하더라도 nil이다."
+  [토큰문자열]
+  (try
+   (가정 [[인증문자열 서명] (clojure.string/split 토큰문자열 #":")]
+     (만약 (서명확인 인증문자열 서명)
+       (-> 인증문자열 .getBytes decode-urlsafe-base64 String. read-string)))
+   (catch Exception e nil)))
