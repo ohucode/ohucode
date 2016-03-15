@@ -10,8 +10,9 @@
             [ring.logger.timbre :refer [wrap-with-logger]]
             [prone.middleware :refer [wrap-exceptions]]
             [taoensso.timbre :as timbre]
-            [clojure.edn]
+            [clojure.edn :as edn]
             [오후코드.db :as db]
+            [오후코드.보안 :as 보안]
             [오후코드.뷰 :as 뷰]
             [오후코드.핸들러-깃 :refer [smart-http-routes]]
             [오후코드.핸들러-관리 :refer [관리-라우트]]
@@ -28,23 +29,45 @@
             (-> (db/select-user 아이디)
                 (dissoc :password_digest :created_at :updated_at))))
 
+(함수- 지금시각 []
+  (quot (System/currentTimeMillis) 1000))
+
+(정의 인증쿠키명 "ohucode-auth")
+
+(정의 ^:private 인증쿠키-기본값
+  {:value ""
+   :path "/"
+   :max-age (* 7 24 3600)
+   :secure false ;; HTTPS 연결후 true로 바꾸자
+   :http-only true})
+
+(함수- 인증쿠키 [아이디]
+  (assoc 인증쿠키-기본값
+         :value (보안/인증토큰생성
+                 {:아이디   아이디
+                  :발급일시 (지금시각)
+                  :만료일시 (+ (지금시각) (* 7 24 3600))})))
+
+(함수- 인증쿠키삭제 [응답]
+  (assoc-in 응답 [:cookies 인증쿠키명]
+            (assoc 인증쿠키-기본값 :max-age 0)))
+
+(함수- 인증아이디 [요청]
+  (get-in 요청 [:인증 :아이디]))
+
 (정의 이용자-라우트
   (routes
    (context "/user" []
      (POST "/login" [아이디 비밀번호]
        (만약 (db/valid-user-password? 아이디 비밀번호)
-         (가정 [이용자 (-> (db/select-user 아이디)
-                           (dissoc :password_digest))]
-           ;; TODO: 로그인 쿠키 발급
-           {:status 200 :body {:이용자 이용자} :session {:이용자 이용자}})
+         {:status 200 :body {:아이디 아이디} :cookies {인증쿠키명 (인증쿠키 아이디)}}
          {:status 401 :body {:실패 "인증 실패"}}))
      (PUT "/logout" 요청
        (db/insert-audit (or (:아이디 (session-user 요청))
                             "손님")
                         "로그아웃" {})
-       ;; TODO: 로그인 쿠기 제거
-       {:status 200 :session {:이용자 nil}
-        :body {:성공 "로그아웃 처리"}}))
+       (인증쿠키삭제 {:status 200
+                      :body {:성공 "로그아웃 처리"}})))
    (context "/:아이디" [아이디]
      (GET "/" [] (if-let [이용자 (db/select-user 아이디)]
                    (str 이용자)))
@@ -89,25 +112,40 @@
     (binding [*client-ip* (:remote-addr 요청)]
       (핸들러 요청))))
 
+(함수- wrap-인증쿠키확인
+  "인증쿠키를 확인해서 유효하면, 요청에 :인증 정보를 포함시키고,
+  무효하면, 인증쿠키를 삭제한다."
+  [핸들러]
+  (fn [요청]
+    (가정 [인증정보 (-> 요청
+                        (get-in [:cookies 인증쿠키명 :value])
+                        보안/인증토큰확인)]
+      (만약 (and 인증정보
+                 (< (지금시각) (get 인증정보 :만료일시 0)))
+        (핸들러 (assoc 요청 :인증 인증정보))
+        (if-let [응답 (핸들러 요청)]
+          (if (get-in 응답 [:cookies 인증쿠키명])
+            응답  ; 로그인 처리일 경우, 응답에서 인증 쿠키가 새로 생긴다. 이때는 유지.
+            (인증쿠키삭제 응답)))))))
+
 (함수- wrap-edn-params
-  "요청 컨텐트 타입이 application/edn이면 요청 본문을 EDN 형태로 읽어서 :params 맵에 추가합니다."
+  "요청 컨텐트 타입이 application/edn이면 요청 본문을 EDN 형태로 읽어서 :params 맵에 추가한다."
   [핸들러]
   (가정 [edn? (fn [요청]
                 (and
                  (re-find #"^application/edn" (get-in 요청 [:headers "content-type"] ""))
                  (:body 요청)))
-
-         ;; [주의] clojure.core/read-string은 eval이 되므로 쓰지 않습니다.
+         ;; [주의] clojure.core/read-string은 eval이 되므로 쓰지 않는다.
          ;; http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/read
          ;; clojure.edn/read-string은 괜찮습니다.
-         read-edn (합성 clojure.edn/read-string slurp)]
+         read-edn (합성 edn/read-string slurp)]
     (fn [요청]
       (만약-가정 [본문 (edn? 요청)]
         (핸들러 (assoc 요청 :params (병합 (:params 요청) (read-edn 본문))))
         (핸들러 요청)))))
 
 (함수- wrap-edn-response
-  "응답 본문이 맵이면 EDN 표기로 바꿔 보냅니다."
+  "응답 본문이 맵이면 EDN 표기로 바꿔 보낸다."
   [핸들러]
   (fn [요청]
     (만약-가정 [응답 (핸들러 요청)]
@@ -119,7 +157,7 @@
 
 (한번정의
  ^{:private true
-   :doc "리로드해도 세션을 유지하기 위해 메모리 세션 따로 둡니다"}
+   :doc "리로드해도 세션을 유지하기 위해 메모리 세션 따로 둔다"}
   세션저장소 (memory-store))
 
 (정의 app
@@ -136,12 +174,13 @@
        wrap-user-info
        wrap-bind-client-ip
        wrap-html-content-type
+       wrap-인증쿠키확인
        wrap-edn-response
        wrap-edn-params
        (wrap-defaults (-> site-defaults
-                          ;; static 자원은 앞에서 미리 처리합니다
+                          ;; static 자원은 앞에서 미리 처리한다
                           (dissoc :static)
-                          (dissoc :security) ;; TODO: AJAX CSRF 대응합시다.
+                          (dissoc :security) ;; TODO: AJAX CSRF 대응
                           (assoc-in [:session :store] 세션저장소))))
 
    (ANY "*" [] 뷰/not-found)))

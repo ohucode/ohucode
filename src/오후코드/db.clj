@@ -70,8 +70,7 @@
      (insert-audit 아이디 "가입" (select-keys 레코드 [:이메일 :성명])))))
 
 (함수 valid-user-password? [아이디 비밀번호]
-  (만약-가정 [raw (-> (select-user 아이디)
-                      :비번해쉬)]
+  (만약-가정 [raw (-> (select-user 아이디) :비번해쉬)]
     (가정 [valid? (보안/ohucode-valid-password? 아이디 비밀번호 raw)]
       (insert-audit 아이디 "login" {:성공 valid?})
       valid?)

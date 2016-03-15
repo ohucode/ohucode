@@ -18,8 +18,9 @@ CREATE TABLE 이용자 (
 -- 영문아이디는 대소문자 구분하지 않고 같게 취급하지만, 보여주는 것은 구분합니다.
 CREATE UNIQUE INDEX 이용자_소문자_아이디_인덱스 ON 이용자 (lower(아이디));
 
-INSERT INTO 이용자 (아이디, 이메일, 성명) VALUES
-  ('admin',  'admin@ohucode.com',   '관리자'),
-  ('system', 'system@ohucode.com',  '시스템'),
-  ('guest',  'guest@ohucode.com',   '손님'  ),
-  ('미생',   'misaeng@ohucode.com', '장그래');
+INSERT INTO 이용자 (아이디, 이메일, 성명, 비번해쉬) VALUES
+  ('admin',    'admin@ohucode.com',   '관리자', NULL),
+  ('system',   'system@ohucode.com',  '시스템', NULL),
+  ('guest',    'guest@ohucode.com',   '손님',   NULL),
+  ('미생',     'misaeng@ohucode.com', '장그래', NULL),
+  ('애월조단', 'dhk@ohucode.com',     '김대현', 'kkUDtH2Ee/iZ6ldzrNXpzNKHdJk=');
