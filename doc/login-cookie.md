@@ -30,13 +30,17 @@ Java 표준 라이브러리로 읽기 위해 DER포맷의 PKCS8 파일을 준비
 ### 인증처리를 위한 필수 정보
 
 * 아이디
+* 발급일시
 * 만료일시
 * 인증서버 서명
 
 ``` clojure
-{:인증 {:아이디 "애월조단" :만료일시 1234567890}
- :서명 "0abcboeoaeu12344123"}
+{:인증 {:아이디 "애월조단", :발급일시 1458014921, :만료일시 1459829321}
+ :서명 "G1+hfnsSlzS2SygMTelPWEQJE9EZB9/A5ynqzL709PmBuKlMIhaymYzbMuX0vnFtET1bVl3QV1mLVAki0z23qLr0kP07G8rc4gbT2FjbD+SEfktuMfwyOA2Y31TYT1TaRARUyN5kLAMjeIb0KPIQNPepA4wMUsiRTDRIiABvRw3YuMzQCASW/etybCc3SXc6xOTtzOFwWU/K0vIdw1tTA8AqY6IaVEtqiRbgSvHRKvy5q6rClbiqgH5hZOumdS94CidJs0OsVi35nC7px6HxA8/CB7q7K7Qi7dG37UPfiq4U+5NCMviKors5syzhlJkkEH0twDOdRLUu2ZwfcMVkxg=="}
 ```
+
+* ```:인증``` 맵을 ```(pr-str)```로 찍어서 그걸 RSA로 서명하고, 그걸 ```:서명``` 값으로 넣는다.
+* 후에 "다른 기기에서 로그인한 것 취소"같은 기능을 넣는다면, 발급일시가, 최종 취소요청 일시보다 이전이면 인증처리를 안하도록 처리하면 된다.
 
 ### 인증처리후 넘겨줄 세션 프로필 정보
 
