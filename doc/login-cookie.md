@@ -22,7 +22,7 @@
 ```sh
 $ openssl genrsa -out auth.rsa 2048
 $ openssl pkcs8 -in auth.rsa -inform pem -topk8 -out auth.pk8 -outform der -nocrypt
-$ openssl rsa -in auth.rsa -pubout -out auth.pub.der -outform der
+$ openssl rsa -in auth.rsa -pubout -out auth.pub -outform der
 ```
 
 Java 표준 라이브러리로 읽기 위해 DER포맷의 PKCS8 파일을 준비해둡니다.

@@ -3,7 +3,7 @@
   (:import [javax.crypto SecretKeyFactory]
            [javax.crypto.spec PBEKeySpec]
            [java.util Base64]
-           [java.security SecureRandom KeyFactory Signature]
+           [java.security SecureRandom KeyFactory Signature KeyPairGenerator]
            [java.security.spec PKCS8EncodedKeySpec X509EncodedKeySpec]))
 
 (함수 encode-base64 [bytes]
@@ -78,11 +78,16 @@
     (-> (KeyFactory/getInstance "RSA")
         (.generatePublic 스펙))))
 
+(함수 키쌍생성 []
+  (-> (doto (KeyPairGenerator/getInstance "RSA")
+        (.initialize 2048))
+      (.genKeyPair)))
+
 (함수 바이트-서명 [개인키 내용]
   ;; https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#Signature
   (-> (doto (Signature/getInstance "SHA256withRSA")
-         (.initSign 개인키)
-         (.update 내용))
+        (.initSign 개인키)
+        (.update 내용))
       (.sign)))
 
 (함수 바이트-서명확인 [공개키 내용 서명]
@@ -97,7 +102,7 @@
       encode-base64))
 
 (함수 서명확인 [^String 내용 ^String 서명]
-  (가정 [키 (공개키 "conf/auth.pub.der")
+  (가정 [키 (공개키 "conf/auth.pub")
          내용 (.getBytes 내용)
          서명 (decode-base64 서명)]
     (바이트-서명확인 키 내용 서명)))
