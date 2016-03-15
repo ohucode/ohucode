@@ -1,4 +1,4 @@
-(ns 오후코드.password
+(ns 오후코드.보안
   (:use [미생.기본])
   (:import [javax.crypto SecretKeyFactory]
            [javax.crypto.spec PBEKeySpec]

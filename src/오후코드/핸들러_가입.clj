@@ -1,8 +1,7 @@
 (ns 오후코드.핸들러-가입
   (:require [compojure.route :as route]
             [오후코드.메일 :as 메일]
-            [오후코드.db :as db]
-            [오후코드.password :as pw])
+            [오후코드.db :as db])
   (:use [미생.기본]
         [compojure.core]
         [ring.util.response]))

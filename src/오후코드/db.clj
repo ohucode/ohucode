@@ -4,7 +4,7 @@
         [미생.기본]
         [korma.db]
         [korma.core])
-  (:require [오후코드.password :as pw]
+  (:require [오후코드.보안 :as 보안]
             [taoensso.timbre :as timbre]
             [clojure.data.json :as json]
             [clojure.set :refer [rename-keys]])
@@ -62,7 +62,7 @@
   {:pre [(not-any? 공? [이메일 아이디 성명 비밀번호])]}
 
   (가정 [조건 {:이메일 이메일 :아이디 아이디 :성명 성명
-               :비번해쉬 (pw/ohucode-password-digest 아이디 비밀번호)}]
+               :비번해쉬 (보안/ohucode-password-digest 아이디 비밀번호)}]
     (transaction
      (insert 이용자 (values 조건))
      (insert 이용자메일 (values (select-keys 조건 [:이메일 :아이디])))
@@ -72,7 +72,7 @@
 (함수 valid-user-password? [아이디 비밀번호]
   (만약-가정 [raw (-> (select-user 아이디)
                       :비번해쉬)]
-    (가정 [valid? (pw/ohucode-valid-password? 아이디 비밀번호 raw)]
+    (가정 [valid? (보안/ohucode-valid-password? 아이디 비밀번호 raw)]
       (insert-audit 아이디 "login" {:성공 valid?})
       valid?)
     (작용

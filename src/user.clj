@@ -7,7 +7,7 @@
             [오후코드.핸들러 :as h]
             [오후코드.서버 :as s]
             [오후코드.db :as db]
-            [오후코드.password :as pw]
+            [오후코드.보안 :as pw]
             [clojure.tools.namespace.repl :refer [refresh]]
             [ragtime.jdbc :as jdbc]
             [ragtime.repl :as ragtime]))
