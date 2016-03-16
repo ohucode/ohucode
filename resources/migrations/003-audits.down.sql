@@ -1,1 +1,1 @@
-DROP TABLE 기록;
+drop table 기록;

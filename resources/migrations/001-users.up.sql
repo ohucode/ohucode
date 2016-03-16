@@ -1,26 +1,26 @@
 -- 이용자 기본 정보
-CREATE TABLE 이용자 (
-  아이디   VARCHAR(32) PRIMARY KEY,
-  이메일   VARCHAR(256) NOT NULL UNIQUE,
-  성명     VARCHAR(64),
-  비번해쉬 VARCHAR(32),
+create table 이용자 (
+  아이디   varchar(32) primary key,
+  이메일   varchar(256) not null unique,
+  성명     varchar(64),
+  비번해쉬 varchar(32),
 
-  코호트   INT DEFAULT 0,
-  요금제   INT DEFAULT 0,
-  소속     VARCHAR(64),
-  거주지역 VARCHAR(64),
-  url      VARCHAR(256),
-  생성일시 TIMESTAMP NOT NULL DEFAULT now(),
-  갱신일시 TIMESTAMP NOT NULL DEFAULT now(),
-  동의일시 TIMESTAMP NOT NULL DEFAULT now()
+  코호트   int default 0,
+  요금제   int default 0,
+  소속     varchar(64),
+  거주지역 varchar(64),
+  url      varchar(256),
+  생성일시 timestamp not null default now(),
+  갱신일시 timestamp not null default now(),
+  동의일시 timestamp not null default now()
 );
 
 -- 영문아이디는 대소문자 구분하지 않고 같게 취급하지만, 보여주는 것은 구분합니다.
-CREATE UNIQUE INDEX 이용자_소문자_아이디_인덱스 ON 이용자 (lower(아이디));
+create unique index 이용자_소문자_아이디_인덱스 on 이용자 (lower(아이디));
 
-INSERT INTO 이용자 (아이디, 이메일, 성명, 비번해쉬) VALUES
-  ('admin',    'admin@ohucode.com',   '관리자', NULL),
-  ('system',   'system@ohucode.com',  '시스템', NULL),
-  ('guest',    'guest@ohucode.com',   '손님',   NULL),
-  ('미생',     'misaeng@ohucode.com', '장그래', NULL),
-  ('애월조단', 'dhk@ohucode.com',     '김대현', 'kkUDtH2Ee/iZ6ldzrNXpzNKHdJk=');
+insert into 이용자 (아이디, 이메일, 성명, 비번해쉬) values
+  ('admin',    'admin@ohucode.com',   '관리자', null),
+  ('system',   'system@ohucode.com',  '시스템', null),
+  ('guest',    'guest@ohucode.com',   '손님',   null),
+  ('미생',     'misaeng@ohucode.com', '장그래', null),
+  ('애월조단', 'dhk@ohucode.com',     '김대현', 'kkudth2ee/iz6ldzrnxpznkhdjk=');
