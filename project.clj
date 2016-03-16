@@ -11,7 +11,7 @@
                  [org.javassist/javassist "3.20.0-GA"]
                  [misaeng "0.1.0"]
 
-                 [compojure "1.4.0"]
+                 [compojure "1.5.0"]
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
                  [ring-logger-timbre "0.7.4"]
