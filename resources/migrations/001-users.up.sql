@@ -23,4 +23,4 @@ insert into 이용자 (아이디, 이메일, 성명, 비번해쉬) values
   ('system',   'system@ohucode.com',  '시스템', null),
   ('guest',    'guest@ohucode.com',   '손님',   null),
   ('미생',     'misaeng@ohucode.com', '장그래', null),
-  ('애월조단', 'dhk@ohucode.com',     '김대현', 'kkudth2ee/iz6ldzrnxpznkhdjk=');
+  ('애월조단', 'dhk@ohucode.com',     '김대현', 'kkUDtH2Ee/iZ6ldzrNXpzNKHdJk=');
