@@ -18,7 +18,9 @@
             [오후코드.핸들러-관리 :refer [관리-라우트]]
             [오후코드.핸들러-가입 :refer [가입-라우트]]))
 
-(함수 wrap-signed-user-only [핸들러]
+(함수 wrap-signed-user-only
+  "로그인한 세션만 핸들러를 처리하고, 그렇지 않으면 에러페이지를 보낸다."
+  [핸들러]
   (fn [요청]
     (만약 (로그인? 요청)
       (핸들러 요청)
@@ -34,39 +36,58 @@
 
 (정의 인증쿠키명 "ohucode-auth")
 
-(정의 ^:private 인증쿠키-기본값
-  {:value ""
-   :path "/"
-   :max-age (* 7 24 3600)
-   :secure false ;; HTTPS 연결후 true로 바꾸자
-   :http-only true})
+(가정 [유통기한 (* 7 24 3600)]
+  (정의 ^:private 인증쿠키-기본값
+    {:value ""
+     :path "/"
+     :max-age 유통기한
+     :secure false ;; HTTPS 연결후 true로 바꾸자
+     :http-only true})
 
-(함수- 인증쿠키 [아이디]
-  (assoc 인증쿠키-기본값
-         :value (보안/인증토큰생성
-                 {:아이디   아이디
-                  :발급일시 (지금시각)
-                  :만료일시 (+ (지금시각) (* 7 24 3600))})))
+  (함수- 인증쿠키 [아이디]
+    (assoc 인증쿠키-기본값
+           :value (보안/인증토큰생성
+                   {:아이디   아이디
+                    :발급일시 (지금시각)
+                    :만료일시 (+ (지금시각) 유통기한)}))))
 
 (함수- 인증쿠키삭제 [응답]
   (assoc-in 응답 [:cookies 인증쿠키명]
             (assoc 인증쿠키-기본값 :max-age 0)))
 
-(함수- 인증아이디 [요청]
-  (get-in 요청 [:인증 :아이디]))
+(함수- 로그인-미들웨어 [핸들러 아이디]
+  (fn [요청]
+    (가정 [이용자 (db/select-user 아이디)
+           요청' (-> 요청
+                     (assoc-in [:session :이용자] 이용자)
+                     (assoc-in [:오후코드 :로그인처리] true))
+           응답 (핸들러 요청')]
+      (cond-> 응답       ; TODO: 최종 로그인 시간 기록
+        true
+        (assoc-in [:session :이용자] 이용자)
+
+        (= :없음 (get-in 응답 [:cookies 인증쿠키명] :없음))
+        (assoc-in [:cookies 인증쿠키명] (인증쿠키 아이디))))))
+
+(함수- 로그아웃응답 [응답]
+  (-> 응답
+      (assoc-in [:session :이용자] nil) ; TODO: nil로 삭제되는건지 확인 필요
+      인증쿠키삭제))
 
 (정의 이용자-라우트
   (routes
    (context "/user" []
-     (POST "/login" [아이디 비밀번호]
+     (POST "/login" [아이디 비밀번호 :as 요청]
        (만약 (db/valid-user-password? 아이디 비밀번호)
-         {:status 200 :body {:아이디 아이디} :cookies {인증쿠키명 (인증쿠키 아이디)}}
+         (가정 [이용자 (db/select-user 아이디) ; TODO: 중복 제거
+                핸들러 (fn [_] {:status 200 :body {:이용자 이용자}})
+                로그인처리 (로그인-미들웨어 핸들러 아이디)]
+           (로그인처리 요청))
          {:status 401 :body {:실패 "인증 실패"}}))
      (PUT "/logout" 요청
-       (db/insert-audit (or (:아이디 (session-user 요청))
-                            "손님")
+       (db/insert-audit (get (세션이용자 요청) :아이디 "손님")
                         "로그아웃" {})
-       (인증쿠키삭제 {:status 200
+       (로그아웃응답 {:status 200
                       :body {:성공 "로그아웃 처리"}})))
    (context "/:아이디" [아이디]
      (GET "/" [] (if-let [이용자 (db/select-user 아이디)]
@@ -100,35 +121,51 @@
    이용자-라우트
    프로젝트-라우트))
 
-(함수- wrap-html-content-type [핸들러]
+(함수- wrap-콘텐트타입 [핸들러]
   (fn [요청]
     (만약-가정 [응답 (핸들러 요청)]
       (만약 (find-header 응답 "Content-Type")
         응답
         (content-type 응답 "text/html; charset=utf-8")))))
 
-(함수- wrap-bind-client-ip [핸들러]
+(함수- wrap-client-ip-표시 [핸들러]
   (fn [요청]
-    (binding [*client-ip* (:remote-addr 요청)]
+    (바인딩 [*client-ip* (:remote-addr 요청)]
       (핸들러 요청))))
+
+(함수- 손님전용-미들웨어
+  "로그인하지 않은 세션의 경우에만 미들웨어를 끼운다.
+   로그인한 세션은 미들웨어 거치지 않고 바로 핸들러 처리한다."
+  [핸들러 미들웨어]
+  (가정 [미들웨어-낀-핸들러 (미들웨어 핸들러)]
+    (fn [요청]
+      ((if (로그인? 요청) 핸들러 미들웨어-낀-핸들러) 요청))))
+
+(함수- 인증쿠키삭제-미들웨어
+  [핸들러]
+  (fn [요청]
+    (만약-가정 [응답 (핸들러 요청)]
+      (만약 (get-in 응답 [:cookies 인증쿠키명])
+        응답 ; 로그인 처리일 경우, 응답에서 인증 쿠키가 새로 생긴다. 이때는 유지.
+        (인증쿠키삭제 응답)))))
 
 (함수- wrap-인증쿠키확인
   "인증쿠키를 확인해서 유효하면, 요청에 :인증 정보를 포함시키고,
-  무효하면, 인증쿠키를 삭제한다."
+  무효하면, 인증쿠키를 삭제한다. 이미 인증된 세션의 경우 아무런
+  처리도 하지 않는다.
+  중요: 쿠키/세션 미들웨어보다 안쪽에 등록해야한다."
   [핸들러]
-  (fn [요청]
-    (가정 [인증정보 (-> 요청
-                        (get-in [:cookies 인증쿠키명 :value])
-                        보안/인증토큰확인)]
-      (만약 (and 인증정보
-                 (< (지금시각) (get 인증정보 :만료일시 0)))
-        (핸들러 (assoc 요청 :인증 인증정보))
-        (if-let [응답 (핸들러 요청)]
-          (if (get-in 응답 [:cookies 인증쿠키명])
-            응답  ; 로그인 처리일 경우, 응답에서 인증 쿠키가 새로 생긴다. 이때는 유지.
-            (인증쿠키삭제 응답)))))))
+  (가정 [인증쿠키삭제-핸들러 (인증쿠키삭제-미들웨어 핸들러)]
+    (fn [요청]
+      (가정 [인증정보 (-> 요청
+                          (get-in [:cookies 인증쿠키명 :value])
+                          보안/인증토큰확인)]
+        (만약 (and 인증정보
+                   (< (지금시각) (get 인증정보 :만료일시 0)))
+          ((로그인-미들웨어 핸들러 (:아이디 인증정보)) 요청)
+          (인증쿠키삭제-핸들러 요청))))))
 
-(함수- wrap-edn-params
+(함수- wrap-edn-파라미터
   "요청 컨텐트 타입이 application/edn이면 요청 본문을 EDN 형태로 읽어서 :params 맵에 추가한다."
   [핸들러]
   (가정 [edn? (fn [요청]
@@ -144,7 +181,7 @@
         (핸들러 (assoc 요청 :params (병합 (:params 요청) (read-edn 본문))))
         (핸들러 요청)))))
 
-(함수- wrap-edn-response
+(함수- wrap-edn-응답
   "응답 본문이 맵이면 EDN 표기로 바꿔 보낸다."
   [핸들러]
   (fn [요청]
@@ -154,6 +191,11 @@
             (assoc :body (pr-str (:body 응답)))
             (content-type "application/edn; charset=utf-8"))
         응답))))
+
+(함수- wrap-이용자정보 [핸들러]
+  (fn [요청]
+    (바인딩 [*세션이용자* (세션이용자 요청)]
+      (핸들러 요청))))
 
 (한번정의
  ^{:private true
@@ -171,12 +213,12 @@
 
    (-> 웹-라우트
        wrap-with-logger     ; TODO: 로거 위치 고민 필요
-       wrap-user-info
-       wrap-bind-client-ip
-       wrap-html-content-type
-       wrap-인증쿠키확인
-       wrap-edn-response
-       wrap-edn-params
+       wrap-이용자정보
+       wrap-client-ip-표시
+       wrap-콘텐트타입
+       (손님전용-미들웨어 wrap-인증쿠키확인)
+       wrap-edn-응답
+       wrap-edn-파라미터
        (wrap-defaults (-> site-defaults
                           ;; static 자원은 앞에서 미리 처리한다
                           (dissoc :static)

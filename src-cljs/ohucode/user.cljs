@@ -59,7 +59,7 @@
          [fg [다음버튼 {:라벨 "로그인" :로딩? (@로그인상태 :로딩?)
                         :disabled (@검증상태 :무효)
                         :class "btn-block"
-                        :클릭 #(dispatch [:로그인 (select-keys @폼상태 키목록)])}]]]]])))
+                        :클릭 #(dispatch [:로그인요청 (select-keys @폼상태 키목록)])}]]]]])))
 
 (defn 이용자홈 []
   [:div "로그인한 이용자 홈 화면"])

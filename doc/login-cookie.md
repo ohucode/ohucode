@@ -65,3 +65,12 @@ A. SPA 구조이니만큼, 세션이 필요 없을 수도 있다. 무언가 필�
 ### 쿠키 만료일시 연장 절차
 
 * 만료일시 전에 재방문 했을 때, 언제 쿠키를 새로 발급하나?
+* 참고자료에 있는 대로, 인증쿠키로 로그인 처리를 해주는 시점에 재발급하면 깔끔하겠다. 그러면 7일정도로도 괜찮다. 7일내에 재방문하면 7일 유효기간의 쿠키가 새로 발급된다.
+
+### 참고자료
+
+* http://stackoverflow.com/questions/244882/what-is-the-best-way-to-implement-remember-me-for-a-website
+* http://jaspan.com/improved_persistent_login_cookie_best_practice
+* (번역) http://blog.naver.com/PostView.nhn?blogId=junhwen&logNo=130145534571
+* (질문과 링크정보) http://okky.kr/article/164187
+* (PBKDF) http://d2.naver.com/helloworld/318732

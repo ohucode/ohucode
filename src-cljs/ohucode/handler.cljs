@@ -42,7 +42,7 @@
           (cond-> (assoc-in db [:가입신청 :로딩?] false)
             (= :실패 성패) (assoc-in [:가입신청 :실패] "실패했어요"))))
 
-(핸들러 :로그인
+(핸들러 :로그인요청
         (fn [db [_ 이용자]]
           (js/console.log #js ["로그인 요청" 이용자])
           (POST "/user/login"
@@ -55,8 +55,12 @@
         (fn [db [_ 성패 내용]]
           (js/console.log "로그인결과" (name 성패) (str 내용))
           (dispatch [:페이지 :이용자홈])
-          (cond-> (assoc-in db [:로그인 :로딩?] false)
-            (= :성공 성패) (assoc-in [:로그인 :이용자] (:이용자 내용)))))
+          (if (= :성공 성패) (dispatch [:로그인 (:이용자 내용)]))
+          (assoc-in db [:로그인 :로딩?] false)))
+
+(핸들러 :로그인
+        (fn [db [_ 이용자]]
+          (assoc-in db [:로그인 :이용자] 이용자)))
 
 (핸들러 :로그아웃
         (fn [db _]
