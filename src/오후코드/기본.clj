@@ -21,3 +21,6 @@
 
 (함수 관리자? [요청]
   (= "admin" (:아이디 (세션이용자 요청))))
+
+(함수 지금시각 []
+  (quot (System/currentTimeMillis) 1000))
