@@ -60,14 +60,14 @@
               [{:id "dev"
                 :source-paths ["src-cljs"]
                 :figwheel {:on-jsload "ohucode.main/fig-reload"}
-                :compiler {:main ohucode.main
+                :compiler {:main "ohucode.main"
                            :optimizations :none
                            :asset-path "js"
                            :output-to "resources/public/js/main.js"
                            :output-dir "resources/public/js"}}
                {:id "min"
                 :source-paths ["src-cljs"]
-                :compiler {:main ohucode.main
+                :compiler {:main "ohucode.main"
                            :optimizations :advanced
                            :pretty-print false
                            :output-to "resources/public/js/main.js"}}]})

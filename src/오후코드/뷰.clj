@@ -1,5 +1,6 @@
 (ns 오후코드.뷰
-  (:require [ring.middleware.anti-forgery :refer [*anti-forgery-token*]])
+  (:require [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
+            [clojure.data.json :as json])
   (:use [미생.기본]
         [오후코드.기본]
         [hiccup.core]
@@ -24,8 +25,7 @@
                          (:css 옵션)))]
          [:body
           [:div#app]
-          (사상 include-js
-                (리스트* "/js/main.js" (:js 요청)))]))
+          (사상 include-js (리스트* "/js/main.js" (:js 요청)))]))
 
 (함수 기본 [요청]
   {:status 200
@@ -43,8 +43,12 @@
                         "/css/ohucode.css"])]
                 [:body
                  [:div#app]
-                 (사상 include-js ["/js/main.js"])])
-   :session {}})
+                 (사상 include-js ["/js/main.js"])
+                 (만약-가정 [이용자 (세션이용자 요청)] ; 로그인 사실을 통보
+                   [:script {:type "text/javascript"}
+                    "ohucode.main.로그인_알림("
+                    (json/write-str (select-keys 이용자 [:아이디 :성명 :코호트 :요금제]))
+                    ");"])])})
 
 (함수 anti-forgery-field []
   [:input {:type "hidden" :name "__anti-forgery-token"

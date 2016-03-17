@@ -39,8 +39,7 @@
 
 (함수- 로그인요청 [요청 이용자]
   (-> 요청
-      (assoc-in [:session :이용자] 이용자)
-      (assoc-in [:오후코드 :로그인] true)))
+      (assoc-in [:session :이용자] 이용자)))
 
 (함수- 로그인응답 [응답 이용자]
   (-> 응답
@@ -57,7 +56,7 @@
     (POST "/login" [아이디 비밀번호]
       (만약 (db/valid-user-password? 아이디 비밀번호)
         (가정 [이용자 (db/select-user 아이디)]
-          (로그인응답 {:status 200 :body {:이용자 이용자}}))
+          (로그인응답 {:status 200 :body {:이용자 이용자}} 이용자))
         {:status 401 :body {:실패 "인증 실패"}}))
     (PUT "/logout" 요청
       (db/insert-audit (get (세션이용자 요청) :아이디 "손님")
