@@ -8,15 +8,19 @@
         [korma.db]
         [korma.core]))
 
+(매크로 롤백-트랜잭션 [& 본문]
+  `(korma.db/transaction
+    (try
+      ~@본문
+      (finally (korma.db/rollback)))))
+
 (매크로 가입-트랜잭션 [bindings & body]
   `(가정 [아이디# (str (gensym "test_"))
           이메일# (str 아이디# "@test.com")
           비밀번호# (str "pass_" 아이디#)]
-     (korma.db/transaction
-      (try
-        (가정 [[~@bindings] [이메일# 아이디# 비밀번호#]]
-          ~@body)
-        (finally (korma.db/rollback))))))
+     (롤백-트랜잭션
+      (가정 [[~@bindings] [이메일# 아이디# 비밀번호#]]
+        ~@body))))
 
 (실험정의 db-test
   (실험 "now 함수 확인"
@@ -38,8 +42,17 @@
      (확인 (not (가용이메일? 이메일)) "가입한 이메일은 사용할 수 없어야한다")))
 
   (실험 "대소문자 아이디 구분"
-    (transaction
+    (롤백-트랜잭션
      (insert 이용자 (values {:아이디 "Aaa" :이메일 "test@abc.com"}))
      (확인 (예외발생? Exception
-                      (insert 이용자 (values {:아이디 "aaa" :이메일 "another@abc.com"}))))
-     (rollback))))
+                      (insert 이용자 (values {:아이디 "aaa" :이메일 "another@abc.com"})))))))
+
+(실험정의 프로젝트-실험
+  (실험 "프로젝트 생성"
+    (롤백-트랜잭션
+     (가정 [아이디 "테스트"]
+       (프로젝트생성 아이디 "첫프로젝트" "설명도 넣어야겠지요?" true)
+       (확인 (= {:소유자 아이디 :이름 "첫프로젝트" :공개 true}
+                (-> (select 프로젝트 (where {:소유자 아이디 :이름 "첫프로젝트"}))
+                    first
+                    (select-keys [:소유자 :이름 :공개]))))))))

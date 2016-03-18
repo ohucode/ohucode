@@ -23,7 +23,21 @@
   ([dsec] (java.sql.Timestamp. (+ (.getTime (java.util.Date.))
                                   (* 1000 dsec)))))
 
+(declare 이용자메일 프로젝트 기록)
+
+(defentity 이용자
+  (pk :아이디)
+  (has-many 이용자메일 {:fk :아이디})
+  (has-many 프로젝트 {:fk :소유자}))
+
+(defentity 이용자메일
+  (pk :이메일))
+
 (defentity 기록)
+
+(defentity 프로젝트
+  (pk [:소유자 :이름])
+  (belongs-to 이용자 {:fk :소유자}))
 
 (함수 insert-audit [아이디 행위 데이터]
   (insert 기록 (values {:아이디 아이디 :행위 행위
@@ -33,7 +47,7 @@
 (함수 select-audits []
   (select 기록 (order :생성일시 :DESC) (limit 100)))
 
-(defentity 이용자메일)
+
 
 (함수 가용이메일? [이메일]
   (empty? (select 이용자메일 (where {:이메일 이메일}))))
@@ -41,8 +55,6 @@
 (함수 이메일-등록 [주소]
   )
 
-(defentity 이용자
-  (has-many 이용자메일 {:fk :아이디}))
 
 (함수 가용아이디? [아이디]
   (empty?
@@ -77,3 +89,9 @@
     (작용
       (insert-audit "guest" "login" {:성공 거짓 :아이디 아이디})
       거짓)))
+
+(함수 프로젝트생성 [아이디 이름 설명 공개?]
+  {:pre [(not-any? 공? [아이디 이름])]}
+  (insert 프로젝트 (values {:소유자 아이디 :이름 이름
+                            :설명 설명
+                            :공개 (boolean 공개?)})))
