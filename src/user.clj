@@ -1,6 +1,6 @@
 (ns user
   (:use [미생.기본]
-        [미생.실험]
+        [미생.검사]
         [clojure.test]
         [clojure.repl])
   (:require [오후코드.git :as git]

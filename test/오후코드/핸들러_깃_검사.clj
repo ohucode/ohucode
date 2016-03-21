@@ -1,13 +1,13 @@
-(ns 오후코드.핸들러-깃-실험
+(ns 오후코드.핸들러-깃-검사
   (:use [미생.기본]
-        [미생.실험]
+        [미생.검사]
         [오후코드.핸들러-깃])
   (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]
             [오후코드.핸들러 :refer [app]]))
 
-(실험정의 git-http-route
-  (실험 "/info/refs should response with a proper content-type"
+(검사정의 git-http-route
+  (검사 "/info/refs should response with a proper content-type"
     (가정 [응답 (app (mock/request :get "/u/p/info/refs?service=git-upload-pack"))]
       (확인 (= (get-in 응답 [:headers "Content-Type"])
                "application/x-git-upload-pack-advertisement"))
@@ -17,7 +17,7 @@
                "application/x-git-receive-pack-advertisement"))))
 
   ;; 요청 파일 업데이트 필요함
-  (comment 실험 "POST /git-upload-pack"
+  (comment 검사 "POST /git-upload-pack"
     (가정 [file (io/as-file "fixture/upload-pack-req.body")
            요청 (merge
                  (mock/request :post "/u/p/git-upload-pack")
@@ -35,7 +35,7 @@
              "Cache-Control" "no-cache, max-age=0, must-revalidate")))
 
   ;; 요청 파일 업데이트 필요함
-  (comment 실험 "POST /git-receive-pack"
+  (comment 검사 "POST /git-receive-pack"
     (가정 [create-branch (io/as-file "fixture/receive-pack-create-branch.body")
            delete-branch (io/as-file "fixture/receive-pack-delete-branch.body")]
       (doseq [fixture-file [create-branch delete-branch]]

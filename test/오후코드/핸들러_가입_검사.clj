@@ -1,6 +1,6 @@
-(ns 오후코드.핸들러-가입-실험
+(ns 오후코드.핸들러-가입-검사
   (:use [미생.기본]
-        [미생.실험]
+        [미생.검사]
         [오후코드.핸들러-가입])
   (:require [ring.mock.request :as mock]
             [ring.middleware.params :refer [wrap-params]]
@@ -14,9 +14,9 @@
              "Content-Type" "application/edn"}
    :params data})
 
-(실험정의 가입실험
+(검사정의 가입검사
   (가정 [요청 (합성 가입-라우트 edn-요청)]
-    (실험 "신규가입"
+    (검사 "신규가입"
       (transaction
        (가정 [응답 (요청 :post "/signup"
                          {:이메일 "test001@test.com" :아이디 "테스트아이디" :비밀번호 "testpass"

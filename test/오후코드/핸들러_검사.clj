@@ -1,21 +1,21 @@
-(ns 오후코드.핸들러-실험
+(ns 오후코드.핸들러-검사
   (:use [미생.기본]
-        [미생.실험]
+        [미생.검사]
         [오후코드.핸들러])
   (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]))
 
-(실험정의 앱실험
-  (실험 "main route"
+(검사정의 앱검사
+  (검사 "main route"
     (가정 [응답 (app (mock/request :get "/"))]
       (확인 (= (:status 응답) 200))))
 
-  (실험 "not-found route"
+  (검사 "not-found route"
     (가정 [응답 (app (mock/request :get "/invalid/not/found"))]
       (확인 (= (:status 응답) 404)))))
 
-(실험정의 미들웨어실험
-  (실험 "EDN 요청 본문 처리"
+(검사정의 미들웨어검사
+  (검사 "EDN 요청 본문 처리"
     (가정 [본문 "{:아이디 \"test-id\" :이메일 \"a@bc.com\"}"]
       ((#'오후코드.핸들러/edn-파라미터-미들웨어
         (fn 확인용-핸들러 [요청]
@@ -25,7 +25,7 @@
            (mock/header "Content-Type" "application/edn")
            (mock/body 본문)))))
 
-  (실험 "EDN 응답 처리"
+  (검사 "EDN 응답 처리"
     (가정 [요청 (-> (mock/request :get "/whatever")
                     (mock/header "Accept" "application/edn"))
            응답본문 {:edn true :status 200}
