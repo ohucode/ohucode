@@ -4,15 +4,15 @@
         [오후코드.핸들러-깃])
   (:require [clojure.java.io :as io]
             [ring.mock.request :as mock]
-            [오후코드.핸들러 :refer [app]]))
+            [오후코드.핸들러 :refer [앱라우트]]))
 
 (검사정의 git-http-route
   (검사 "/info/refs should response with a proper content-type"
-    (가정 [응답 (app (mock/request :get "/u/p/info/refs?service=git-upload-pack"))]
+    (가정 [응답 (앱라우트 (mock/request :get "/u/p/info/refs?service=git-upload-pack"))]
       (확인 (= (get-in 응답 [:headers "Content-Type"])
                "application/x-git-upload-pack-advertisement"))
       (확인 (= (:status 응답) 200)))
-    (가정 [응답 (app (mock/request :get "/u/p/info/refs?service=git-receive-pack"))]
+    (가정 [응답 (앱라우트 (mock/request :get "/u/p/info/refs?service=git-receive-pack"))]
       (확인 (= (get-in 응답 [:headers "Content-Type"])
                "application/x-git-receive-pack-advertisement"))))
 
@@ -27,7 +27,7 @@
                             "Content-Encoding" "gzip"
                             "Accept-Encoding" "gzip"}
                   :body (io/input-stream file)})
-           응답 (app 요청)]
+           응답 (앱라우트 요청)]
       (확인 (= (:status 응답) 200))
       (확인* [key value] (= (get-in 응답 [:headers key]) value)
              "Content-Type" "application/x-git-upload-pack-result"
@@ -46,7 +46,7 @@
                                 "Accept" "application/x-git-receive-pack-result"
                                 "Accept-Encoding" "gzip"}
                       :body (io/input-stream fixture-file)})
-               응답 (app 요청)]
+               응답 (앱라우트 요청)]
           (확인 (= (:status 응답) 200))
           (확인* [key value] (= (get-in 응답 [:headers key]) value)
             "Content-Type" "application/x-git-receive-pack-result"

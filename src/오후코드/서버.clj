@@ -1,6 +1,6 @@
 (ns 오후코드.서버
   (:require [aleph.http :as http]
-            [오후코드.핸들러 :refer [app-dev]]
+            [오후코드.핸들러 :refer [앱-dev]]
             [taoensso.timbre :as timbre]
             [clojure.tools.nrepl.server :refer [start-server stop-server]]
             [cider.nrepl :refer [cider-nrepl-handler]])
@@ -11,7 +11,7 @@
 (defn 시작 []
   (let [http-port 10000
         repl-port 7888
-        handler-for-reload #(app-dev %)]
+        handler-for-reload #(앱-dev %)]
     (do
       (comment (Locale/setDefault Locale/US) "aleph Date 헤더문제는 해결됐습니다.")
       (timbre/info (str "Starting http-server on " http-port))

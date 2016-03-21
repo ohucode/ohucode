@@ -7,11 +7,11 @@
 
 (검사정의 앱검사
   (검사 "main route"
-    (가정 [응답 (app (mock/request :get "/"))]
+    (가정 [응답 (앱라우트 (mock/request :get "/"))]
       (확인 (= (:status 응답) 200))))
 
   (검사 "not-found route"
-    (가정 [응답 (app (mock/request :get "/invalid/not/found"))]
+    (가정 [응답 (앱라우트 (mock/request :get "/invalid/not/found"))]
       (확인 (= (:status 응답) 404)))))
 
 (검사정의 미들웨어검사

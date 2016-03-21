@@ -119,7 +119,7 @@
     (-> (response in)
         (content-type "application/x-git-receive-pack-result"))))
 
-(def smart-http-routes
+(def smart-http-라우트
   (wrap-no-cache-and-gzip
    (context "/:user/:project" [user project]
      (GET "/info/refs" [] info-refs-handler)

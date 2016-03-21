@@ -36,11 +36,11 @@
   (검사 "사이트 특정 salt 테스트"
     (누차 [i 5]
       (가정 [r (random-int)
-             userid (str "test" r)
-             password (str "pass" r)]
-        (확인 (ohucode-valid-password?
-               userid password
-               (ohucode-password-digest userid password)))))))
+             아이디 (str "test" r)
+             비밀번호 (str "pass" r)]
+        (확인 (오후코드-유효비번?
+               아이디 비밀번호
+               (오후코드-비번해쉬 아이디 비밀번호)))))))
 
 (검사정의 서명-검사
   (검사 "기본키로 서명하고 확인하기"

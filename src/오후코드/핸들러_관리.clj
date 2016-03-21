@@ -47,11 +47,11 @@
                        [:td.date (timestamp (:created_at u))]])]]]]])
 
 (함수 users [req]
-  (가정 [u (db/select-users)]
+  (가정 [u (db/이용자-목록)]
     (admin-layout req "홈" (대시보드 u))))
 
 (함수 recent-audits [req]
-  (가정 [audits (db/select-audits)]
+  (가정 [audits (db/기록-검색)]
     (admin-layout req "행위"
                   [:table#audit-list.table.table-striped
                    [:tbody

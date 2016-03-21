@@ -62,10 +62,10 @@
   (= raw (password-digest password salt)))
 
 (가정 [saltfn (partial str "ohucode/")]
-  (함수 ohucode-password-digest [userid password]
+  (함수 오후코드-비번해쉬 [userid password]
     (password-digest password (saltfn userid)))
 
-  (함수 ohucode-valid-password? [userid password raw]
+  (함수 오후코드-유효비번? [userid password raw]
     (valid-password-digest? password (saltfn userid) raw)))
 
 (함수 개인키 [파일명]
