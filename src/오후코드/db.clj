@@ -10,6 +10,8 @@
             [clojure.set :refer [rename-keys]])
   (:import [java.sql SQLException]))
 
+(매크로대응 트랜잭션 korma.db/transaction)
+
 (정의 ^:private read-edn
   (comp eval read-string slurp))
 
@@ -72,7 +74,7 @@
 
   (가정 [조건 {:이메일 이메일 :아이디 아이디 :성명 성명
                :비번해쉬 (보안/오후코드-비번해쉬 아이디 비밀번호)}]
-    (transaction
+    (트랜잭션
      (insert 이용자 (values 조건))
      (insert 이용자메일 (values (select-keys 조건 [:이메일 :아이디])))
      ;; 이메일 발송은 어디서?
@@ -87,8 +89,14 @@
       (기록-남기기 "guest" "login" {:성공 거짓 :아이디 아이디})
       거짓)))
 
-(함수 프로젝트생성 [아이디 이름 설명 공개?]
+(함수 프로젝트-생성 [아이디 이름 설명 공개?]
   {:pre [(not-any? 공? [아이디 이름])]}
   (insert 프로젝트 (values {:소유자 아이디 :이름 이름
                             :설명 설명
                             :공개 (boolean 공개?)})))
+
+(함수 프로젝트-목록 [아이디]
+  (select 프로젝트
+          (where {:소유자 아이디})
+          (order :갱신일시 :DESC)
+          (limit 20)))
