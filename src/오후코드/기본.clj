@@ -1,9 +1,10 @@
 (ns 오후코드.기본
-  (:use [미생.기본]))
+  (:use [미생.기본])
+  (:require [ring.util.codec :refer [url-encode]]))
 
 (정의 ^:dynamic
   ^{:doc "클라이언트 IP"}
-  *client-ip* "0.0.0.0")
+  *클라이언트IP* "0.0.0.0")
 
 (정의 ^:dynamic
   ^{:doc "로그인한 사용자 정보"}
@@ -16,6 +17,9 @@
 
 (함수 세션이용자 [요청]
   (get-in 요청 [:session :이용자]))
+
+(함수 세션이용자-아이디 [요청]
+  (get-in 요청 [:session :이용자 :아이디]))
 
 (정의 로그인? (합성 부정 공? 세션이용자))
 

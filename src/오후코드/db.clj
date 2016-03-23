@@ -43,7 +43,7 @@
 
 (함수 기록-남기기 [아이디 행위 데이터]
   (insert 기록 (values {:아이디 아이디 :행위 행위
-                        :ip (sqlfn "inet" *client-ip*)
+                        :ip (sqlfn "inet" *클라이언트IP*)
                         :데이터 (sqlfn "to_json" (json/write-str 데이터))})))
 
 (함수 기록-검색 []
