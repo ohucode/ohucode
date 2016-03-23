@@ -21,11 +21,11 @@
             [오후코드.핸들러-관리 :refer [관리-라우트]]
             [오후코드.핸들러-가입 :refer [가입-라우트]]))
 
-(매크로 미들웨어-라우트 [& 본문]
-  (가정 [미들웨어 (첫째 본문)
-         라우트목록 (잔여 본문)]
-    `(compojure.core/wrap-routes (compojure.core/routes ~@라우트목록)
-                                 ~@미들웨어)))
+(매크로 미들웨어-라우트
+  "컴포저 라우트에 매칭된 경우에만 미들웨어를 적용하는 매크로."
+  [미들웨어+인수 & 라우트목록]
+  `(compojure.core/wrap-routes (compojure.core/routes ~@라우트목록)
+                               ~@미들웨어+인수))
 
 (매크로대응 라우트정의 defroutes)
 
