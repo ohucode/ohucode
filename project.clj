@@ -35,9 +35,9 @@
                  [reagent "0.6.0-alpha"]
                  [re-frame "0.7.0-alpha-3"]
                  [secretary "1.2.3"]
-                 [cljs-ajax "0.5.3"]
+                 [cljs-ajax "0.5.4"]
+                 [org.apache.httpcomponents/httpclient "4.5.2"] ; cljs-ajax가 clj에서 리로드될 때 필요.
                  [cljsjs/bootstrap "3.3.6-0"]
-                 [cljsjs/react-motion "0.4.1-1"]
                  [cljsjs/jquery "2.1.4-0"]
                  [cljsjs/marked "0.3.5-0"]
                  [cljsjs/highlight "8.4-0"]
