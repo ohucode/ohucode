@@ -48,6 +48,7 @@
   :plugins [[lein-figwheel "0.5.0-6"]
             [lein-cljsbuild "1.1.2" :exclusions [[org.clojure/clojure]]]]
   :main 오후코드.서버/시작
+            [lein-codox "0.9.4"]]
   ;; :hooks [leiningen.cljsbuild]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [ring/ring-mock "0.3.0"]]}}
