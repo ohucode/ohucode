@@ -2,34 +2,24 @@
 
 ## 개발환경 준비
 
-### 1. JDK8 설치
-### 2. leiningen, rlwrap, git 설치
+### JDK8 설치
+### leiningen, rlwrap, git 설치
 
 ``` sh
 $ brew install leiningen rlwrap git
 ```
 
-### 3. postgresapp 설치 (맥용 PostgreSQL 앱) & 실행
+### postgresapp 설치 (맥용 PostgreSQL 앱) & 실행
 
 http://postgresapp.com
 
-### 4. 오후코드 프로젝트 클론
+### 오후코드 프로젝트 클론
 
 ``` sh
 $ git clone https://github.com/ohucode/ohucode
 ```
 
-### 5. 미생 (클로저 한글 확장) 클론
-
-``` sh
-$ cd ohucode
-$ mkdir checkouts
-$ git clone https://github.com/hatemogi/misaeng checkouts/misaeng
-$ cd checkouts/misaeng
-$ lein install
-```
-
-### 6. DB 유저, 데이터베이스 생성. JDBC 연결설정파일 준비
+### DB 유저, 데이터베이스 생성. JDBC 연결설정파일 준비
 
 > 패스워드는 별도 공유합니다.
 
@@ -47,7 +37,7 @@ $ cat conf/db_dev.edn
 
 위 명령어로, JDBC 연결용 설정파일도 있는지 확인.
 
-### 7. 웹서버 실행 (10000번 포트에 웹서버, 7888포트에 REPL서버가 뜹니다)
+### 웹서버 실행 (10000번 포트에 웹서버, 7888포트에 REPL서버가 뜹니다)
 
 ```
 $ lein run
@@ -59,7 +49,7 @@ $ lein run
 $ rlwrap lein repl
 ```
 
-### 8. 클로저스크립트 빌드툴 (figwheel 실행)
+### 클로저스크립트 빌드툴 (figwheel 실행)
 
 ``` sh
 $ rlwrap lein figwheel
@@ -67,11 +57,11 @@ $ rlwrap lein figwheel
 
 클로저스크립트 REPL이 준비되고, 파일변경시 자동 컴파일됩니다.
 
-### 9. 웹브라우저로 접속
+### 웹브라우저로 접속
 
 http://0.0.0.0:10000/
 
-### 10. 해피해킹!
+### 해피해킹!
 
 
 ## 컴파일 & 실행
