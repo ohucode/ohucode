@@ -61,9 +61,24 @@
                         :class "btn-block"
                         :클릭 #(dispatch [:로그인요청 (select-keys @폼상태 키목록)])}]]]]])))
 
-(defn 이용자홈 []
-  [:div "로그인한 이용자 홈 화면"])
+(defn 프로젝트목록 [플젝들]
+  [페이지 [:h3 "프로젝트"]
+   [:ul.list-group
+    (for [플젝 플젝들]
+      (let [키 (str "/" (:소유자 플젝) "/" (:이름 플젝))]
+        [:li.list-group-item {:key 키}
+         [링크 {:페이지 키} [:h4 (:이름 플젝)]]]))]])
 
+(defn 터전첫페이지 [터전주인]
+  [:div.container-fluid
+   [:div.row
+    [:div.col-md-3
+     [:div.thumbnail
+      [:img {:src "https://pbs.twimg.com/profile_images/649229866798157824/km1HyMU-_400x400.jpg" :alt "프로필 이미지"}]
+      [:div.caption
+       [:h3 (:성명 터전주인) " "
+        [:small (:아이디 터전주인)]]]]]
+    [:div.col-md-9 [프로젝트목록 (:프로젝트 터전주인)]]]])
 
 (defn 새프로젝트 [아이디]
   (let [fg :div.form-group

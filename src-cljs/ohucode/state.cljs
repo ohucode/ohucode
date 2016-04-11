@@ -6,7 +6,7 @@
             [re-frame.core :refer [dispatch]])
   (:import goog.history.Html5History))
 
-;; FIXME: 크롬에서는 최초 NAVIGATE 이벤트 발생하지 않음.
+;; FIXME: 크롬에서는 최초 NAVIGATE 이벤트 발생하지 않음. 사파리 최신버전도 마찬가지
 (defonce 히스토리
   (doto (Html5History.)
     (.setPathPrefix (str js/window.location.protocol "//" js/window.location.host))

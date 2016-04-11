@@ -54,12 +54,12 @@
      :aria-haspopup true :aria-expanded true}
     아이디 " " [:span.caret]]
    [:ul.dropdown-menu {:aria-labelledby "accountMenu1"}
-    [:li [링크 {:href "/user/profile"}   [:i.fa.fa-fw.fa-user]     " 프로필"]]
-    [:li [링크 {:href "/user/message"}   [:i.fa.fa-fw.fa-envelope] " 메시지"]]
-    [:li [링크 {:href "/user/bookmarks"} [:i.fa.fa-fw.fa-bookmark] " 책갈피"]]
+    [:li [링크 {:href (str "/" 아이디)}              [:i.fa.fa-fw.fa-user]     " 프로필"]]
+    [:li [링크 {:href (str "/" 아이디 "/messages")}  [:i.fa.fa-fw.fa-envelope] " 메시지"]]
+    [:li [링크 {:href (str "/" 아이디 "/bookmarks")} [:i.fa.fa-fw.fa-bookmark] " 책갈피"]]
     [:li.divider {:role "separator"}]
-    [:li [링크 {:href "/user/settings"}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
-    [:li [링크 {:이벤트 [:로그아웃]}     [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
+    [:li [링크 {:href (str "/" 아이디 "/settings")}  [:i.fa.fa-fw.fa-cog]      " 설정"]]
+    [:li [링크 {:이벤트 [:로그아웃]}                 [:i.fa.fa-fw.fa-sign-out] " 로그아웃"]]]])
 
 (defn 네비게이션 [미리보기]
   (let [이용자 (subscribe [:이용자])]
@@ -117,7 +117,10 @@
                               :개인정보취급방침 [개인정보취급방침]
                               :가입신청 [이용자/가입폼]
                               :가입환영 [이용자/가입환영]
-                              :이용자홈 [이용자/이용자홈]
+                              :터전첫페이지 [이용자/터전첫페이지
+                                             {:아이디 "애월조단" :성명 "김대현"
+                                              :프로젝트 [{:소유자 "애월조단" :이름 "오후코드"}
+                                                         {:소유자 "애월조단" :이름 "빈프로젝트"}]}]
                               :새프로젝트 [이용자/새프로젝트]
                               [빈페이지])
           (var? 페이지) [(deref 페이지)]
@@ -136,7 +139,7 @@
               :가입신청
               :가입환영
               #'ohucode.user/로그인폼
-              :이용자홈
+              :터전첫페이지
               :새프로젝트]
         이름 (fn [대상]
                (cond
