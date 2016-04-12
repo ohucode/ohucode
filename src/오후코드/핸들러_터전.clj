@@ -1,13 +1,11 @@
 (ns 오후코드.핸들러-터전
-  (:use [미생.기본]
-        [오후코드.기본]
-        [오후코드.핸들러-유틸]
-        [compojure.core])
-  (:require [오후코드.db :as db]
-            [오후코드.보안 :as 보안]
+  (:require [compojure.core :refer :all]
+            [미생.기본 :refer :all]
+            [오후코드.db :as db]
+            [오후코드.권한 :as 권한]
             [오후코드.뷰 :as 뷰]
             [오후코드.저장소 :as 저장소]
-            [오후코드.권한 :as 권한]))
+            [오후코드.핸들러-유틸 :refer :all]))
 
 (라우트정의 터전-라우트
   (context "/:터전명" [터전명]

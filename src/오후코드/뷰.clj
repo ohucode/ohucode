@@ -1,10 +1,9 @@
 (ns 오후코드.뷰
-  (:require [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-            [clojure.data.json :as json])
-  (:use [미생.기본]
-        [오후코드.기본]
-        [hiccup.core]
-        [hiccup.page]))
+  (:require [clojure.data.json :as json]
+            [hiccup.page :refer :all]
+            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
+            [미생.기본 :refer :all]
+            [오후코드.기본 :refer :all]))
 
 ;; 제거 예정 (대부분의 뷰는 클로저스크립트로 넘어갑니다)
 (함수 레이아웃 [요청 옵션 & 본문]

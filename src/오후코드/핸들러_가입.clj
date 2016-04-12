@@ -1,10 +1,7 @@
 (ns 오후코드.핸들러-가입
-  (:require [compojure.route :as route]
-            [오후코드.메일 :as 메일]
-            [오후코드.db :as db])
-  (:use [미생.기본]
-        [compojure.core]
-        [ring.util.response]))
+  (:require [compojure.core :refer :all]
+            [미생.기본 :refer :all]
+            [오후코드.db :as db]))
 
 (정의 금지아이디
   #{"admin" "js" "css" "static" "fonts" "signup" "login" "logout"

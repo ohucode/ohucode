@@ -1,6 +1,5 @@
 (ns 오후코드.기본
-  (:use [미생.기본])
-  (:require [ring.util.codec :refer [url-encode]]))
+  (:require [미생.기본 :refer :all]))
 
 (정의 ^:dynamic
   ^{:doc "클라이언트 IP"}

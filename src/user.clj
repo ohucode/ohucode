@@ -1,16 +1,9 @@
 (ns user
-  (:use [미생.기본]
-        [미생.검사]
-        [clojure.test]
-        [clojure.repl])
-  (:require [오후코드.git :as git]
-            [오후코드.핸들러 :as h]
-            [오후코드.서버 :as 서버]
+  (:require [ragtime.jdbc :as jdbc]
+            [ragtime.repl :as ragtime]
+            [미생.기본 :refer :all]
             [오후코드.db :as db]
-            [오후코드.보안 :as 보안]
-            [clojure.tools.namespace.repl :refer [refresh]]
-            [ragtime.jdbc :as jdbc]
-            [ragtime.repl :as ragtime]))
+            [오후코드.서버 :as 서버]))
 
 (함수- config []
   {:datastore  (jdbc/sql-database {:datasource (:datasource @(:pool db/dev-db))})

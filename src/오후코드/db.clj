@@ -1,14 +1,11 @@
 (ns 오후코드.db
-  (:refer-clojure :exclude [update])
-  (:use [오후코드.기본]
-        [미생.기본]
-        [korma.db]
-        [korma.core])
-  (:require [오후코드.보안 :as 보안]
-            [taoensso.timbre :as timbre]
-            [clojure.data.json :as json]
-            [clojure.set :refer [rename-keys]])
-  (:import [java.sql SQLException]))
+  (:require [clojure.data.json :as json]
+            [korma.core :refer :all]
+            [korma.db :refer :all]
+            [미생.기본 :refer :all]
+            [오후코드.기본 :refer :all]
+            [오후코드.보안 :as 보안])
+  (:refer-clojure :exclude [update]))
 
 (매크로대응 트랜잭션 korma.db/transaction)
 

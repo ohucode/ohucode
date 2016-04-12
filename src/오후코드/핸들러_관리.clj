@@ -1,10 +1,8 @@
 (ns 오후코드.핸들러-관리
-  (:use [미생.기본]
-        [오후코드.기본]
-        [compojure.core]
-        [ring.util.response]
-        [hiccup.core])
-  (:require [오후코드.db :as db]
+  (:require [compojure.core :refer :all]
+            [미생.기본 :refer :all]
+            [오후코드.db :as db]
+            [오후코드.기본 :refer :all]
             [오후코드.뷰 :as 뷰]))
 
 (함수 admin-nav [req]

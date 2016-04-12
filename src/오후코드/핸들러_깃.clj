@@ -1,16 +1,13 @@
 (ns 오후코드.핸들러-깃
-  (:use [미생.기본]
-        [compojure.core]
-        [ring.util.response])
-  (:require [오후코드.git :as git])
-  (:import [java.io InputStream OutputStream ByteArrayOutputStream
-            PipedInputStream PipedOutputStream]
-           [java.util.zip GZIPInputStream GZIPOutputStream]
-           [org.eclipse.jgit.transport
-            UserAgent PacketLineOut
-            RefAdvertiser$PacketLineOutRefAdvertiser
-            ReceivePack PreReceiveHook PostReceiveHook
-            UploadPack RefFilter PreUploadHook PostUploadHook]))
+  (:require [compojure.core :refer :all]
+            [ring.util.response :refer :all])
+  (:import (java.io InputStream OutputStream PipedInputStream
+                    PipedOutputStream)
+           (java.util.zip GZIPInputStream GZIPOutputStream)
+           (org.eclipse.jgit.transport PacketLineOut PreUploadHook
+                                       ReceivePack
+                                       RefAdvertiser$PacketLineOutRefAdvertiser
+                                       RefFilter UploadPack UserAgent)))
 
 (defn advertise [repo svc ^OutputStream out]
   (let [plo (PacketLineOut. out)

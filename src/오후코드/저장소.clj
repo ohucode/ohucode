@@ -1,14 +1,8 @@
 (ns 오후코드.저장소
-  (:use [미생.기본])
-  (:require [clojure.string])
-  (:import [org.eclipse.jgit.lib Ref Repository FileMode]
-           [org.eclipse.jgit.api Git]
-           [org.eclipse.jgit.storage.file FileRepositoryBuilder]
-           [org.eclipse.jgit.revwalk RevWalk RevTree]
-           [org.eclipse.jgit.treewalk TreeWalk]
-           [org.eclipse.jgit.treewalk.filter PathFilter]
-           [org.eclipse.jgit.api.errors RefNotFoundException]
-           [java.io File FileNotFoundException]))
+  (:require [미생.기본 :refer :all])
+  (:import (java.io File)
+           (org.eclipse.jgit.api Git)
+           (org.eclipse.jgit.storage.file FileRepositoryBuilder)))
 
 (정의 ^{:dynamic 참
         :doc "저장소를 읽고 쓸 최상위 디렉토리."}

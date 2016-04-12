@@ -1,8 +1,7 @@
 (ns 오후코드.권한
-  (:use [미생.기본]
-        [오후코드.기본])
-  (:require [오후코드.db :as db]
-            [오후코드.보안 :as 보안]))
+  (:require [미생.기본 :refer :all]
+            [오후코드.db :as db]
+            [오후코드.기본 :refer :all]))
 
 (함수- 거절하기 [_]
   {:status 403 :body "권한이 없습니다."})

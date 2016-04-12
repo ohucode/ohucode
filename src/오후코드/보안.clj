@@ -1,10 +1,11 @@
 (ns 오후코드.보안
-  (:use [미생.기본])
-  (:import [javax.crypto SecretKeyFactory]
-           [javax.crypto.spec PBEKeySpec]
-           [java.util Base64]
-           [java.security SecureRandom KeyFactory Signature KeyPairGenerator]
-           [java.security.spec PKCS8EncodedKeySpec X509EncodedKeySpec]))
+  (:require [미생.기본 :refer :all])
+  (:import (java.security KeyFactory KeyPairGenerator SecureRandom
+                          Signature)
+           (java.security.spec PKCS8EncodedKeySpec X509EncodedKeySpec)
+           (java.util Base64)
+           (javax.crypto SecretKeyFactory)
+           (javax.crypto.spec PBEKeySpec)))
 
 (함수 encode-base64 [bytes]
   "일반 Base64 인코딩"

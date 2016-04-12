@@ -1,11 +1,11 @@
 (ns 오후코드.서버
-  (:use [미생.기본])
   (:require [aleph.http :as http]
-            [오후코드.핸들러 :refer [앱-dev 앱라우트]]
+            [cider.nrepl :refer [cider-nrepl-handler]]
+            [clojure.tools.nrepl.server :refer [start-server
+                                                stop-server]]
             [taoensso.timbre :as l]
-            [clojure.tools.nrepl.server :refer [start-server stop-server]]
-            [cider.nrepl :refer [cider-nrepl-handler]])
-  (:import [java.util Locale]))
+            [미생.기본 :refer :all]
+            [오후코드.핸들러 :refer [앱-dev]]))
 
 (레코드 서버레코드 [웹서버 레플서버]
   java.io.Closeable

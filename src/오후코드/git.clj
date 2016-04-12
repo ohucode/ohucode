@@ -1,13 +1,12 @@
 (ns 오후코드.git
-  (:use [미생.기본])
-  (:import (org.eclipse.jgit.lib Ref Repository FileMode)
+  (:require [미생.기본 :refer :all])
+  (:import (java.io File FileNotFoundException)
            (org.eclipse.jgit.api Git)
-           (org.eclipse.jgit.storage.file FileRepositoryBuilder)
-           (org.eclipse.jgit.revwalk RevWalk RevTree)
-           (org.eclipse.jgit.treewalk TreeWalk)
-           (org.eclipse.jgit.treewalk.filter PathFilter)
            (org.eclipse.jgit.api.errors RefNotFoundException)
-           (java.io File FileNotFoundException)))
+           (org.eclipse.jgit.lib FileMode Repository)
+           (org.eclipse.jgit.revwalk RevTree RevWalk)
+           (org.eclipse.jgit.storage.file FileRepositoryBuilder)
+           (org.eclipse.jgit.treewalk TreeWalk)))
 
 (defrecord Cursor [owner project head path])
 

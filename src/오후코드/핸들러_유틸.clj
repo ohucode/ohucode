@@ -1,6 +1,5 @@
 (ns 오후코드.핸들러-유틸
-  (:use [미생.기본])
-  (:require [compojure.core]))
+  (:require [미생.기본 :refer :all]))
 
 (매크로대응 라우트정의 compojure.core/defroutes)
 
