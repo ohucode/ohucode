@@ -20,5 +20,5 @@
                                               path)))))))
 
 (defn 주소이동 [href]
-  (js/console.log "주소이동 for " href)
-  (.setToken 히스토리 href))
+  (js/console.log "주소이동: " href)
+  (secretary/dispatch! href))
