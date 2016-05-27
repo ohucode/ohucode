@@ -64,6 +64,7 @@
 
 (핸들러 :로그아웃
         (fn [db _]
+          (dispatch [:페이지 :로그아웃])
           (PUT "/user/logout"
               {:내용 {}
                :성공 #(dispatch [:로그아웃결과 :성공])
@@ -75,10 +76,8 @@
           (js/console.log "로그아웃결과" (name 성패))
           (if (= :성공 성패)
             (do
-              (dispatch [:페이지 :이용자홈])
               (dissoc db :로그인))
             (do
-              (dispatch [:페이지 :첫페이지>가입])
               (assoc db :알림 "실패")))))
 
 (핸들러 :페이지
@@ -103,6 +102,11 @@
         (fn [db [_ 성패 내용]]
           (js/console.log #js ["새프로젝트 결과" 성패 내용])
           (assoc db :새프로젝트 {:로딩? false})))
+
+(핸들러 :공간선택
+        (fn [db [_ ns]]
+          (js/console.log "공간선택 핸들러")
+          (assoc db :공간 {:로딩? true})))
 
 (def ^:private 채널 register-sub)
 

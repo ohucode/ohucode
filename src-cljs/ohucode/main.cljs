@@ -1,14 +1,17 @@
 (ns ohucode.main
   (:require [reagent.core :as r]
+            [cljsjs.marked]
             [ohucode.handler]
+            [ohucode.route]
             [ohucode.top :refer [앱페이지]]
-            [ohucode.route :as route]
-            [re-frame.core :refer [dispatch]]))
+            [re-frame.core :refer [dispatch]]
+            [secretary.core :as secretary]))
 
 (defn ^:export main []
   (aset js/marked.options "highlight"
         (fn [code] (.-value (.highlightAuto js/hljs code))))
-  (r/render-component [앱페이지] (.getElementById js/document "app")))
+  (r/render-component [앱페이지] (.getElementById js/document "app"))
+  (secretary/dispatch! js/window.location.pathname))
 
 (defn 온로드-등록 [함수]
   (let [이전 (aget js/window "onload")]

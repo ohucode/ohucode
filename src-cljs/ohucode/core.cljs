@@ -8,7 +8,7 @@
             [ajax.core :as ajax]
             [ajax.edn :refer [edn-request-format edn-response-format]]
             [re-frame.core :refer [dispatch subscribe]]
-            [ohucode.state :refer [히스토리]]))
+            [ohucode.state :refer [히스토리 주소이동]]))
 
 (def 서비스명 "오후코드")
 
@@ -147,11 +147,11 @@
   :페이지와 :이벤트 속성을 둘다 주지는 않도록 한다."
   [{:keys [href 페이지 이벤트] :as 속성} & 본문]
   {:pre [(not (and 페이지 이벤트))]}
-  (let [속성' (dissoc 속성 :페이지 :이벤트)
+  (let [속성' (dissoc 속성 :페이지 :이벤트 :href)
         a-클릭 (fn [on-click]
                  [:a (merge {:href "#" :on-click (prevent-default on-click)} 속성')])]
     (into (cond
             페이지 (a-클릭 #(dispatch [:페이지 페이지]))
             이벤트 (a-클릭 #(dispatch 이벤트))
-            href   (a-클릭 #(.setToken 히스토리 href)))
+            href   (a-클릭 #(주소이동 href)))
           본문)))

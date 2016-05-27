@@ -18,10 +18,10 @@
 (정의 시작! 서버/시작!)
 (정의 중단! 서버/중단!)
 
-(함수 before-refresh
+(함수 stop-system!
   "cider-refresh를 위한 stop 함수"
   [] (중단!))
-(함수 after-refresh
+(함수 start-system!
   "cider-refresh를 위한 start 함수"
   [] (시작!))
 

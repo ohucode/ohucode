@@ -47,7 +47,7 @@
     [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
     [:div.page-header [:h1 "위키 페이지 작성"]]]])
 
-(defn 계정정보메뉴 [아이디]
+(defn- 계정정보메뉴 [아이디]
   [:li.dropdown
    [:a.dropdown-toggle
     {:id "accountMenu1" :role "button" :data-toggle "dropdown"
@@ -122,6 +122,7 @@
                                               :프로젝트 [{:소유자 "애월조단" :이름 "오후코드"}
                                                          {:소유자 "애월조단" :이름 "빈프로젝트"}]}]
                               :새프로젝트 [이용자/새프로젝트]
+                              :로그아웃 [이용자/로그아웃]
                               [빈페이지])
           (var? 페이지) [(deref 페이지)]
           (fn? 페이지) [페이지]
@@ -140,7 +141,8 @@
               :가입환영
               #'ohucode.user/로그인폼
               :공간첫페이지
-              :새프로젝트]
+              :새프로젝트
+              :로그아웃]
         이름 (fn [대상]
                (cond
                  (keyword? 대상) (name 대상)
