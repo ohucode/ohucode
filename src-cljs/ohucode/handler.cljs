@@ -7,7 +7,7 @@
                                    dispatch
                                    dispatch-sync
                                    subscribe]]
-            [ohucode.core :refer [POST PUT 검증반응]]))
+            [ohucode.core :refer [POST PUT GET 검증반응]]))
 
 (def ^{:doc "애플리케이션 상태 초기화"}
   초기상태 {:가입신청 {}             ; 가입신청시 신청 정보 임시 보관
@@ -116,8 +116,15 @@
  :공간선택
  (fn [db [_ ns]]
    (js/console.log "공간선택 register-handler")
+   (GET (str "/" ns)
+       {:성공 #(dispatch [:공간선택결과 :성공 %])
+        :실패 (fn [코드 내용] (dispatch [:공간선택결과 :실패 내용]))})
    (assoc db :공간 {:로딩? true})))
 
+(register-handler
+ :공간선택결과
+ (fn [db [_ 성패 내용]]
+   (assoc db :공간 {:로딩? false})))
 
 ;;; 이하 register-sub은 subscribe를 위한 쿼리 함수를 등록한다.
 ;;; 그리고 이 함수는 뷰 컴포넌트에서 subscribe로 불러다 쓴다.

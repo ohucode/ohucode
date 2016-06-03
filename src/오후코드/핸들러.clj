@@ -22,7 +22,7 @@
 ;; TODO 기본 URL은 뷰 템플릿 깔아주고,
 ;; AJAX요청일 때만, EDN/JSON 응답하게 나눠서 처리해야한다.
 
-(라우트정의 웹-라우트
+(defroutes 웹-라우트
   (GET "/" [] 뷰/기본)
   (GET "/throw" [] (예외발생 (RuntimeException. "스택트레이스 실험")))
   (GET "/tos" [] 뷰/기본)
@@ -85,7 +85,7 @@
    :doc "리로드해도 세션을 유지하기 위해 메모리 세션 따로 둔다"}
   세션저장소 (memory-store))
 
-(라우트정의 앱라우트
+(defroutes 앱라우트
   (route/resources "/js"  {:root "public/js"})
   (route/resources "/css" {:root "public/css"})
   (route/resources "/md"  {:root "public/md"})

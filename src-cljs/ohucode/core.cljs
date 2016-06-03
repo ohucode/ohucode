@@ -21,6 +21,15 @@
    :error-handler (fn [{:keys [status response]}] (실패 status response))
    :finally 완료})
 
+(defn GET
+  "AJAX GET 요청을 보냄. EDN 포맷으로 주고 받습니다.\n
+  :내용 {}                    ; EDN 포맷으로 보낼 요청 본문
+  :성공 (fn [응답내용])       ; 200류의 성공시 호출됨
+  :실패 (fn [코드 응답내용])  ; 실패 또는 타임아웃시 호출됨
+  :완료 (fn [])               ; 성패와 무관하게 마무리 작업에 사용"
+  [url {:keys [내용 성공 실패 완료] :as 속성}]
+  (ajax/GET url (wrap-edn-ajax 속성)))
+
 (defn POST
   "AJAX POST 요청을 보냄. EDN 포맷으로 주고 받습니다.\n
   :내용 {}                    ; EDN 포맷으로 보낼 요청 본문
