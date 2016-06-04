@@ -19,23 +19,24 @@ http://postgresapp.com
 $ git clone https://github.com/ohucode/ohucode
 ```
 
-### DB 유저, 데이터베이스 생성. JDBC 연결설정파일 준비
+### DB 유저, 데이터베이스 생성.
 
-> 패스워드는 별도 공유합니다.
-
-``` sh
-$ openssl enc -d -aes256 -in privates.tar.enc -out privates.tar
-$ tar xvf privates.tar
-$ cat credentials
+```sql
+CREATE USER ohucode_web PASSWORD 'ohucode!!';
+CREATE DATABASE ohucode_dev OWNER ohucode_web ENCODING 'utf-8';
 ```
 
-맥 메뉴바의 postgress.app의 psql을 실행한뒤, ```credentials```에 있는 내용대로 실행.
+맥 메뉴바의 postgress.app의 psql을 실행한뒤, 위 명령어로 기본 유저와 데이터베이스 준비.
 
-``` sh
-$ cat conf/db_dev.edn
+그리고, (user/migrate)로 최초 마이그레이션 (테이블 생성) 처리.
+
+### 테스트 저장소 준비
+
+```bash
+$ mkdir -p 저장소/테스트
+$ git clone --bare https://github.com/ohucode/fixture-repo 저장소/테스트/테스트리포
+$ git clone --bare https://github.com/ohucode/empty-repo 저장소/테스트/빈저장소
 ```
-
-위 명령어로, JDBC 연결용 설정파일도 있는지 확인.
 
 ### 웹서버 실행 (10000번 포트에 웹서버, 7888포트에 REPL서버가 뜹니다)
 
