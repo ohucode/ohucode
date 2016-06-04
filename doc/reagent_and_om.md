@@ -45,6 +45,7 @@ Om은 클로저 프로토콜을 사용하고, 기본은 Hiccup 스타일이 아�
 * 이벤트 핸들러를 등록해서 애플리케이션 상태가 전이된다.
 * 애플리케이션 상태에 따른 별도의 뷰를 관리하고, 그 뷰를 구독해서 필요에 따른 형태로 렌더링.
 
+* [The introduction to Reactive Programming you've been missing](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754)
 
 ### 2016/03/05
 
