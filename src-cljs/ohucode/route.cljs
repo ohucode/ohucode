@@ -15,7 +15,7 @@
 (defroute "/credits" []
   (dispatch [:페이지 :감사의말]))
 
-(defroute "/:namespace" [ns]
+(defroute "/:ns" [ns]
   (js/console.log "공간 첫페이지 보입시다. " ns)
   (dispatch [:공간선택 ns])
   (dispatch [:페이지 :공간첫페이지]))

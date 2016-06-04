@@ -19,12 +19,6 @@
             })
 
 (register-handler
- :가입폼
- (fn [db [_ 키 값]]
-   #_(js/console.log "가입폼" 값)
-   (assoc-in db [:가입폼 키] 값)))
-
-(register-handler
  :가입신청
  (fn [db [_ 이용자]]
    (js/console.log "가입신청" (str 이용자))
@@ -115,7 +109,7 @@
 (register-handler
  :공간선택
  (fn [db [_ ns]]
-   (js/console.log "공간선택 register-handler")
+   (js/console.log "공간선택 register-handler" ns)
    (GET (str "/" ns)
        {:성공 #(dispatch [:공간선택결과 :성공 %])
         :실패 (fn [코드 내용] (dispatch [:공간선택결과 :실패 내용]))})
@@ -124,7 +118,8 @@
 (register-handler
  :공간선택결과
  (fn [db [_ 성패 내용]]
-   (assoc db :공간 {:로딩? false})))
+   (js/console.log (clj->js 내용))
+   (assoc db :공간 (merge 내용 {:로딩? false}))))
 
 ;;; 이하 register-sub은 subscribe를 위한 쿼리 함수를 등록한다.
 ;;; 그리고 이 함수는 뷰 컴포넌트에서 subscribe로 불러다 쓴다.
@@ -158,3 +153,8 @@
  :새프로젝트
  (fn [db [_]]
    (reaction (or (:새프로젝트 @db) {}))))
+
+(register-sub
+ :공간
+ (fn [db [_]]
+   (reaction (or (:공간 @db) {}))))

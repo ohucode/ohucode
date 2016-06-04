@@ -1,5 +1,6 @@
 (ns 오후코드.기본
-  (:require [미생.기본 :refer :all]))
+  (:require [미생.기본 :refer :all]
+            [taoensso.timbre :as l]))
 
 (정의 ^:dynamic
   ^{:doc "클라이언트 IP"}
@@ -27,3 +28,6 @@
 
 (함수 지금시각 []
   (quot (System/currentTimeMillis) 1000))
+
+(defmacro 로그 [& args]
+  `(l/debug ~@args))

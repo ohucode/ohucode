@@ -12,7 +12,9 @@
 (함수 edn요청?
   "요청 콘텐트타입이 edn인지 확인한다."
   [요청]
-  (re-find #"^application/edn" (get-in 요청 [:headers "content-type"] "")))
+  (re-find #"^application/edn"
+           (get-in 요청 [:headers "content-type"]
+                   (get-in 요청 [:headers "accept"] ""))))
 
 (함수 요청선택-미들웨어 [핸들러 선택함수]
   (fn [요청]

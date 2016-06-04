@@ -69,16 +69,18 @@
         [:li.list-group-item {:key 키}
          [링크 {:페이지 키} [:h4 (:이름 플젝)]]]))]])
 
-(defn 공간첫페이지 [공간주인]
-  [:div.container-fluid
-   [:div.row
-    [:div.col-md-3
-     [:div.thumbnail
-      [:img {:src "https://pbs.twimg.com/profile_images/649229866798157824/km1HyMU-_400x400.jpg" :alt "프로필 이미지"}]
-      [:div.caption
-       [:h3 (:성명 공간주인) " "
-        [:small (:아이디 공간주인)]]]]]
-    [:div.col-md-9 [프로젝트목록 (:프로젝트 공간주인)]]]])
+(defn 공간첫페이지 []
+  (let [공간 (subscribe [:공간])]
+    (fn []
+      [:div.container-fluid
+       [:div.row
+        [:div.col-md-3
+         [:div.thumbnail
+          [:img {:src "https://pbs.twimg.com/profile_images/649229866798157824/km1HyMU-_400x400.jpg" :alt "프로필 이미지"}]
+          [:div.caption
+           [:h3 (get-in @공간 [:공간주인 :성명] "이름없음")
+            [:small (get-in @공간 [:공간주인 :아이디])]]]]]
+        [:div.col-md-9 [프로젝트목록 (:플젝목록 @공간)]]]])))
 
 (defn 새프로젝트 [아이디]
   (let [fg :div.form-group

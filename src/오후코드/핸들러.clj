@@ -85,6 +85,14 @@
    :doc "리로드해도 세션을 유지하기 위해 메모리 세션 따로 둔다"}
   세션저장소 (memory-store))
 
+(defn- wrap-logger [handler]
+  (fn [req]
+    (let [res (handler req)]
+      (로그 {:요청 (merge (select-keys req [:request-method :path :flash :uri])
+                          {:accept (get-in req [:headers "accept"])})
+             :응답 res})
+      res)))
+
 (defroutes 앱라우트
   (route/resources "/js"  {:root "public/js"})
   (route/resources "/css" {:root "public/css"})
@@ -94,7 +102,7 @@
                wrap-defaults api-defaults)
 
   (-> 웹-라우트
-      #_wrap-with-logger          ; TODO: 로거 위치 고민 필요
+      wrap-logger          ; TODO: 로거 위치 고민 필요
       이용자-바인딩-미들웨어
       ip-바인딩-미들웨어
       콘텐트타입-미들웨어
