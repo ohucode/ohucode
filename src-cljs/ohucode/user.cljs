@@ -82,11 +82,13 @@
             [:small (get-in @공간 [:공간주인 :아이디])]]]]]
         [:div.col-md-9 [프로젝트목록 (:플젝목록 @공간)]]]])))
 
-(defn 새프로젝트 [아이디]
+(defn 새프로젝트 []
   (let [fg :div.form-group
         폼상태 (r/atom {:공개? true :초기화? false})
         검증상태 (검증반응 폼상태 [:프로젝트명])
         새프로젝트상태 (subscribe [:새프로젝트])
+        이용자 (subscribe [:이용자])
+        아이디 (:아이디 @이용자)
         입력 (fn [키 속성]
                [입력컨트롤 (merge {:type "text" :placeholder (name 키) :value (@폼상태 키)
                                    :on-change #(swap! 폼상태 assoc 키 (.-target.value %))}
@@ -98,13 +100,13 @@
         체크박스 (fn [키]
                    [:input {:type "checkbox" :checked (@폼상태 키)
                             :on-change #(swap! 폼상태 update 키 not)}])]
-    (fn [아이디]
+    (fn []
       [패널 ["새 프로젝트"]
        [:div.새프로젝트
         [:form.form-inline
          [:fieldset {:disabled (@새프로젝트상태 :로딩?)}
           [fg
-           [:select.form-control [:option {:value "hatemogi"} "hatemogi"]]
+           [:select.form-control [:option {:value 아이디} 아이디]]
            " / "
            [입력 :프로젝트명 {:auto-focus true}]]]]
         [:br]
