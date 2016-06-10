@@ -2,7 +2,6 @@
   (:require [clojure.edn :as edn]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [prone.middleware :refer [wrap-exceptions]]
             [ring.middleware.defaults :refer [api-defaults
                                               site-defaults
                                               wrap-defaults]]
@@ -117,7 +116,4 @@
   (rfn _ 뷰/not-found))
 
 (정의 앱-dev
-  (-> 앱라우트
-      wrap-exceptions
-      #_wrap-reload; tools.namespace.repl/refresh 쓸 때는 이걸 뺀다.
-      ))
+  (-> 앱라우트)) ;; 현재 개발모드 특화 미들웨어 없음
