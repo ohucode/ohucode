@@ -35,9 +35,10 @@
 
 (함수 ^저장소레코드 생성! [아이디 프로젝트명]
   "로컬 파일 시스템에 빈 bare 저장소를 새로 만든다."
-  (가정 [리포 (doto (.. (FileRepositoryBuilder.)
+  (가정 [디렉터리 (저장소파일 아이디 프로젝트명)
+         리포 (doto (.. (FileRepositoryBuilder.)
                         setBare
-                        (setGitDir (저장소파일 아이디 프로젝트명))
+                        (setGitDir 디렉터리)
                         build)
                 (.create 참))]
     (->저장소레코드 아이디 프로젝트명 리포)))
