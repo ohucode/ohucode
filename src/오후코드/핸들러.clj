@@ -1,5 +1,6 @@
 (ns 오후코드.핸들러
   (:require [clojure.edn :as edn]
+            [clojure.pprint :as pp]
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [api-defaults
@@ -87,9 +88,13 @@
 (defn- wrap-logger [handler]
   (fn [req]
     (let [res (handler req)]
-      (로그 {:요청 (merge (select-keys req [:request-method :path :flash :uri])
-                          {:accept (get-in req [:headers "accept"])})
-             :응답 res})
+      (-> {:요청 (merge (select-keys req [:request-method :path :params])
+                        #_{:accept (get-in req [:headers "accept"])}
+                        {:path (ring.util.codec/url-decode (:uri req))})
+           :응답 (select-keys res [:status :headers :body])}
+          pp/pprint
+          with-out-str
+          로그)
       res)))
 
 (defroutes 앱라우트
