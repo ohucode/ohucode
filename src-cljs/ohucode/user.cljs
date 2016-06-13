@@ -67,7 +67,10 @@
     (for [플젝 플젝들]
       (let [키 (str "/" (:소유자 플젝) "/" (:이름 플젝))]
         [:li.list-group-item {:key 키}
-         [링크 {:페이지 키} [:h4 (:이름 플젝)]]]))]])
+         [:h4
+          [:span.octicon.octicon-repo] " "
+          [링크 {:이벤트 [:프로젝트선택 키]}
+           (:이름 플젝)]]]))]])
 
 (defn 공간첫페이지 []
   (let [공간 (subscribe [:공간])]
@@ -78,7 +81,9 @@
          [:div.thumbnail
           [:img {:src "https://pbs.twimg.com/profile_images/649229866798157824/km1HyMU-_400x400.jpg" :alt "프로필 이미지"}]
           [:div.caption
-           [:h3 (get-in @공간 [:공간주인 :성명] "이름없음")
+           [:h3
+            (get-in @공간 [:공간주인 :성명] "이름없음")
+            " "
             [:small (get-in @공간 [:공간주인 :아이디])]]]]]
         [:div.col-md-9 [프로젝트목록 (:플젝목록 @공간)]]]])))
 
