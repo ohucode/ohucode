@@ -20,12 +20,7 @@
                  [ragtime "0.5.2"]
                  [com.taoensso/timbre "4.3.1"]
                  [org.slf4j/slf4j-api "1.7.14"]
-                 [org.slf4j/log4j-over-slf4j "1.7.14"]
                  [com.fzakaria/slf4j-timbre "0.3.2"]
-                 [log4j "1.2.15" :exclusions [javax.mail/mail
-                                              javax.jms/jms
-                                              com.sun.jdmk/jmxtools
-                                              com.sun.jmx/jmxri]]
                  [org.postgresql/postgresql "9.4-1206-jdbc42"]
                  [org.eclipse.jgit/org.eclipse.jgit "4.3.1.201605051710-r"]
                  [amazonica "0.3.57"]
