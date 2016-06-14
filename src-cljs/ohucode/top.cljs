@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [re-frame.core :refer [dispatch subscribe]]
             [ohucode.user :as 이용자]
+            [ohucode.project :as 프로젝트]
             [ohucode.core :refer [서비스명 페이지 마크다운 관리자? 링크]]
             [cljsjs.bootstrap :as b]))
 
@@ -19,33 +20,35 @@
   (페이지 [:h2 "고마움을 전합니다"]
           [마크다운 {:url "/md/CREDITS.md"}]))
 
-(defn 첫페이지 [가입or로그인]
-  [:div
-   [:div.jumbotron
-    [:div.row
-     [:div.col-xs-6.col-md-8
-      [:h1 서비스명]
-      [:p "즐겁고 효율적인 프로그래밍의 동반자, " 서비스명 "에 오신 것을 환영합니다. "
-       서비스명 "는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git 리모트 리포지토리)를 "
-       "편리하게 제공합니다."]]
-     (case 가입or로그인
-       :가입 [:div.col-xs-6.col-md-4
-              [이용자/가입폼]
-              [:div.panel.panel-login
-               [:div.panel-body.text-center
-                [:div "이미 가입하셨나요? "
-                 [링크 {:페이지 :첫페이지>로그인} "로그인"]]]]]
-       :로그인 [:div.col-xs-6.col-md-4
-                [이용자/로그인폼]
-                [:div.panel.panel-login
-                 [:div.panel-body.text-center
-                  [:div "아이디가 없으신가요? "
-                   [링크 {:페이지 :첫페이지>가입} "가입하기"]]]]]
-       [:div "페이지 상태 에러"])]]
-   [:div.container>div.row
-    [:div.page-header [:h1 "Git 저장소 서비스"]]
-    [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
-    [:div.page-header [:h1 "위키 페이지 작성"]]]])
+(defn 첫화면 []
+  (let [가입or로그인 (subscribe [:첫화면선택 :가입or로그인])]
+    (fn []
+      [:div
+       [:div.jumbotron
+        [:div.row
+         [:div.col-xs-6.col-md-8
+          [:h1 서비스명]
+          [:p "즐겁고 효율적인 프로그래밍의 동반자, " 서비스명 "에 오신 것을 환영합니다. "
+           서비스명 "는 여러분의 프로젝트에 꼭 필요한 소스코드 저장소(Git 리모트 리포지토리)를 "
+           "편리하게 제공합니다."]]
+         (case @가입or로그인
+           :가입 [:div.col-xs-6.col-md-4
+                  [이용자/가입폼]
+                  [:div.panel.panel-login
+                   [:div.panel-body.text-center
+                    [:div "이미 가입하셨나요? "
+                     [링크 {:이벤트 [:첫화면선택 :가입or로그인 :로그인]} "로그인"]]]]]
+           :로그인 [:div.col-xs-6.col-md-4
+                    [이용자/로그인폼]
+                    [:div.panel.panel-login
+                     [:div.panel-body.text-center
+                      [:div "아직 아이디가 없으신가요? "
+                       [링크 {:이벤트 [:첫화면선택 :가입or로그인 :가입]} "가입하기"]]]]]
+           [:div "페이지 상태 에러"])]]
+       [:div.container>div.row
+        [:div.page-header [:h1 "Git 저장소 서비스"]]
+        [:div.page-header [:h1 "프로젝트 구성원 권한 관리"]]
+        [:div.page-header [:h1 "위키 페이지 작성"]]]])))
 
 (defn- 계정정보메뉴 [아이디]
   [:li.dropdown
@@ -104,45 +107,32 @@
 (defn- 보기 [페이지 제목]
   [:a {:href "#"} 제목])
 
+(def 화면이름들
+  {:첫화면 첫화면
+   :이용약관 이용약관
+   :감사의말 감사의말
+   :개인정보취급방침 개인정보취급방침
+   :가입신청 이용자/가입폼
+   :가입환영 이용자/가입환영
+   :공간첫페이지 이용자/공간첫페이지
+   :새프로젝트 이용자/새프로젝트
+   :로그아웃 이용자/로그아웃
+   :프로젝트홈 프로젝트/프로젝트홈})
+
 (defn main-view []
   (let [페이지 (subscribe [:페이지])]
     (fn []
-      (loop [페이지 (:페이지 @페이지)]
+      (let [페이지 (:페이지 @페이지)]
         (cond
-          (keyword? 페이지) (case 페이지
-                              :첫페이지>가입 [첫페이지 :가입]
-                              :첫페이지>로그인 [첫페이지 :로그인]
-                              :이용약관 [이용약관]
-                              :감사의말 [감사의말]
-                              :개인정보취급방침 [개인정보취급방침]
-                              :가입신청 [이용자/가입폼]
-                              :가입환영 [이용자/가입환영]
-                              :공간첫페이지 [이용자/공간첫페이지
-                                             {:아이디 "애월조단" :성명 "김대현"
-                                              :프로젝트 [{:소유자 "애월조단" :이름 "오후코드"}
-                                                         {:소유자 "애월조단" :이름 "빈프로젝트"}]}]
-                              :새프로젝트 [이용자/새프로젝트]
-                              :로그아웃 [이용자/로그아웃]
-                              [빈페이지])
+          (keyword? 페이지) [(get 화면이름들 페이지 빈페이지)]
           (var? 페이지) [(deref 페이지)]
           (fn? 페이지) [페이지]
-          (vector? 페이지) (recur (first 페이지))
           :기타 [빈페이지])))))
 
 (defn 미리보기
   "미리보기 페이지"
   [본문]
-  (let [목록 [:첫페이지>가입
-              :첫페이지>로그인
-              :이용약관
-              :감사의말
-              :개인정보취급방침
-              :가입신청
-              :가입환영
-              #'ohucode.user/로그인폼
-              :공간첫페이지
-              :새프로젝트
-              :로그아웃]
+  (let [목록 (sort (keys 화면이름들))
         이름 (fn [대상]
                (cond
                  (keyword? 대상) (name 대상)

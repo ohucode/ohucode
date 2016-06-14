@@ -4,7 +4,7 @@
             [ohucode.handler]
             [ohucode.route]
             [ohucode.top :refer [앱페이지]]
-            [re-frame.core :refer [dispatch dispatch-sync]]
+            [re-frame.core :refer [dispatch dispatch-sync subscribe]]
             [secretary.core :as secretary]))
 
 (defn ^:export main []
@@ -24,8 +24,7 @@
 (온로드-등록 main)
 
 (defn ^:export fig-reload []
-  (js/console.log "리로드")
-  (js/console.debug (clj->js @re-frame.db/app-db)))
+  (js/console.log "리로드"))
 
 (defn ^:export 로그인-알림 [이용자]
   (온로드-등록 (fn []
