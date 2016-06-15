@@ -136,9 +136,9 @@
 
 (register-handler
  :프로젝트선택
- (fn [db [_ ns project]]
-   (js/console.log "프로젝트선택 register-handler" ns)
-   (GET (str "/" ns "/" project)
+ (fn [db [_ 프로젝트키]]
+   (js/console.log "프로젝트선택 register-handler" 프로젝트키)
+   (GET 프로젝트키
        {:성공 #(dispatch [:프로젝트선택-결과 :성공 %])
         :실패 (fn [코드 내용] (dispatch [:프로젝트선택-결과 :실패 내용]))})
    (dispatch [:페이지 :프로젝트홈])
