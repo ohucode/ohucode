@@ -80,8 +80,7 @@
          [:ul.nav.navbar-nav
           ;; TODO: 개발자만(또는 개발환경에서만) 미리보기모드를 제공합니다.
           [:li {:class (if 미리보기 "active" "")}
-           [링크 {:이벤트 [:미리보기 (not 미리보기)]} "미리보기"]]
-          [:li [링크 {:href "/help"} "도움말"]]]
+           [링크 {:이벤트 [:미리보기 (not 미리보기)]} "미리보기"]]]
          (if-let [아이디 (:아이디 @이용자)]
            [:ul.nav.navbar-nav.navbar-right
             (if (관리자? 아이디)
