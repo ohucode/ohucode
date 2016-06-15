@@ -192,3 +192,8 @@
  :공간
  (fn [db [_]]
    (reaction (or (:공간 @db) {}))))
+
+(register-sub
+ :프로젝트
+ (fn [db [_]]
+   (reaction (or (:프로젝트 @db) {}))))
