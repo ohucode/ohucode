@@ -1,68 +1,82 @@
 (ns 오후코드.저장소
-  (:require [미생.기본 :refer :all])
-  (:import (java.io File)
-           (org.eclipse.jgit.api Git)
-           (org.eclipse.jgit.storage.file FileRepositoryBuilder)))
+  (:import [java.io File]
+           [org.eclipse.jgit.api Git]
+           [org.eclipse.jgit.storage.file FileRepositoryBuilder]
+           [org.eclipse.jgit.api.errors RefNotFoundException]))
 
-(정의 ^{:dynamic 참
-        :doc "저장소를 읽고 쓸 최상위 디렉토리."}
+(def ^{:dynamic true
+       :doc "저장소를 읽고 쓸 최상위 디렉토리."}
   *저장소위치* "저장소")
 
-(레코드 커서 [아이디 프로젝트명 레프 경로])
+(defrecord 커서 [아이디 프로젝트명 레프 경로])
 
-(선언 닫기)
+(declare 닫기)
 
-(레코드 저장소레코드 [아이디 프로젝트명 리포]
+(defrecord 저장소레코드 [아이디 프로젝트명 리포]
   java.io.Closeable
   (close [this] (닫기 this)))
 
-(함수 저장소경로 [아이디 프로젝트명]
+(defn 저장소경로 [아이디 프로젝트명]
   (clojure.string/join "/" [*저장소위치* 아이디 프로젝트명]))
 
-(함수- 저장소파일 [아이디 프로젝트명]
+(defn- 저장소파일 [아이디 프로젝트명]
   (.. (File. (저장소경로 아이디 프로젝트명)) getAbsoluteFile))
 
-(함수 ^저장소레코드 열기 [아이디 프로젝트명]
+(defn ^저장소레코드 열기 [아이디 프로젝트명]
   "로컬 파일 저장소를 연다."
-  (가정 [리포 (.. (FileRepositoryBuilder.)
-                  (setGitDir (저장소파일 아이디 프로젝트명))
-                  (setMustExist 참)
-                  build)]
+  (let [리포 (.. (FileRepositoryBuilder.)
+                 (setGitDir (저장소파일 아이디 프로젝트명))
+                 (setMustExist true)
+                 build)]
     (->저장소레코드 아이디 프로젝트명 리포)))
 
-(함수 닫기 [^저장소레코드 저장소]
+(defn 닫기 [^저장소레코드 저장소]
   (.close (:리포 저장소)))
 
-(함수 ^저장소레코드 생성! [아이디 프로젝트명]
+(defn ^저장소레코드 생성! [아이디 프로젝트명]
   "로컬 파일 시스템에 빈 bare 저장소를 새로 만든다."
-  (가정 [디렉터리 (저장소파일 아이디 프로젝트명)
-         리포 (doto (.. (FileRepositoryBuilder.)
-                        setBare
-                        (setGitDir 디렉터리)
-                        build)
-                (.create 참))]
+  (let [디렉터리 (저장소파일 아이디 프로젝트명)
+        리포 (doto (.. (FileRepositoryBuilder.)
+                       setBare
+                       (setGitDir 디렉터리)
+                       build)
+               (.create true))]
     (->저장소레코드 아이디 프로젝트명 리포)))
 
-(함수- rm-rf! [경로]
-  (만약 (.isDirectory 경로)
+(defn- rm-rf! [경로]
+  (if (.isDirectory 경로)
     (run! rm-rf! (.listFiles 경로)))
   (.delete 경로))
 
 ;;; TODO: 저장소레코드 사용하는 형태 고민
-(정의 삭제! (합성 rm-rf! 저장소파일))
+(def 삭제! (comp rm-rf! 저장소파일))
 
-(함수- git-명령 [리포 명령]
+(defn- git-명령 [리포 명령]
   ;; TODO: Repository에도 .close가 있는데, Git에도 .close를 따로 해야하나?
   (with-open [git (Git. 리포)]
     (-> git 명령 .call)))
 
-(함수- ref->hash [ref]
+(defn- resolve-ref [리포 레프]
+  (if-let [object-id (.resolve 리포 레프)]
+    object-id
+    #_(throw (RefNotFoundException. 레프))))
+
+(defn- ref->hash [ref]
   {:name (.getName ref)
    :object-id (.name (.getObjectId ref))}) ;; 개체-id
 
-(함수 브랜치목록 [{리포 :리포}]
+(defn 브랜치목록 [{리포 :리포}]
   (->> (git-명령 리포 (memfn branchList))
-      (사상 ref->hash)))
+       (map ref->hash)))
 
-(함수 빈저장소? [저장소]
-  (빈? (브랜치목록 저장소)))
+(defn 기본브랜치명 [리포]
+  (:name (first (브랜치목록 리포))))
+
+(defn 커밋이력
+  ([리포] (커밋이력 리포 "HEAD"))
+  ([{리포 :리포} 레프]
+   (if-let [object-id (resolve-ref 리포 레프)]
+     (seq (git-명령 리포 #(-> (.log %) (.add object-id)))))))
+
+(defn 빈저장소? [저장소]
+  (empty? (브랜치목록 저장소)))

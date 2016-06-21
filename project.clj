@@ -22,7 +22,7 @@
                  [org.slf4j/slf4j-api "1.7.14"]
                  [com.fzakaria/slf4j-timbre "0.3.2"]
                  [org.postgresql/postgresql "9.4-1206-jdbc42"]
-                 [org.eclipse.jgit/org.eclipse.jgit "4.3.1.201605051710-r"]
+                 [org.eclipse.jgit/org.eclipse.jgit "4.4.0.201606070830-r"]
                  [amazonica "0.3.57"]
 
                  [org.clojure/clojurescript "1.8.51"]
