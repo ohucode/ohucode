@@ -4,6 +4,7 @@
   :min-lein-version "2.5.3"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.nrepl "0.2.12"]
+                 [org.clojure/test.check "0.9.0"]
                  [cider/cider-nrepl "0.12.0"]
                  [org.clojure/tools.namespace "0.2.11"]
 
