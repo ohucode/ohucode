@@ -4,7 +4,6 @@
   :min-lein-version "2.5.3"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.nrepl "0.2.12"]
-                 [org.clojure/test.check "0.9.0"]
                  [cider/cider-nrepl "0.12.0"]
                  [org.clojure/tools.namespace "0.2.11"]
 
@@ -49,7 +48,8 @@
   :main 오후코드.서버/시작!
   ;; :hooks [leiningen.cljsbuild]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [ring/ring-mock "0.3.0"]]}}
+                                  [ring/ring-mock "0.3.0"]
+                                  [org.clojure/test.check "0.9.0"]]}}
   :repl-options {:init-ns user
                  :init (set! *print-length* 50)
                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
