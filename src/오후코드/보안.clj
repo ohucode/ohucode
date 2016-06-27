@@ -1,138 +1,145 @@
 (ns 오후코드.보안
-  (:require [미생.기본 :refer :all])
-  (:import (java.security KeyFactory KeyPairGenerator SecureRandom
-                          Signature)
-           (java.security.spec PKCS8EncodedKeySpec X509EncodedKeySpec)
-           (java.util Base64)
-           (javax.crypto SecretKeyFactory)
-           (javax.crypto.spec PBEKeySpec)))
+  (:import [java.security KeyFactory KeyPairGenerator SecureRandom Signature]
+           [java.security.spec PKCS8EncodedKeySpec X509EncodedKeySpec]
+           [java.util Base64]
+           [javax.crypto SecretKeyFactory]
+           [javax.crypto.spec PBEKeySpec]))
 
-(함수 encode-base64 [bytes]
+(defn encode-base64
   "일반 Base64 인코딩"
+  [bytes]
   (.encodeToString (Base64/getEncoder) bytes))
 
-(함수 decode-base64 [bytes]
+(defn decode-base64
   "일반 Base64 디코딩"
+  [bytes]
   (.decode (Base64/getDecoder) bytes))
 
-(함수 encode-urlsafe-base64 [bytes]
+(defn encode-urlsafe-base64
   "URL-safe Base64 인코딩: RFC4648, https://www.ietf.org/rfc/rfc4648.txt"
+  [bytes]
   (.encodeToString (.withoutPadding (Base64/getUrlEncoder)) bytes))
 
-(함수 decode-urlsafe-base64 [bytes]
+(defn decode-urlsafe-base64
   "URL-safe Base64 디코딩: RFC4648, https://www.ietf.org/rfc/rfc4648.txt"
+  [bytes]
   (.decode (Base64/getUrlDecoder) bytes))
 
-(함수 random-bytes [size]
+(defn random-bytes
   "안전한 랜덤 바이트 생성. size 길이의 랜덤 바이트를 만들어 base64로 인코딩."
-  (가정 [rng (SecureRandom.)
-         bytes (byte-array size)]
+  [size]
+  (let [rng (SecureRandom.)
+        bytes (byte-array size)]
     (.nextBytes rng bytes)
     bytes))
 
-(함수 random-int []
+(defn random-int []
   (.nextInt (SecureRandom.)))
 
-(함수 random-digits [len]
+(defn random-digits
   "최대 10진수로 len 자리수 만큼의 랜덤 숫자 생성."
+  [len]
   (rem (Math/abs (random-int))
        (.intValue (Math/pow 10 len))))
 
-(함수 random-digits-str [len]
+(defn random-digits-str [len]
   (format (str "%0" len "d")
           (random-digits len)))
 
-(정의 generate-passcode (partial random-digits-str 6))
+(def generate-passcode (partial random-digits-str 6))
 
-(함수 random-digest []
+(defn random-digest
   "32바이트 길이의 임의 urlsafe-base64 문자열 생성."
+  []
   (encode-urlsafe-base64 (random-bytes 24)))
 
-(함수 pbkdf2 [password salt iterations derived-bits]
+(defn pbkdf2
   "PBKDF2 해쉬값을 base64로 인코딩한 문자열로 생성"
-  (가정 [spec (PBEKeySpec. (.toCharArray password) (.getBytes salt) iterations derived-bits)
-         factory (SecretKeyFactory/getInstance "PBKDF2WithHmacSHA1")]
+  [password salt iterations derived-bits]
+  (let [spec (PBEKeySpec. (.toCharArray password) (.getBytes salt) iterations derived-bits)
+        factory (SecretKeyFactory/getInstance "PBKDF2WithHmacSHA1")]
     (->> (.generateSecret factory spec)
          (.getEncoded)
          (encode-base64))))
 
-(함수 password-digest [password salt]
+(defn password-digest [password salt]
   (pbkdf2 password salt 100000 160))
 
-(함수 valid-password-digest? [password salt raw]
+(defn valid-password-digest? [password salt raw]
   (= raw (password-digest password salt)))
 
-(가정 [saltfn (partial str "ohucode/")]
-  (함수 오후코드-비번해쉬 [userid password]
+(let [saltfn (partial str "ohucode/")]
+  (defn 오후코드-비번해쉬 [userid password]
     (password-digest password (saltfn userid)))
 
-  (함수 오후코드-유효비번? [userid password raw]
+  (defn 오후코드-유효비번? [userid password raw]
     (valid-password-digest? password (saltfn userid) raw)))
 
-(함수 개인키 [파일명]
-  (가정 [스펙 (-> (slurp 파일명 :encoding "ISO-8859-1")
-                  (.getBytes "ISO-8859-1")
-                  (PKCS8EncodedKeySpec.))]
+(defn 개인키 [파일명]
+  (let [스펙 (-> (slurp 파일명 :encoding "ISO-8859-1")
+                 (.getBytes "ISO-8859-1")
+                 (PKCS8EncodedKeySpec.))]
     (-> (KeyFactory/getInstance "RSA")
         (.generatePrivate 스펙))))
 
-(함수 공개키 [파일명]
-  (가정 [스펙 (-> (slurp 파일명 :encoding "ISO-8859-1")
-                  (.getBytes "ISO-8859-1")
-                  (X509EncodedKeySpec.))]
+(defn 공개키 [파일명]
+  (let [스펙 (-> (slurp 파일명 :encoding "ISO-8859-1")
+                 (.getBytes "ISO-8859-1")
+                 (X509EncodedKeySpec.))]
     (-> (KeyFactory/getInstance "RSA")
         (.generatePublic 스펙))))
 
-(함수 키쌍생성 []
-  (-> (doto (KeyPairGenerator/getInstance "RSA")
-        (.initialize 2048))
-      (.genKeyPair)))
+(defn 키쌍생성
+  ([] (키쌍생성 2048))
+  ([bitsize] (-> (doto (KeyPairGenerator/getInstance "RSA")
+                   (.initialize bitsize))
+                 (.genKeyPair))))
 
-(함수 바이트-서명 [개인키 내용]
+(defn 바이트-서명 [개인키 내용]
   ;; https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#Signature
   (-> (doto (Signature/getInstance "SHA256withRSA")
         (.initSign 개인키)
         (.update 내용))
       (.sign)))
 
-(함수 바이트-서명확인 [공개키 내용 서명]
+(defn 바이트-서명확인 [공개키 내용 서명]
   (-> (doto (Signature/getInstance "SHA256withRSA")
         (.initVerify 공개키)
         (.update 내용))
       (.verify 서명)))
 
-(정의 ^{:dynamic true
-        :doc "오후코드 사이트 공통으로 쓸 개인키"}
+(def ^{:dynamic true
+       :doc "오후코드 사이트 공통으로 쓸 개인키"}
   *개인키* (개인키 "conf/auth.pk8"))
 
-(정의 ^{:dynamic true
-        :doc "오후코드 사이트 공통으로 쓸 공개키"}
+(def ^{:dynamic true
+       :doc "오후코드 사이트 공통으로 쓸 공개키"}
   *공개키* (공개키 "conf/auth.pub"))
 
-(함수 서명 [^String 내용]
+(defn 서명 [^String 내용]
   (-> *개인키*
       (바이트-서명  (.getBytes 내용))
       encode-urlsafe-base64))
 
-(함수 서명확인 [^String 내용 ^String 서명]
-  (가정 [내용 (.getBytes 내용)
-         서명 (decode-urlsafe-base64 서명)]
+(defn 서명확인 [^String 내용 ^String 서명]
+  (let [내용 (.getBytes 내용)
+        서명 (decode-urlsafe-base64 서명)]
     (바이트-서명확인 *공개키* 내용 서명)))
 
-(함수 인증토큰생성
+(defn 인증토큰생성
   "인증쿠키에 보관할 [인증문자열:서명] 값을 생성한다."
   [인증정보]
-  (가정 [인증문자열 (-> 인증정보 pr-str .getBytes encode-urlsafe-base64)
-         서명 (서명 인증문자열)]
+  (let [인증문자열 (-> 인증정보 pr-str .getBytes encode-urlsafe-base64)
+        서명 (서명 인증문자열)]
     (str 인증문자열 ":" 서명)))
 
-(함수 인증토큰확인
+(defn 인증토큰확인
   "인증쿠키에 있는 인증문자열과 서명을 확인해서,
    서명이 유효하다면 인증문자열을 read-string으로 읽어서 돌려주고,
    무효라면 nil을 반환한다. 디코딩에 실패하더라도 nil이다."
   [토큰문자열]
   (try
-   (가정 [[인증문자열 서명] (clojure.string/split 토큰문자열 #":")]
-     (만약 (서명확인 인증문자열 서명)
-       (-> 인증문자열 .getBytes decode-urlsafe-base64 String. read-string)))
-   (catch Exception e nil)))
+    (let [[인증문자열 서명] (clojure.string/split 토큰문자열 #":")]
+      (if (서명확인 인증문자열 서명)
+        (-> 인증문자열 .getBytes decode-urlsafe-base64 String. read-string)))
+    (catch Exception e nil)))
