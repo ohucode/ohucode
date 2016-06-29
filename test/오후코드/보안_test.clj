@@ -14,7 +14,7 @@
   (prop/for-all [v gen/bytes]
                 (= (seq v) (seq (decode-urlsafe-base64 (encode-urlsafe-base64 v))))))
 
-(defspec 해쉬찍고-확인
+(defspec 해쉬찍고-확인 10
   (prop/for-all [password (gen/fmap (partial str "pass-") gen/string-ascii)
                  salt (gen/fmap (partial str "salt-") gen/string-ascii)]
                 (valid-password-digest? password salt (password-digest password salt))))
