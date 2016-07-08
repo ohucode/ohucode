@@ -74,9 +74,13 @@
 
 (defn 커밋이력
   ([리포] (커밋이력 리포 "HEAD"))
-  ([{리포 :리포} 레프]
-   (if-let [object-id (resolve-ref 리포 레프)]
-     (seq (git-명령 리포 #(-> (.log %) (.add object-id)))))))
+  ([리포 레프] (커밋이력 리포 "HEAD" 30 0))
+  ([{리포 :리포} 레프 최대건수 시작커밋]
+   (if-let [ref (.resolve 리포 레프)]
+     (with-open [walk (git-명령 리포 #(-> % .log
+                                          (.add ref)
+                                          (.setMaxCount 최대건수)))]
+       (map bean walk)))))
 
 (defn 빈저장소? [저장소]
   (empty? (브랜치목록 저장소)))

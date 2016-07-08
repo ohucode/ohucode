@@ -2,8 +2,7 @@
   (:use [clojure.test]
         [오후코드.기본]
         [오후코드.저장소])
-  (:import [org.eclipse.jgit.lib Repository]
-           [오후코드.저장소 저장소레코드]))
+  (:import [org.eclipse.jgit.lib Repository]))
 
 (defn- rm-rf! [경로]
   (when (.isDirectory 경로)
@@ -19,19 +18,17 @@
 
   (testing "열기"
     (with-open [ㅈ (열기 "테스트" "테스트리포")]
-      (is (instance? 오후코드.저장소.저장소레코드 ㅈ))))
+      (is (not (nil? ㅈ)))))
 
   (testing "빈 저장소인지 확인하기"
     (with-open [빈거 (열기 "테스트" "빈저장소")
                 쓴거 (열기 "테스트" "테스트리포")]
-      (is (instance? 오후코드.저장소.저장소레코드 빈거))
       (is (true? (빈저장소? 빈거)))
       (is (false? (빈저장소? 쓴거)))))
 
   (testing "빈 저장소 만들기"
     (삭제! "테스트" "프로젝트")
     (with-open [새거 (생성! "테스트" "프로젝트")]
-      (is (instance? 오후코드.저장소.저장소레코드 새거))
       (is (빈저장소? 새거))))
 
   (testing "브랜치 목록"
@@ -44,4 +41,6 @@
     (with-open [빈거 (열기 "테스트" "빈저장소")
                 쓴거 (열기 "테스트" "테스트리포")]
       (is (empty? (커밋이력 빈거)))
-      (is (= "01c405f94c7bcd7838d06a3eb2351baca4dac106" (.getName (last (커밋이력 쓴거))))))))
+      (is (= ["7eacf26edeb82e0a080c99d49557ed983ed1edc2"
+              "01c405f94c7bcd7838d06a3eb2351baca4dac106"]
+             (map :name (take-last 2 (커밋이력 쓴거))))))))
