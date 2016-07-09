@@ -2,6 +2,7 @@
   (:use [clojure.test]
         [오후코드.기본]
         [오후코드.저장소])
+  (:require [clojure.set :as s])
   (:import [org.eclipse.jgit.lib Repository]))
 
 (defn- rm-rf! [경로]
@@ -34,8 +35,11 @@
   (testing "브랜치 목록"
     (with-open [빈거 (열기 "테스트" "빈저장소")
                 쓴거 (열기 "테스트" "테스트리포")]
-      (is (= () (map :name (브랜치목록 빈거))))
-      (is (= ["refs/heads/master"] (map :name (브랜치목록 쓴거))))))
+      (is (empty? (브랜치목록 빈거)))
+      (is (empty? (s/difference #{"refs/heads/master"
+                                  "refs/heads/branch-A"
+                                  "refs/heads/branch-B"}
+                                (map :name (브랜치목록 쓴거)))))))
 
   (testing "커밋이력"
     (with-open [빈거 (열기 "테스트" "빈저장소")
