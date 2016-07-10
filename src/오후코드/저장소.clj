@@ -16,16 +16,16 @@
   java.io.Closeable
   (close [this] (닫기 this)))
 
-(defn 저장소경로 [아이디 프로젝트명]
+(defn 저장소-경로 [아이디 프로젝트명]
   (clojure.string/join "/" [*저장소위치* 아이디 프로젝트명]))
 
-(defn- 저장소파일 [아이디 프로젝트명]
-  (.. (File. (저장소경로 아이디 프로젝트명)) getAbsoluteFile))
+(defn- 저장소-파일 [아이디 프로젝트명]
+  (.. (File. (저장소-경로 아이디 프로젝트명)) getAbsoluteFile))
 
 (defn ^저장소레코드 열기 [아이디 프로젝트명]
   "로컬 파일 저장소를 연다."
   (let [리포 (.. (FileRepositoryBuilder.)
-                 (setGitDir (저장소파일 아이디 프로젝트명))
+                 (setGitDir (저장소-파일 아이디 프로젝트명))
                  (setMustExist true)
                  build)]
     (->저장소레코드 아이디 프로젝트명 리포)))
@@ -35,7 +35,7 @@
 
 (defn ^저장소레코드 생성! [아이디 프로젝트명]
   "로컬 파일 시스템에 빈 bare 저장소를 새로 만든다."
-  (let [디렉터리 (저장소파일 아이디 프로젝트명)
+  (let [디렉터리 (저장소-파일 아이디 프로젝트명)
         리포 (doto (.. (FileRepositoryBuilder.)
                        setBare
                        (setGitDir 디렉터리)
@@ -49,7 +49,7 @@
   (.delete 경로))
 
 ;;; TODO: 저장소레코드 사용하는 형태 고민
-(def 삭제! (comp rm-rf! 저장소파일))
+(def 삭제! (comp rm-rf! 저장소-파일))
 
 (defn- git-명령 [리포 명령]
   ;; TODO: Repository에도 .close가 있는데, Git에도 .close를 따로 해야하나?
@@ -84,3 +84,12 @@
 
 (defn 빈저장소? [저장소]
   (empty? (브랜치목록 저장소)))
+
+(defn 저장소읽는-미들웨어
+  "프로젝트를 읽거나 쓸 때, 깃 저장소를 준비한다. 이미 플젝읽는-미들웨어등으로
+  미리 처리되있는 경우 정상 처리."
+  [핸들러]
+  (fn [요청]
+    (if-let [플젝 (get-in 요청 [:앱 :프로젝트])]
+      (핸들러 (assoc-in 요청 [:앱 :저장소] (열기 (:소유자 플젝) (:이름 플젝))))
+      (핸들러 요청))))

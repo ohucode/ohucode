@@ -1,9 +1,9 @@
 (ns 오후코드.저장소-test
-  (:use [clojure.test]
-        [오후코드.기본]
-        [오후코드.저장소])
-  (:require [clojure.set :as s])
-  (:import [org.eclipse.jgit.lib Repository]))
+  (:require [clojure
+             [set :as s]
+             [test :refer :all]]
+            [오후코드.저장소 :refer :all]
+            [오후코드.db :as db]))
 
 (defn- rm-rf! [경로]
   (when (.isDirectory 경로)
@@ -13,9 +13,9 @@
 
 (deftest 저장소-검사
   (testing "경로 만들기"
-    (is (= "저장소/테스트/테스트플젝1" (저장소경로 "테스트" "테스트플젝1")))
+    (is (= "저장소/테스트/테스트플젝1" (저장소-경로 "테스트" "테스트플젝1")))
     (binding [*저장소위치* "테스트저장소"]
-      (is (= "테스트저장소/테스트/테스트플젝2" (저장소경로 "테스트" "테스트플젝2")))))
+      (is (= "테스트저장소/테스트/테스트플젝2" (저장소-경로 "테스트" "테스트플젝2")))))
 
   (testing "열기"
     (with-open [ㅈ (열기 "테스트" "테스트리포")]
@@ -48,3 +48,14 @@
       (is (= ["7eacf26edeb82e0a080c99d49557ed983ed1edc2"
               "01c405f94c7bcd7838d06a3eb2351baca4dac106"]
              (map :name (take-last 2 (커밋이력 쓴거))))))))
+
+(deftest 저장소-미들웨어-테스트
+  (testing "저장소 읽는 미들웨어 정상처리"
+    (let [요청 {:앱 {:프로젝트 (db/프로젝트-열람 "테스트" "테스트리포")}}
+          핸들러 (fn [요청] (get-in 요청 [:앱 :저장소]))]
+      (is (= [:아이디 :프로젝트명 :리포] (keys ((저장소읽는-미들웨어 핸들러) 요청))))))
+
+  (testing "저장소 읽는 미들웨어 읽지 못할 때 처리"
+    (let [요청 {:앱 {:프로젝트 nil}}
+          핸들러 (fn [요청] (get-in 요청 [:앱 :저장소]))]
+      (is (nil? ((저장소읽는-미들웨어 핸들러) 요청))))))
