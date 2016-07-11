@@ -61,13 +61,30 @@
     object-id
     #_(throw (RefNotFoundException. 레프))))
 
-(defn- ref->hash [ref]
+(defn- ref->clj [ref]
   {:name (.getName ref)
    :object-id (.name (.getObjectId ref))}) ;; 개체-id
 
+(defn- ident->clj [ident]
+  {:name (.getName ident)
+   :email (.getEmailAddress ident)
+   :when (.getWhen ident)
+   :timezone (.getID (.getTimeZone ident))})
+
+(defn- commit->clj [commit]
+  {:parents       (map (memfn name) (.getParents commit))
+   :tree          (.getName (.getTree commit))
+   :committer     (ident->clj (.getCommitterIdent commit))
+   :author        (ident->clj (.getAuthorIdent commit))
+   :type          (.getType commit)
+   :id            (.getName commit)
+   :short-message (.getShortMessage commit)
+   :full-message  (.getFullMessage commit)
+   :encoding      (.displayName (.getEncoding commit))})
+
 (defn 브랜치목록 [{리포 :리포}]
   (->> (git-명령 리포 (memfn branchList))
-       (map ref->hash)))
+       (map ref->clj)))
 
 (defn 기본브랜치명 [리포]
   (:name (first (브랜치목록 리포))))
@@ -80,7 +97,7 @@
      (with-open [walk (git-명령 리포 #(-> % .log
                                           (.add ref)
                                           (.setMaxCount 최대건수)))]
-       (map bean walk)))))
+       (map commit->clj walk)))))
 
 (defn 빈저장소? [저장소]
   (empty? (브랜치목록 저장소)))
