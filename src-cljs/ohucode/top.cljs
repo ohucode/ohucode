@@ -1,10 +1,8 @@
 (ns ohucode.top
-  (:require [reagent.core :as r]
-            [re-frame.core :refer [dispatch subscribe]]
-            [ohucode.user :as 이용자]
+  (:require [ohucode.core :refer [관리자? 링크 마크다운 서비스명 페이지]]
             [ohucode.project :as 프로젝트]
-            [ohucode.core :refer [서비스명 페이지 마크다운 관리자? 링크]]
-            [cljsjs.bootstrap :as b]))
+            [ohucode.user :as 이용자]
+            [re-frame.core :refer [subscribe]]))
 
 (defn 이용약관 []
   [:div.container-fluid
