@@ -1,9 +1,11 @@
 (ns user
-  (:require [ragtime.jdbc :as jdbc]
-            [ragtime.repl :as ragtime]
+  (:require [ragtime
+             [jdbc :as jdbc]
+             [repl :as ragtime]]
             [미생.기본 :refer :all]
-            [오후코드.db :as db]
-            [오후코드.서버 :as 서버]))
+            [오후코드
+             [db :as db]
+             [서버 :as 서버]]))
 
 (함수- config []
   {:datastore  (jdbc/sql-database {:datasource (:datasource @(:pool db/dev-db))})

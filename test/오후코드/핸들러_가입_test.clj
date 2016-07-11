@@ -1,11 +1,7 @@
 (ns 오후코드.핸들러-가입-test
-  (:use [clojure.test]
-        [오후코드.핸들러-가입])
-  (:require [ring.mock.request :as mock]
-            [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
-            [korma.db :refer [transaction rollback]]
-            [오후코드.db :as db]))
+  (:require [clojure.test :refer :all]
+            [korma.db :refer [rollback transaction]]
+            [오후코드.핸들러-가입 :refer :all]))
 
 (defn edn-요청 [method uri data]
   {:request-method method :uri uri

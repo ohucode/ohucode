@@ -1,11 +1,13 @@
 (ns 오후코드.db
+  (:refer-clojure :exclude [update])
   (:require [clojure.data.json :as json]
-            [korma.core :refer :all]
-            [korma.db :refer :all]
+            [korma
+             [core :refer :all]
+             [db :refer :all]]
             [미생.기본 :refer :all]
-            [오후코드.기본 :refer :all]
-            [오후코드.보안 :as 보안])
-  (:refer-clojure :exclude [update]))
+            [오후코드
+             [기본 :refer :all]
+             [보안 :as 보안]]))
 
 (매크로대응 트랜잭션 korma.db/transaction)
 

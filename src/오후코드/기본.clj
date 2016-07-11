@@ -1,6 +1,6 @@
 (ns 오후코드.기본
-  (:require [미생.기본 :refer :all]
-            [taoensso.timbre :as l]))
+  (:require [taoensso.timbre :as l]
+            [미생.기본 :refer :all]))
 
 (정의 ^:dynamic
   ^{:doc "클라이언트 IP"}

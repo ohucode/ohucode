@@ -1,7 +1,6 @@
 (ns 오후코드.핸들러-깃-test
-  (:use [clojure.test]
-        [오후코드.핸들러-깃])
   (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
             [ring.mock.request :as mock]
             [오후코드.핸들러 :refer [앱라우트]]))
 

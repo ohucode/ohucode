@@ -1,13 +1,9 @@
 (ns 오후코드.핸들러-깃
   (:require [compojure.core :refer :all]
             [ring.util.response :refer :all])
-  (:import (java.io InputStream OutputStream PipedInputStream
-                    PipedOutputStream)
-           (java.util.zip GZIPInputStream GZIPOutputStream)
-           (org.eclipse.jgit.transport PacketLineOut PreUploadHook
-                                       ReceivePack
-                                       RefAdvertiser$PacketLineOutRefAdvertiser
-                                       RefFilter UploadPack UserAgent)))
+  (:import [java.io InputStream OutputStream PipedInputStream PipedOutputStream]
+           [java.util.zip GZIPInputStream GZIPOutputStream]
+           [org.eclipse.jgit.transport PacketLineOut PreUploadHook ReceivePack RefAdvertiser$PacketLineOutRefAdvertiser RefFilter UploadPack UserAgent]))
 
 (defn advertise [repo svc ^OutputStream out]
   (let [plo (PacketLineOut. out)

@@ -1,8 +1,7 @@
 (ns 오후코드.저장소
-  (:import [java.io File]
-           [org.eclipse.jgit.api Git]
-           [org.eclipse.jgit.storage.file FileRepositoryBuilder]
-           [org.eclipse.jgit.api.errors RefNotFoundException]))
+  (:import java.io.File
+           org.eclipse.jgit.api.Git
+           org.eclipse.jgit.storage.file.FileRepositoryBuilder))
 
 (def ^{:dynamic true
        :doc "저장소를 읽고 쓸 최상위 디렉토리."}

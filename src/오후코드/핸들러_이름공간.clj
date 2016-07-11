@@ -1,11 +1,12 @@
 (ns 오후코드.핸들러-이름공간
   (:require [compojure.core :refer :all]
             [미생.기본 :refer :all]
-            [오후코드.db :as db]
-            [오후코드.권한 :as 권한]
-            [오후코드.뷰 :as 뷰]
-            [오후코드.저장소 :as 저장소]
-            [오후코드.핸들러-유틸 :refer :all]))
+            [오후코드
+             [db :as db]
+             [권한 :as 권한]
+             [뷰 :as 뷰]
+             [저장소 :as 저장소]
+             [핸들러-유틸 :refer :all]]))
 
 (defroutes 이름공간-라우트
   (context "/:ns" [ns]

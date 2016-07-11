@@ -1,8 +1,7 @@
 (ns 오후코드.핸들러-test
-  (:use [clojure.test]
-        [오후코드.핸들러])
-  (:require [clojure.java.io :as io]
-            [ring.mock.request :as mock]))
+  (:require [clojure.test :refer :all]
+            [ring.mock.request :as mock]
+            [오후코드.핸들러 :refer :all]))
 
 (deftest 앱테스트
   (testing "main route"
