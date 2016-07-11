@@ -4,7 +4,7 @@
            org.eclipse.jgit.storage.file.FileRepositoryBuilder))
 
 (def ^{:dynamic true
-       :doc "저장소를 읽고 쓸 최상위 디렉토리."}
+       :doc     "저장소를 읽고 쓸 최상위 디렉토리."}
   *저장소위치* "저장소")
 
 (defrecord 커서 [아이디 프로젝트명 레프 경로])
@@ -35,11 +35,11 @@
 (defn ^저장소레코드 생성! [아이디 프로젝트명]
   "로컬 파일 시스템에 빈 bare 저장소를 새로 만든다."
   (let [디렉터리 (저장소-파일 아이디 프로젝트명)
-        리포 (doto (.. (FileRepositoryBuilder.)
-                       setBare
-                       (setGitDir 디렉터리)
-                       build)
-               (.create true))]
+        리포     (doto (.. (FileRepositoryBuilder.)
+                           setBare
+                           (setGitDir 디렉터리)
+                           build)
+                   (.create true))]
     (->저장소레코드 아이디 프로젝트명 리포)))
 
 (defn- rm-rf! [경로]
@@ -61,13 +61,13 @@
     #_(throw (RefNotFoundException. 레프))))
 
 (defn- ref->clj [ref]
-  {:name (.getName ref)
+  {:name      (.getName ref)
    :object-id (.name (.getObjectId ref))}) ;; 개체-id
 
 (defn- ident->clj [ident]
-  {:name (.getName ident)
-   :email (.getEmailAddress ident)
-   :when (.getWhen ident)
+  {:name     (.getName ident)
+   :email    (.getEmailAddress ident)
+   :when     (.getWhen ident)
    :timezone (.getID (.getTimeZone ident))})
 
 (defn- commit->clj [commit]

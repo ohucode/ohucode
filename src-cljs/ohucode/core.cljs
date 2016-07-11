@@ -13,13 +13,13 @@
 (def 서비스명 "오후코드")
 
 (defn- wrap-edn-ajax [{:keys [내용 성공 실패 완료] :as 속성}]
-  {:format (edn-request-format)
+  {:format          (edn-request-format)
    :response-format (edn-response-format)
-   :params 내용
-   :timeout 3000
-   :handler 성공
-   :error-handler (fn [{:keys [status response]}] (실패 status response))
-   :finally 완료})
+   :params          내용
+   :timeout         3000
+   :handler         성공
+   :error-handler   (fn [{:keys [status response]}] (실패 status response))
+   :finally         완료})
 
 (defn GET
   "AJAX GET 요청을 보냄. EDN 포맷으로 주고 받습니다.\n
@@ -83,8 +83,8 @@
 (defn 마크다운 [속성]
   (let [src (r/atom "<i class='fa fa-spin fa-spinner'></i>")]
     (ajax/GET (:url 속성)
-        {:timeout 3000
-         :handler #(reset! src (js/marked % #js {:sanitize true}))
+        {:timeout       3000
+         :handler       #(reset! src (js/marked % #js {:sanitize true}))
          :error-handler #(reset! src "실패: " %1)})
     (fn [속성] [:div {:dangerouslySetInnerHTML #js {:__html @src}}])))
 
@@ -144,7 +144,7 @@
   nil -> {:class \"\"}"
   [검증상태]
   {:class (case 검증상태
-            true "has-success"
+            true  "has-success"
             false "has-error"
             "")})
 
@@ -156,7 +156,7 @@
   :페이지와 :이벤트 속성을 둘다 주지는 않도록 한다."
   [{:keys [href 페이지 이벤트] :as 속성} & 본문]
   {:pre [(not (and 페이지 이벤트))]}
-  (let [속성' (dissoc 속성 :페이지 :이벤트 :href)
+  (let [속성'  (dissoc 속성 :페이지 :이벤트 :href)
         a-클릭 (fn [on-click]
                  [:a (merge {:href "#" :on-click (prevent-default on-click)} 속성')])]
     (into (cond
