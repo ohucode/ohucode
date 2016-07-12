@@ -1,13 +1,7 @@
 (ns 오후코드.핸들러
-  (:require [clojure
-             [edn :as edn]
-             [pprint :as pp]]
-            [compojure
-             [core :refer :all]
-             [route :as route]]
-            [ring.middleware.defaults
-             :refer
-             [api-defaults site-defaults wrap-defaults]]
+  (:require [clojure [edn :as edn] [pprint :as pp]]
+            [compojure [core :refer :all] [route :as route]]
+            [ring.middleware.defaults :refer [api-defaults site-defaults wrap-defaults]]
             [ring.middleware.session.memory :refer [memory-store]]
             [ring.util.response :refer :all]
             [미생.기본 :refer :all]

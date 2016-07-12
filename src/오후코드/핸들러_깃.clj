@@ -124,6 +124,13 @@
       (권한/플젝읽는-미들웨어 이름공간 프로젝트명)))
 
 ;; GIT-CLI에서 한글 경로가 안 먹는듯
+;; $ nc -l 11000
+;; GET /애월조단/첫프로젝트/info/refs?service=git-upload-pack HTTP/1.1
+;; Host: 0.0.0.0:11000
+;; User-Agent: git/2.8.2
+;; Accept: */*
+;; Accept-Encoding: gzip
+;; Pragma: no-cache
 (def smart-http-라우트
   (wrap-no-cache-and-gzip
    (context "/:이름공간/:프로젝트명" [이름공간 프로젝트명]

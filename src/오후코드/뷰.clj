@@ -58,6 +58,7 @@
             [:div.container [:div.row [:h1 제목] 본문]]))
 
 (함수 not-found [요청]
+  (로그 "Not Found " 요청)
   {:status 404
    :body (basic-content 요청 "찾을 수 없습니다"
                         [:p "요청하신 페이지를 찾을 수 없습니다."])})
