@@ -2,12 +2,13 @@
   (:require [clojure
              [set :as s]
              [test :refer :all]]
-            [clojure.test.check :as tc]
-            [clojure.test.check.generators :as gen]
-            [clojure.test.check.properties :as prop]
-            [clojure.test.check.clojure-test :refer [defspec]]
-            [오후코드.저장소 :refer :all]
-            [오후코드.db :as db]))
+            [clojure.test.check
+             [clojure-test :refer [defspec]]
+             [generators :as gen]
+             [properties :as prop]]
+            [오후코드
+             [db :as db]
+             [저장소 :refer :all]]))
 
 (defn- rm-rf! [경로]
   (when (.isDirectory 경로)
