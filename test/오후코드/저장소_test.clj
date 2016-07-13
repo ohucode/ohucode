@@ -10,12 +10,6 @@
              [db :as db]
              [저장소 :refer :all]]))
 
-(defn- rm-rf! [경로]
-  (when (.isDirectory 경로)
-    (doseq [파일 (.listFiles 경로)]
-      (rm-rf! 파일)))
-  (.delete 경로))
-
 (defspec 저장소경로-테스트
   (prop/for-all [이름공간 gen/string-ascii
                  프로젝트명 gen/string-ascii
@@ -46,10 +40,10 @@
     (with-open [빈거 (열기 "test" "empty")
                 쓴거 (열기 "test" "fixture")]
       (is (empty? (브랜치목록 빈거)))
-      (is (empty? (s/difference #{"refs/heads/master"
-                                  "refs/heads/branch-A"
-                                  "refs/heads/branch-B"}
-                                (map :name (브랜치목록 쓴거)))))))
+      (is (s/subset? #{"refs/heads/master"
+                       "refs/heads/branch-A"
+                       "refs/heads/branch-B"}
+                     (set (map :name (브랜치목록 쓴거)))))))
 
   (testing "커밋이력"
     (with-open [빈거 (열기 "test" "empty")
