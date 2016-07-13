@@ -23,7 +23,7 @@ INSERT INTO 이용자 (아이디, 이메일, 성명, 비번해쉬) VALUES
   ('admin',    'admin@ohucode.com',  '관리자', NULL),
   ('system',   'system@ohucode.com', '시스템', NULL),
   ('guest',    'guest@ohucode.com',  '손님',   NULL),
-  ('test',     'test@ohucode.com',   '오테슽', 'vsrusjmRxBqVM+wLYA5TP5OQJVk='),
+  ('test',     'test@ohucode.com',   '테스트', 'vsrusjmRxBqVM+wLYA5TP5OQJVk='),
   ('awjordan', 'dhk@ohucode.com',    '김대현', 'JGnGP3MXoUsAkRaRFHyTMOtDIqU=');
 
 -- test / test1234

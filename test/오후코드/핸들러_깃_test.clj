@@ -7,11 +7,11 @@
 
 (deftest git-http-route
   (testing "/info/refs should response with a proper content-type"
-    (let [응답 (앱라우트 (mock/request :get "/u/p/info/refs?service=git-upload-pack"))]
+    (let [응답 (앱라우트 (mock/request :get "/test/fixture/info/refs?service=git-upload-pack"))]
       (is (= (get-in 응답 [:headers "Content-Type"])
              "application/x-git-upload-pack-advertisement"))
       (is (= (:status 응답) 200)))
-    (let [응답 (앱라우트 (mock/request :get "/u/p/info/refs?service=git-receive-pack"))]
+    (let [응답 (앱라우트 (mock/request :get "/test/fixture/info/refs?service=git-receive-pack"))]
       (is (= (get-in 응답 [:headers "Content-Type"])
              "application/x-git-receive-pack-advertisement"))))
 

@@ -12,4 +12,4 @@ pom.xml.asc
 *.iml
 *.log
 resources/public/js*
-저장소/
+/repo

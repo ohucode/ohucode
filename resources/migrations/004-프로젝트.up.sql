@@ -12,6 +12,6 @@ CREATE TABLE 프로젝트 (
 CREATE INDEX 프로젝트_최신순_인덱스 ON 프로젝트 (소유자, 이름, 갱신일시 DESC);
 
 INSERT INTO 프로젝트 (소유자, 이름, 설명, 공개) VALUES
-  ('test', 'empty-repo',   '빈 프로젝트 테스트용도', TRUE),
-  ('test', 'test-repo',    '각종 테스트용도', TRUE),
-  ('test', 'private-repo', '비공개 저장소 테스트용도', FALSE);
+  ('test', 'empty',   '빈 프로젝트 테스트용도', TRUE),
+  ('test', 'fixture', '각종 테스트용도', TRUE),
+  ('test', 'private', '비공개 저장소 테스트용도', FALSE);
