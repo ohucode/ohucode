@@ -3,7 +3,7 @@
         [오후코드.권한])
   (:require [오후코드.db :as db]))
 
-(deftest 권한-검사
+(deftest 권한-테스트
   (let [핸들러   (constantly {:status 200 :body "정상응답"})
         주인요청 {:session {:이용자 {:아이디 "test"}}}
         타인요청 {:session {:이용자 {:아이디 "guest"}}}
